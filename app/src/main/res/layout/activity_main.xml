@@ -12,7 +12,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Quiz app"
+        android:text="Wiki Search Quiz"
         android:gravity="center"
         android:layout_marginBottom="30dp"
         android:textSize="25sp"
@@ -48,18 +48,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Enter your name"
+                android:text="Enter starting title"
                 android:textColor="#363A43"
                 android:textSize="16sp"
                 />
 
             <EditText
-                android:id="@+id/et_name"
+                android:id="@+id/et_startTitle"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Name"
+                android:hint="startTitle"
+                android:text="Juggling"
+                android:textColor="#363A43"
+                android:textColorHint="#7A8089" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Enter goal title"
+                android:textColor="#363A43"
+                android:textSize="16sp"
+                />
+
+            <EditText
+                android:id="@+id/et_goalTitle"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="goalTitle"
+                android:text="History"
                 android:textColor="#363A43"
                 android:textColorHint="#7A8089" />
 

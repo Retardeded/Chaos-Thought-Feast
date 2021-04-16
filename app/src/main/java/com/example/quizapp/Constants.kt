@@ -2,9 +2,9 @@ package com.example.quizapp
 
 object Constants {
 
-    const val USER_NAME:String = "user_name"
-    const val TOTAL_QUESTIONS:String = "total_question"
-    const val CORRECT_ANSWERS:String = "correct_answers"
+    const val TITLE_START:String = "start_title"
+    const val TITLE_GOAL:String = "goal_title"
+    const val TOTAL_MOVES:String = "total_moves"
 
     fun getQuestions(): ArrayList<Question>
     {

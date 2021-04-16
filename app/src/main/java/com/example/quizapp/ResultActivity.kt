@@ -8,7 +8,7 @@ import android.widget.TextView
 
 class ResultActivity : AppCompatActivity() {
 
-    private lateinit var nameView: TextView
+    private lateinit var titleStartView: TextView
     private lateinit var scoreView: TextView
 
     private lateinit var buttonFinish: Button
@@ -17,16 +17,17 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        nameView = findViewById(R.id.tv_name)
+        titleStartView = findViewById(R.id.tv_start_title)
         scoreView = findViewById(R.id.tv_score)
         buttonFinish = findViewById(R.id.btn_finish)
 
-        val userName = intent.getStringExtra(Constants.USER_NAME)
-        nameView.text = userName
-        val totalQuestions = intent.getIntExtra(Constants.TOTAL_QUESTIONS,0)
-        val correctAnswers = intent.getIntExtra(Constants.CORRECT_ANSWERS,0)
+        val startTitle = intent.getStringExtra(Constants.TITLE_START)
+        val goalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
+        titleStartView.text = startTitle
+        val totalMoves = intent.getIntExtra(Constants.TOTAL_MOVES,0)
 
-        scoreView.text = "Your score is $correctAnswers out of $totalQuestions"
+        titleStartView.setText(startTitle)
+        scoreView.text = "You found $goalTitle in $totalMoves moves"
 
         buttonFinish.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))

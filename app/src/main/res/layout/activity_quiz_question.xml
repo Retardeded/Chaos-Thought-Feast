@@ -16,21 +16,13 @@
         >
 
         <TextView
-            android:id="@+id/tv_question"
+            android:id="@+id/tv_current_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:gravity="center"
             android:textColor="#363A43"
-            android:textSize="22dp"
-            android:text="What flag belong"/>
-
-        <ImageView
-            android:id="@+id/iv_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/ic_flag_of_argentina"/>
+            android:textSize="22dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,13 +104,25 @@
             android:textSize="18sp"
             android:text="Pol"/>
 
+        <TextView
+            android:id="@+id/tv_option_five"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/defulat_option_border_bg"
+            android:gravity="center"
+            android:padding="15dp"
+            android:textColor="#7A8089"
+            android:textSize="18sp"
+            android:text="Pol"/>
+
         <Button
-            android:id="@+id/btn_submit"
+            android:id="@+id/btn_more"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@color/color_primary"
-            android:text="SUBMIT"
+            android:text="Load more"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
