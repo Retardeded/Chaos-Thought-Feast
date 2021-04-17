@@ -82,6 +82,7 @@
                 android:hint="goalTitle"
                 android:text="History"
                 android:textColor="#363A43"
+                android:textStyle=""
                 android:textColorHint="#7A8089" />
 
             <Button

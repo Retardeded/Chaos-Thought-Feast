@@ -15,7 +15,11 @@ class ResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_result)
+        val totalMoves = intent.getIntExtra(Constants.TOTAL_MOVES,0)
+        if(totalMoves <= 10)
+            setContentView(R.layout.activity_result)
+        else
+            setContentView(R.layout.activity_lose)
 
         titleStartView = findViewById(R.id.tv_start_title)
         scoreView = findViewById(R.id.tv_score)
@@ -24,10 +28,12 @@ class ResultActivity : AppCompatActivity() {
         val startTitle = intent.getStringExtra(Constants.TITLE_START)
         val goalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
         titleStartView.text = startTitle
-        val totalMoves = intent.getIntExtra(Constants.TOTAL_MOVES,0)
 
         titleStartView.setText(startTitle)
-        scoreView.text = "You found $goalTitle in $totalMoves moves"
+        if(totalMoves <= 10)
+            scoreView.text = "You found $goalTitle in $totalMoves moves"
+        else
+            scoreView.text = "You haven't found $goalTitle in at most 10 moves"
 
         buttonFinish.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))

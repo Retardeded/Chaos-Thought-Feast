@@ -14,6 +14,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var progressBar: ProgressBar
     private lateinit var progressView: TextView
     private lateinit var currentLinkView: TextView
+    private lateinit var toFoundView: TextView
 
     private lateinit var optionOneView: TextView
     private lateinit var optionTwoView: TextView
@@ -22,9 +23,9 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var optionFiveView: TextView
     private var options: ArrayList<TextView> = ArrayList()
 
-    private lateinit var buttonMore: Button
+    private lateinit var buttonNext: Button
+    private lateinit var buttonPrevious: Button
 
-    private var mCurrentMoves:Int = 1
     private var mQuestionsList:ArrayList<Question>? = null
     private var mSelectedPositionOption:Int = 0
     private var mTotalMoves:Int = 0
@@ -40,6 +41,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         progressBar = findViewById(R.id.progessBar)
         progressView = findViewById(R.id.tv_progress)
         currentLinkView = findViewById(R.id.tv_current_link)
+        toFoundView = findViewById(R.id.tv_to_found)
 
         optionOneView = findViewById(R.id.tv_option_one)
         optionTwoView = findViewById(R.id.tv_option_two)
@@ -47,7 +49,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         optionFourView = findViewById(R.id.tv_option_four)
         optionFiveView = findViewById(R.id.tv_option_five)
 
-        buttonMore = findViewById(R.id.btn_more)
+        buttonNext = findViewById(R.id.btn_next)
+        buttonPrevious = findViewById(R.id.btn_previous)
 
         mStartTitle = intent.getStringExtra(Constants.TITLE_START)
         mGoalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
@@ -63,14 +66,12 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         for(option in options) {
             option.setOnClickListener(this)
         }
-        buttonMore.setOnClickListener(this)
+        buttonNext.setOnClickListener(this)
+        buttonPrevious.setOnClickListener(this)
 
-        //"https://en.wikipedia.org/wiki/Juggling"
-        //val text = WebParsing.parseHtmlCode("https://en.wikipedia.org/wiki/Football")
-        //print(text.subSequence(0,100))
-
+        toFoundView.setText(toFoundView.text.toString() + mGoalTitle)
         webParsing = WebParsing(this)
-        webParsing.getHtmlFromUrl("https://en.wikipedia.org/wiki/" + mStartTitle, currentLinkView, options)
+        webParsing.getHtmlFromUrl(Constants.BASIC_LINK + mStartTitle, currentLinkView, options)
     }
 
 
@@ -104,9 +105,11 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
             R.id.tv_option_four-> {
                 selectedOptionView(optionFourView, 4)
             }
-            R.id.btn_more-> {
-                webParsing.setNewOptions(options)
-                //submitButton()
+            R.id.btn_next-> {
+                webParsing.setNextLinks(options)
+            }
+            R.id.btn_previous-> {
+                webParsing.setPreviousLinks(options)
             }
         }
     }
@@ -124,19 +127,27 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
         if(tv.text == mGoalTitle)
         {
-            val intent = Intent(this, ResultActivity::class.java)
-            intent.putExtra(Constants.TITLE_START, mStartTitle)
-            intent.putExtra(Constants.TITLE_GOAL, mGoalTitle)
-            intent.putExtra(Constants.TOTAL_MOVES, mTotalMoves)
-            startActivity(intent)
-            finish()
+            endQuiz()
         }
         else
         {
             mTotalMoves++
             progressBar.progress = mTotalMoves
             progressView.text = "$mTotalMoves" + "/" + progressBar.max
+            if(mTotalMoves > 10)
+            {
+                endQuiz()
+            }
         }
 
+    }
+
+    private fun endQuiz() {
+        val intent = Intent(this, ResultActivity::class.java)
+        intent.putExtra(Constants.TITLE_START, mStartTitle)
+        intent.putExtra(Constants.TITLE_GOAL, mGoalTitle)
+        intent.putExtra(Constants.TOTAL_MOVES, mTotalMoves)
+        startActivity(intent)
+        finish()
     }
 }

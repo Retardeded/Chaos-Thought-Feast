@@ -1,9 +1,7 @@
 package com.example.quizapp
 
 import android.content.Context
-import android.content.Intent
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import com.koushikdutta.async.future.FutureCallback
 import com.koushikdutta.ion.Ion
 import java.util.regex.Matcher
@@ -16,20 +14,42 @@ class WebParsing(var applicationContext: Context) {
     private lateinit var mUrls:MutableList<String>
     private var currentIndex = 0
 
-    fun isTitleCorrect(url:String, tv: TextView) {
+
+
+    fun isGoalTitleCorrect(url: String) {
+        Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
+        Constants.correctGoal = false
 
         Ion.with(applicationContext).load(url).asString()
             .setCallback(object :
-                FutureCallback<String?> {
+                    FutureCallback<String?> {
                 override fun onCompleted(e: Exception?, result: String?) {
                     if (result != null) {
-                        tv.setText("true")
-                    }
+                        if(!result.contains("Wikipedia does not have an article with this exact name"))
+                            Constants.correctGoal = true
+                        }
                 }
             })
     }
 
+    fun isStartTitleCorrect(url: String) {
+        Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
+        Constants.correctStart = false
+
+        Ion.with(applicationContext).load(url).asString()
+                .setCallback(object :
+                        FutureCallback<String?> {
+                    override fun onCompleted(e: Exception?, result: String?) {
+                        if (result != null) {
+                            if(!result.contains("Wikipedia does not have an article with this exact name"))
+                                Constants.correctStart = true
+                        }
+                    }
+                })
+    }
+
     fun getHtmlFromUrl(url: String, tv: TextView, options: ArrayList<TextView>) {
+        Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
         Ion.with(applicationContext).load(url).asString()
             .setCallback(object :
                     FutureCallback<String?> {
@@ -37,28 +57,49 @@ class WebParsing(var applicationContext: Context) {
                     if (result != null) {
                         mCurrentHtml = result
                         currentIndex = 0
-                    }
-                    else {
-                       return
+                    } else {
+                        return
                     }
                     mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
                     tv.setText(url)
-                    setNewOptions(options)
+                    setNextLinks(options)
                 }
             })
     }
 
-    fun setNewOptions(options: ArrayList<TextView>) {
-        for (i in options.indices) {
+    fun setNextLinks(options: ArrayList<TextView>) {
 
+        if(currentIndex + options.size >= mUrls.size)
+            return
+
+        for (i in options.indices) {
             val line = mUrls[currentIndex]
             val pattern = "([^/]+\$)"
             val r = Pattern.compile(pattern)
             val m = r.matcher(line)
             if (m.find()) {
                 options[i].setText(m.group(0))
-                currentIndex++
             }
+            currentIndex++
+        }
+    }
+
+    fun setPreviousLinks(options: ArrayList<TextView>) {
+
+        if(currentIndex - 2*options.size < 0)
+            return
+
+        currentIndex -= 2*options.size
+
+        for (i in options.indices) {
+            val line = mUrls[currentIndex]
+            val pattern = "([^/]+\$)"
+            val r = Pattern.compile(pattern)
+            val m = r.matcher(line)
+            if (m.find()) {
+                options[i].setText(m.group(0))
+            }
+            currentIndex++
         }
     }
 
