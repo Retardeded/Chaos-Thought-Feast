@@ -27,17 +27,17 @@
         android:src="@drawable/ic_launcher_foreground" />
 
     <TextView
-        android:id="@+id/tv_start"
+        android:id="@+id/tv_path_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Your starting title was:"
+        android:text="Your wiki path:"
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/tv_start_title"
+        android:id="@+id/tv_path"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"

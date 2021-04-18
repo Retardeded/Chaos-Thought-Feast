@@ -1,13 +1,15 @@
 package com.example.quizapp
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+
 
 class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -28,6 +30,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
     private var mQuestionsList:ArrayList<Question>? = null
     private var mSelectedPositionOption:Int = 0
+    private var mMoves:ArrayList<String> = ArrayList()
     private var mTotalMoves:Int = 0
     private var mGoalTitle:String? = null
     private var mStartTitle:String? = null
@@ -72,43 +75,44 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         toFoundView.setText(toFoundView.text.toString() + mGoalTitle)
         webParsing = WebParsing(this)
         webParsing.getHtmlFromUrl(Constants.BASIC_LINK + mStartTitle, currentLinkView, options)
+        mStartTitle?.let { mMoves.add(it) }
     }
 
 
     private fun defaultOptionsView(){
-        val options = ArrayList<TextView>()
-        options.add(optionFourView)
-        options.add(optionThreeView)
-        options.add(optionTwoView)
-        options.add(optionOneView)
 
         for (option in options) {
             option.setTextColor(Color.parseColor("#7A8089"))
             option.typeface = Typeface.DEFAULT
-            option.background = ContextCompat.getDrawable(this,R.drawable.defulat_option_border_bg)
+            option.background = ContextCompat.getDrawable(this, R.drawable.defulat_option_border_bg)
         }
-
 
     }
 
     override fun onClick(v: View?) {
+
         when(v?.id) {
-            R.id.tv_option_one-> {
+            R.id.tv_option_one -> {
                 selectedOptionView(optionOneView, 1)
             }
-            R.id.tv_option_two-> {
+            R.id.tv_option_two -> {
                 selectedOptionView(optionTwoView, 2)
             }
-            R.id.tv_option_three-> {
+            R.id.tv_option_three -> {
                 selectedOptionView(optionThreeView, 3)
             }
-            R.id.tv_option_four-> {
+            R.id.tv_option_four -> {
                 selectedOptionView(optionFourView, 4)
+
             }
-            R.id.btn_next-> {
+            R.id.tv_option_five -> {
+                selectedOptionView(optionFiveView, 5)
+
+            }
+            R.id.btn_next -> {
                 webParsing.setNextLinks(options)
             }
-            R.id.btn_previous-> {
+            R.id.btn_previous -> {
                 webParsing.setPreviousLinks(options)
             }
         }
@@ -116,12 +120,14 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun selectedOptionView(tv: TextView, selectedOptionNum: Int)
     {
+        mMoves.add(tv.text.toString())
+        mTotalMoves++
         defaultOptionsView()
         mSelectedPositionOption = selectedOptionNum
 
         tv.setTextColor(Color.parseColor("#363A43"))
         tv.setTypeface(tv.typeface, Typeface.BOLD)
-        tv.background = ContextCompat.getDrawable(this,R.drawable.selected_option_border_bg)
+        tv.background = ContextCompat.getDrawable(this, R.drawable.selected_option_border_bg)
 
         webParsing.getHtmlFromUrl("https://en.wikipedia.org/wiki/" + tv.text, currentLinkView, options)
 
@@ -131,9 +137,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         }
         else
         {
-            mTotalMoves++
             progressBar.progress = mTotalMoves
-            progressView.text = "$mTotalMoves" + "/" + progressBar.max
+            progressView.text = mTotalMoves.toString() + "/" + progressBar.max
             if(mTotalMoves > 10)
             {
                 endQuiz()
@@ -146,8 +151,18 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra(Constants.TITLE_START, mStartTitle)
         intent.putExtra(Constants.TITLE_GOAL, mGoalTitle)
-        intent.putExtra(Constants.TOTAL_MOVES, mTotalMoves)
+        intent.putExtra("totalMoves", mTotalMoves);
+        intent.putExtra(Constants.MOVES, parseMoves(mMoves))
         startActivity(intent)
         finish()
+    }
+
+    private fun parseMoves(moves: ArrayList<String>):String {
+        var parsedMoves = ""
+        for (move in moves) {
+            parsedMoves += move + "->"
+        }
+
+        return parsedMoves
     }
 }
