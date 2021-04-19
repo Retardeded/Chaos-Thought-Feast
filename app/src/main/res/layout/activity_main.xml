@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="startTitle"
-                android:text="Juggling"
+                android:text="Programming"
                 android:textColor="#363A43"
                 android:textColorHint="#7A8089" />
 
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="goalTitle"
-                android:text="History"
+                android:text="Europe"
                 android:textColor="#363A43"
                 android:textStyle=""
                 android:textColorHint="#7A8089" />

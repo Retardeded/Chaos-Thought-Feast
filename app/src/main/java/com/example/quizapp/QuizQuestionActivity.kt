@@ -28,7 +28,6 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var buttonNext: Button
     private lateinit var buttonPrevious: Button
 
-    private var mQuestionsList:ArrayList<Question>? = null
     private var mSelectedPositionOption:Int = 0
     private var mMoves:ArrayList<String> = ArrayList()
     private var mTotalMoves:Int = 0
@@ -57,8 +56,6 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
         mStartTitle = intent.getStringExtra(Constants.TITLE_START)
         mGoalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
-
-        mQuestionsList = Constants.getQuestions()
 
         options.add(optionOneView)
         options.add(optionTwoView)

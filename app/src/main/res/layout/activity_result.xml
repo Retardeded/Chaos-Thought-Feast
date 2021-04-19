@@ -55,14 +55,39 @@
         android:textSize="20sp"
         tools:text="You found goalTitle in 9 moves" />
 
-    <Button
-        android:id="@+id/btn_finish"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@color/color_primary"
-        android:text="FINISH"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/btn_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/color_primary"
+            android:text="Another try"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+
+        <Button
+            android:layout_weight="1"
+            android:id="@+id/btn_attempts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@color/color_primary"
+            android:text="Previous attempts"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
 </LinearLayout>

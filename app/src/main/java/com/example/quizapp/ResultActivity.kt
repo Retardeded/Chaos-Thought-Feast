@@ -12,12 +12,19 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var pathView: TextView
 
     private lateinit var buttonFinish: Button
+    private lateinit var buttonPreviousAttempts: Button
+
+    private var dbUserHelper: UserHelper? = null
+    var startTitle:String? = ""
+    var goalTitle:String? = ""
+    var path:String? = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var path = intent.getStringExtra(Constants.MOVES)
+        path = intent.getStringExtra(Constants.MOVES)
         if (path != null) {
-            path = path.dropLast(2)
+            path = path!!.dropLast(2)
         }
         val totalMoves: Int = intent.getIntExtra("totalMoves", 0)
 
@@ -30,8 +37,10 @@ class ResultActivity : AppCompatActivity() {
         scoreView = findViewById(R.id.tv_score)
         pathView = findViewById(R.id.tv_path)
         buttonFinish = findViewById(R.id.btn_finish)
+        buttonPreviousAttempts = findViewById(R.id.btn_attempts)
 
-        val goalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
+        startTitle = intent.getStringExtra(Constants.TITLE_START)
+        goalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
 
 
         pathView.setText(path)
@@ -41,9 +50,32 @@ class ResultActivity : AppCompatActivity() {
             else
                 scoreView.text = "You haven't found $goalTitle in at most 10 moves"
 
+
+        saveToDb()
+
         buttonFinish.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
+        buttonPreviousAttempts.setOnClickListener{
+            startActivity(Intent(this, PreviousAttempts::class.java))
+            finish()
+        }
+
+    }
+
+    fun saveToDb()
+    {
+        dbUserHelper = UserHelper(this)
+        dbUserHelper!!.open()
+        dbUserHelper!!.beginTransaction()
+        val itemUser = PathItem()
+        itemUser.titleStart = startTitle
+        itemUser.titleGoal = goalTitle
+        itemUser.path = path
+        dbUserHelper!!.insert(itemUser)
+        dbUserHelper!!.setTransactionSuccess()
+        dbUserHelper!!.endTransaction()
+        dbUserHelper!!.close()
     }
 }
