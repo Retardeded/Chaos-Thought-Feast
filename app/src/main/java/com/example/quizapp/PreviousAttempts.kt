@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class PreviousAttempts : AppCompatActivity() {
-    internal var userHelper: UserHelper? = null
+    internal var wikiHelper: WikiHelper? = null
     internal var recyclerView: RecyclerView? = null
     internal var wikiPaths: ArrayList<PathItem>? = null
     internal var adapter: RecyclerviewAdapter? = null
@@ -31,13 +31,13 @@ class PreviousAttempts : AppCompatActivity() {
     }
 
     private fun showList() {
-        userHelper = UserHelper(this)
+        wikiHelper = WikiHelper(this)
         adapter = RecyclerviewAdapter(this)
         recyclerView!!.layoutManager = LinearLayoutManager(this)
         recyclerView!!.adapter = adapter
-        userHelper!!.open()
-        wikiPaths = userHelper!!.user
-        userHelper!!.close()
+        wikiHelper!!.open()
+        wikiPaths = wikiHelper!!.user
+        wikiHelper!!.close()
         adapter!!.addItem(wikiPaths!!)
 
     }

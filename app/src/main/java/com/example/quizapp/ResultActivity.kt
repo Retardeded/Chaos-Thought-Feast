@@ -14,7 +14,7 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var buttonFinish: Button
     private lateinit var buttonPreviousAttempts: Button
 
-    private var dbUserHelper: UserHelper? = null
+    private var dbWikiHelper: WikiHelper? = null
     var startTitle:String? = ""
     var goalTitle:String? = ""
     var path:String? = ""
@@ -67,16 +67,16 @@ class ResultActivity : AppCompatActivity() {
 
     fun saveToDb()
     {
-        dbUserHelper = UserHelper(this)
-        dbUserHelper!!.open()
-        dbUserHelper!!.beginTransaction()
+        dbWikiHelper = WikiHelper(this)
+        dbWikiHelper!!.open()
+        dbWikiHelper!!.beginTransaction()
         val itemUser = PathItem()
         itemUser.titleStart = startTitle
         itemUser.titleGoal = goalTitle
         itemUser.path = path
-        dbUserHelper!!.insert(itemUser)
-        dbUserHelper!!.setTransactionSuccess()
-        dbUserHelper!!.endTransaction()
-        dbUserHelper!!.close()
+        dbWikiHelper!!.insert(itemUser)
+        dbWikiHelper!!.setTransactionSuccess()
+        dbWikiHelper!!.endTransaction()
+        dbWikiHelper!!.close()
     }
 }

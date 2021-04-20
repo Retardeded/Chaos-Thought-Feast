@@ -14,11 +14,8 @@ import com.example.quizapp.WikiPath.UserColumns.Companion.STARTTITLE
 import com.example.quizapp.WikiPath.UserColumns.Companion.GOALTITLE
 import com.example.quizapp.WikiPath.UserColumns.Companion.PATH
 
-/**
- * Created by humaira on 4/9/2018.
- */
 
-class UserHelper(private val c: Context) {
+class WikiHelper(private val c: Context) {
     private var dbWikiHelper: DbWikiHelper? = null
     private var database: SQLiteDatabase? = null
     val user: ArrayList<PathItem>
@@ -45,7 +42,7 @@ class UserHelper(private val c: Context) {
         }
 
     @Throws(SQLException::class)
-    fun open(): UserHelper {
+    fun open(): WikiHelper {
         dbWikiHelper = DbWikiHelper(c)
         database = dbWikiHelper!!.writableDatabase
         return this
