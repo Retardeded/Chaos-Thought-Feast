@@ -135,7 +135,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
             mTotalMoves++
             progressBar.progress = mTotalMoves
             progressView.text = mTotalMoves.toString() + "/" + progressBar.max
-            if(mTotalMoves > 10)
+            if(mTotalMoves > progressBar.max)
             {
                 endQuiz()
             }
@@ -147,7 +147,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra(QuizValues.TITLE_START, mStartTitle)
         intent.putExtra(QuizValues.TITLE_GOAL, mGoalTitle)
-        intent.putExtra(QuizValues.TOTAL_MOVES, mTotalMoves);
+        intent.putExtra(QuizValues.TOTAL_MOVES, mTotalMoves)
+        intent.putExtra(QuizValues.MAX_PROGRESS, progressBar.max)
         intent.putExtra(QuizValues.MOVES, parseMoves(mMoves))
         startActivity(intent)
         finish()

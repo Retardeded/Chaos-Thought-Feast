@@ -27,8 +27,9 @@ class ResultActivity : AppCompatActivity() {
             path = path!!.dropLast(2)
         }
         val totalMoves: Int = intent.getIntExtra(QuizValues.TOTAL_MOVES, 0)
+        val maxProgress:Int = intent.getIntExtra(QuizValues.MAX_PROGRESS, 0)
 
-            if(totalMoves <= 10)
+            if(totalMoves <= maxProgress)
                 setContentView(R.layout.activity_result)
             else
                 setContentView(R.layout.activity_lose)
@@ -45,7 +46,7 @@ class ResultActivity : AppCompatActivity() {
 
         pathView.setText(path)
 
-            if(totalMoves <= 10)
+            if(totalMoves <= maxProgress)
                 scoreView.text = "You found $goalTitle in $totalMoves moves"
             else
                 scoreView.text = "You haven't found $goalTitle in at most 10 moves"
