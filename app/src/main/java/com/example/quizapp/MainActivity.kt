@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        editTextStartTitle.afterTextChanged { webParsing.isStartTitleCorrect(Constants.BASIC_LINK+it) }
-        editTextGoalTitle.afterTextChanged { webParsing.isGoalTitleCorrect(Constants.BASIC_LINK+it) }
+        editTextStartTitle.afterTextChanged { webParsing.isStartTitleCorrect(QuizValues.BASIC_LINK+it) }
+        editTextGoalTitle.afterTextChanged { webParsing.isGoalTitleCorrect(QuizValues.BASIC_LINK+it) }
 
 
         buttonStart.setOnClickListener{
@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity() {
                 println("empty")
             }
             else {
-                if(Constants.correctGoal && Constants.correctStart) startQuizActivity()
+                if(QuizValues.correctGoal && QuizValues.correctStart) startQuizActivity()
 
-                if(!Constants.correctStart)
+                if(!QuizValues.correctStart)
                 {
                     editTextStartTitle.setPaintFlags(editTextStartTitle.getPaintFlags() or Paint.STRIKE_THRU_TEXT_FLAG)
                 }
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                 {
                     editTextStartTitle.setPaintFlags(Paint.LINEAR_TEXT_FLAG)
                 }
-                if(!Constants.correctGoal)
+                if(!QuizValues.correctGoal)
                 {
                     editTextGoalTitle.setPaintFlags(editTextGoalTitle.getPaintFlags() or Paint.STRIKE_THRU_TEXT_FLAG)
                 }
@@ -95,8 +95,8 @@ class MainActivity : AppCompatActivity() {
 
     fun startQuizActivity() {
         val intent = Intent(this, QuizQuestionActivity::class.java)
-        intent.putExtra(Constants.TITLE_START, editTextStartTitle.text.toString())
-        intent.putExtra(Constants.TITLE_GOAL, editTextGoalTitle.text.toString())
+        intent.putExtra(QuizValues.TITLE_START, editTextStartTitle.text.toString())
+        intent.putExtra(QuizValues.TITLE_GOAL, editTextGoalTitle.text.toString())
         startActivity(intent)
     }
 }

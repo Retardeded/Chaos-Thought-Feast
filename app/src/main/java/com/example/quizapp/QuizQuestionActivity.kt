@@ -1,6 +1,5 @@
 package com.example.quizapp
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -54,8 +53,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         buttonNext = findViewById(R.id.btn_next)
         buttonPrevious = findViewById(R.id.btn_previous)
 
-        mStartTitle = intent.getStringExtra(Constants.TITLE_START)
-        mGoalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
+        mStartTitle = intent.getStringExtra(QuizValues.TITLE_START)
+        mGoalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL)
 
         options.add(optionOneView)
         options.add(optionTwoView)
@@ -71,7 +70,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
         toFoundView.setText(toFoundView.text.toString() + mGoalTitle)
         webParsing = WebParsing(this)
-        webParsing.getHtmlFromUrl(Constants.BASIC_LINK + mStartTitle, currentLinkView, options)
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + mStartTitle, currentLinkView, options)
         mStartTitle?.let { mMoves.add(it) }
     }
 
@@ -118,7 +117,6 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private fun selectedOptionView(tv: TextView, selectedOptionNum: Int)
     {
         mMoves.add(tv.text.toString())
-        mTotalMoves++
         defaultOptionsView()
         mSelectedPositionOption = selectedOptionNum
 
@@ -126,7 +124,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         tv.setTypeface(tv.typeface, Typeface.BOLD)
         tv.background = ContextCompat.getDrawable(this, R.drawable.selected_option_border_bg)
 
-        webParsing.getHtmlFromUrl("https://en.wikipedia.org/wiki/" + tv.text, currentLinkView, options)
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, currentLinkView, options)
 
         if(tv.text == mGoalTitle)
         {
@@ -134,6 +132,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         }
         else
         {
+            mTotalMoves++
             progressBar.progress = mTotalMoves
             progressView.text = mTotalMoves.toString() + "/" + progressBar.max
             if(mTotalMoves > 10)
@@ -146,10 +145,10 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun endQuiz() {
         val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra(Constants.TITLE_START, mStartTitle)
-        intent.putExtra(Constants.TITLE_GOAL, mGoalTitle)
-        intent.putExtra("totalMoves", mTotalMoves);
-        intent.putExtra(Constants.MOVES, parseMoves(mMoves))
+        intent.putExtra(QuizValues.TITLE_START, mStartTitle)
+        intent.putExtra(QuizValues.TITLE_GOAL, mGoalTitle)
+        intent.putExtra(QuizValues.TOTAL_MOVES, mTotalMoves);
+        intent.putExtra(QuizValues.MOVES, parseMoves(mMoves))
         startActivity(intent)
         finish()
     }

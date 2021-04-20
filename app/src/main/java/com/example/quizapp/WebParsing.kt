@@ -18,7 +18,7 @@ class WebParsing(var applicationContext: Context) {
 
     fun isGoalTitleCorrect(url: String) {
         Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
-        Constants.correctGoal = false
+        QuizValues.correctGoal = false
 
         Ion.with(applicationContext).load(url).asString()
             .setCallback(object :
@@ -26,7 +26,7 @@ class WebParsing(var applicationContext: Context) {
                 override fun onCompleted(e: Exception?, result: String?) {
                     if (result != null) {
                         if(!result.contains("Wikipedia does not have an article with this exact name"))
-                            Constants.correctGoal = true
+                            QuizValues.correctGoal = true
                         }
                 }
             })
@@ -34,7 +34,7 @@ class WebParsing(var applicationContext: Context) {
 
     fun isStartTitleCorrect(url: String) {
         Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
-        Constants.correctStart = false
+        QuizValues.correctStart = false
 
         Ion.with(applicationContext).load(url).asString()
                 .setCallback(object :
@@ -42,7 +42,7 @@ class WebParsing(var applicationContext: Context) {
                     override fun onCompleted(e: Exception?, result: String?) {
                         if (result != null) {
                             if(!result.contains("Wikipedia does not have an article with this exact name"))
-                                Constants.correctStart = true
+                                QuizValues.correctStart = true
                         }
                     }
                 })

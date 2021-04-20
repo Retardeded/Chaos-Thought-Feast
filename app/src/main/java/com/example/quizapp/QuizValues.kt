@@ -1,9 +1,10 @@
 package com.example.quizapp
 
-object Constants {
+object QuizValues {
 
     const val TITLE_START:String = "start_title"
     const val TITLE_GOAL:String = "goal_title"
+    const val TOTAL_MOVES = "total_moves"
     const val MOVES:String = "moves"
     const val BASIC_LINK:String = "https://en.wikipedia.org/wiki/"
     var correctStart = true

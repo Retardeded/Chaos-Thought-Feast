@@ -22,11 +22,11 @@ class ResultActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        path = intent.getStringExtra(Constants.MOVES)
+        path = intent.getStringExtra(QuizValues.MOVES)
         if (path != null) {
             path = path!!.dropLast(2)
         }
-        val totalMoves: Int = intent.getIntExtra("totalMoves", 0)
+        val totalMoves: Int = intent.getIntExtra(QuizValues.TOTAL_MOVES, 0)
 
             if(totalMoves <= 10)
                 setContentView(R.layout.activity_result)
@@ -39,8 +39,8 @@ class ResultActivity : AppCompatActivity() {
         buttonFinish = findViewById(R.id.btn_finish)
         buttonPreviousAttempts = findViewById(R.id.btn_attempts)
 
-        startTitle = intent.getStringExtra(Constants.TITLE_START)
-        goalTitle = intent.getStringExtra(Constants.TITLE_GOAL)
+        startTitle = intent.getStringExtra(QuizValues.TITLE_START)
+        goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL)
 
 
         pathView.setText(path)
