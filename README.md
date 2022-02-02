@@ -9,4 +9,4 @@ You also choose the title you want to find through some "concept association", b
 
 By default the end title is this: https://en.wikipedia.org/wiki/Europe
 
-It is definitely possible to find it with less than 10 steps, starting from the quiz title. Generally geographic stuff is more or less easy to "found".
+It is definitely possible to find it with less than 10 steps, starting from the quiz title. So you may as well just press Start and test your skill/luck.
