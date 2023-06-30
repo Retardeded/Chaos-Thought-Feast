@@ -50,7 +50,7 @@ class ResultActivity : AppCompatActivity() {
             if(win)
                 scoreView.text = "You found $goalTitle in $totalMoves moves"
             else
-                scoreView.text = "You haven't found $goalTitle in at most 10 moves"
+                scoreView.text = "You haven't found $goalTitle"
 
 
         saveToDb()
