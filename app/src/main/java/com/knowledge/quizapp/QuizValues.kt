@@ -8,6 +8,7 @@ object QuizValues {
     const val MOVES:String = "moves"
     const val MAX_PROGRESS:String = "max_progress"
     const val BASIC_LINK:String = "https://en.wikipedia.org/wiki/"
+    const val WIN:String = "win"
     var correctStart = true
     var correctGoal = true
 }

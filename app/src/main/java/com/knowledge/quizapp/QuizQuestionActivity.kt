@@ -74,6 +74,12 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         webParsing = WebParsing(this)
         webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + mStartTitle, currentLinkView, options)
         mStartTitle?.let { mMoves.add(it) }
+
+        val btnEnd = findViewById<Button>(R.id.btn_end)
+
+        btnEnd.setOnClickListener {
+            endQuiz(false)
+        }
     }
 
 
@@ -138,7 +144,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
         if(tv.text == mGoalTitle)
         {
-            endQuiz()
+            mTotalMoves++
+            endQuiz(true)
         }
         else
         {
@@ -147,14 +154,15 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
             progressView.text = mTotalMoves.toString() + "/" + progressBar.max
             if(mTotalMoves > progressBar.max)
             {
-                endQuiz()
+                endQuiz(false)
             }
         }
 
     }
 
-    private fun endQuiz() {
+    private fun endQuiz(win: Boolean) {
         val intent = Intent(this, ResultActivity::class.java)
+        intent.putExtra(QuizValues.WIN, win)
         intent.putExtra(QuizValues.TITLE_START, mStartTitle)
         intent.putExtra(QuizValues.TITLE_GOAL, mGoalTitle)
         intent.putExtra(QuizValues.TOTAL_MOVES, mTotalMoves)

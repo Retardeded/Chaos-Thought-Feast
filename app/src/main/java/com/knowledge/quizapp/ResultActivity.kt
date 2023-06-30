@@ -18,6 +18,7 @@ class ResultActivity : AppCompatActivity() {
     var startTitle:String? = ""
     var goalTitle:String? = ""
     var path:String? = ""
+    var win:Boolean = false;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +43,11 @@ class ResultActivity : AppCompatActivity() {
 
         startTitle = intent.getStringExtra(QuizValues.TITLE_START)
         goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL)
-
+        win = intent.getBooleanExtra(QuizValues.WIN, false)
 
         pathView.setText(path)
 
-            if(totalMoves <= maxProgress)
+            if(win)
                 scoreView.text = "You found $goalTitle in $totalMoves moves"
             else
                 scoreView.text = "You haven't found $goalTitle in at most 10 moves"
