@@ -18,7 +18,7 @@
         android:textSize="25sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
-         />
+        />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -53,16 +53,36 @@
                 android:textSize="16sp"
                 />
 
-            <EditText
-                android:id="@+id/et_startTitle"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginTop="20dp"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="startTitle"
-                android:text="Quiz"
-                android:textColor="#363A43"
-                android:textColorHint="#7A8089" />
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/et_startTitle"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/btn_randomStartTitle"
+                    android:hint="startTitle"
+                    android:text="Quiz"
+                    android:textColor="#363A43"
+                    android:textColorHint="#7A8089"
+                    />
+
+                <Button
+                    android:id="@+id/btn_randomStartTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Random"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white"
+                    android:background="@color/design_default_color_primary"
+                    />
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -73,17 +93,35 @@
                 android:textSize="16sp"
                 />
 
-            <EditText
-                android:id="@+id/et_goalTitle"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginTop="20dp"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="goalTitle"
-                android:text="Europe"
-                android:textColor="#363A43"
-                android:textStyle=""
-                android:textColorHint="#7A8089" />
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/et_goalTitle"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="goalTitle"
+                    android:text="Europe"
+                    android:textColor="#363A43"
+                    android:textColorHint="#7A8089"
+                    />
+
+                <Button
+                    android:id="@+id/btn_randomGoalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Random"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white"
+                    android:background="@color/design_default_color_primary"
+                    />
+
+            </RelativeLayout>
 
             <Button
                 android:id="@+id/btn_start"

@@ -1,5 +1,6 @@
 package com.knowledge.quizapp
 
+import RandomArticleViewModel
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
@@ -9,14 +10,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var buttonStart: Button
+    private lateinit var buttonRandomStart: Button
     private lateinit var editTextStartTitle: EditText
     private lateinit var editTextGoalTitle: EditText
     private val webParsing = WebParsing(this)
+    private lateinit var randomArticleViewModel: RandomArticleViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +88,21 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+        }
+
+        randomArticleViewModel = ViewModelProvider(this).get(RandomArticleViewModel::class.java)
+
+        val buttonRandomStart = findViewById<Button>(R.id.btn_randomStartTitle)
+        buttonRandomStart.setOnClickListener {
+            GlobalScope.launch(Dispatchers.Main) {
+                val result = randomArticleViewModel.getRandomArticle()
+                if (result != null) {
+                    Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
+                    print(result)
+                    editTextStartTitle.setText(result)
+                    QuizValues.correctStart = true
+                }
+            }
         }
     }
 
