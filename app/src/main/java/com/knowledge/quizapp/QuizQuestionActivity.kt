@@ -5,7 +5,9 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 
@@ -123,6 +125,14 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         tv.setTextColor(Color.parseColor("#363A43"))
         tv.setTypeface(tv.typeface, Typeface.BOLD)
         tv.background = ContextCompat.getDrawable(this, R.drawable.selected_option_border_bg)
+
+
+        tv.postDelayed({
+            tv.setTextColor(Color.parseColor("#7A8089"))
+            tv.typeface = Typeface.DEFAULT
+            tv.background = ContextCompat.getDrawable(this, R.drawable.defulat_option_border_bg)
+        }, 300) // Delay of 0.3 seconds (300 milliseconds)
+
 
         webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, currentLinkView, options)
 
