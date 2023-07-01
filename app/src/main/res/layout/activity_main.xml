@@ -44,82 +44,78 @@
                 android:textSize="30sp"
                 android:textStyle="bold"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Enter starting title"
-                android:textColor="#363A43"
-                android:textSize="16sp"
-                />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
-
-                <EditText
-                    android:id="@+id/et_startTitle"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/btn_randomStartTitle"
-                    android:hint="startTitle"
-                    android:text="Quiz"
-                    android:textColor="#363A43"
-                    android:textColorHint="#7A8089"
-                    />
+                    android:layout_marginTop="20dp">
 
-                <Button
-                    android:id="@+id/btn_randomStartTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:text="Random"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/white"
-                    android:background="@color/design_default_color_primary"
-                    />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                       >
 
-            </RelativeLayout>
+                    <EditText
+                        android:id="@+id/et_startTitle"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Enter starting title"
+                        android:text="Quiz"
+                        android:textColor="#363A43"
+                        android:textColorHint="#7A8089"
+                        />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Enter goal title"
-                android:textColor="#363A43"
-                android:textSize="16sp"
-                />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/btn_randomStartTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:text="Random"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/white"
+                        android:background="@color/design_default_color_primary"
+                        />
+
+                </RelativeLayout>
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/et_goalTitle"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="goalTitle"
+                    android:hint="Enter goal title"
                     android:text="Europe"
                     android:textColor="#363A43"
                     android:textColorHint="#7A8089"
                     />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/btn_randomGoalTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
+                    android:layout_centerVertical="true"
                     android:text="Random"
                     android:textSize="12sp"
                     android:textColor="@android:color/white"
                     android:background="@color/design_default_color_primary"
                     />
+
 
             </RelativeLayout>
 

@@ -11,8 +11,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
 
@@ -20,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var buttonStart: Button
     private lateinit var buttonRandomStart: Button
+    private lateinit var buttonRandomGoal: Button
     private lateinit var editTextStartTitle: EditText
     private lateinit var editTextGoalTitle: EditText
     private val webParsing = WebParsing(this)
@@ -92,17 +92,29 @@ class MainActivity : AppCompatActivity() {
 
         randomArticleViewModel = ViewModelProvider(this).get(RandomArticleViewModel::class.java)
 
-        val buttonRandomStart = findViewById<Button>(R.id.btn_randomStartTitle)
-        buttonRandomStart.setOnClickListener {
-            GlobalScope.launch(Dispatchers.Main) {
-                val result = randomArticleViewModel.getRandomArticle()
-                if (result != null) {
-                    Toast.makeText(applicationContext, result, Toast.LENGTH_SHORT).show()
-                    print(result)
-                    editTextStartTitle.setText(result)
-                    QuizValues.correctStart = true
+        fun setRandomArticle(editText: EditText): Boolean {
+            var success = false
+            lifecycleScope.launch {
+                runCatching {
+                    randomArticleViewModel.getRandomArticle()
+                }.onSuccess { result ->
+                    editText.setText(result)
+                    success = true
+                }.onFailure { throwable ->
+                    // Handle the error, e.g., show an error message
                 }
             }
+            return success
+        }
+
+        buttonRandomStart = findViewById(R.id.btn_randomStartTitle)
+        buttonRandomStart.setOnClickListener {
+            QuizValues.correctStart = setRandomArticle(editTextStartTitle)
+        }
+
+        buttonRandomGoal = findViewById(R.id.btn_randomGoalTitle)
+        buttonRandomGoal.setOnClickListener {
+            QuizValues.correctGoal = setRandomArticle(editTextGoalTitle)
         }
     }
 
