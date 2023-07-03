@@ -20,8 +20,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonStart: Button
     private lateinit var buttonRandomStart: Button
     private lateinit var buttonRandomGoal: Button
+    private lateinit var buttonRandomCategory: Button
     private lateinit var editTextStartTitle: EditText
     private lateinit var editTextGoalTitle: EditText
+    private lateinit var editTextCategory: EditText
     private val webParsing = WebParsing(this)
     private lateinit var randomArticleViewModel: RandomArticleViewModel
 
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         buttonStart = findViewById(R.id.btn_start)
         editTextStartTitle = findViewById(R.id.et_startTitle)
         editTextGoalTitle = findViewById(R.id.et_goalTitle)
+        editTextCategory = findViewById(R.id.et_Category)
 
         editTextStartTitle.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -96,7 +99,14 @@ class MainActivity : AppCompatActivity() {
             var success = false
             lifecycleScope.launch {
                 runCatching {
-                    randomArticleViewModel.getRandomArticle()
+                    val category = editTextCategory.text.toString()
+                    if(category.isNotEmpty()) {
+                        randomArticleViewModel.getRandomArticleFromCategory("Category:$category")
+                    } else {
+                        Toast.makeText(applicationContext, category, Toast.LENGTH_SHORT).show()
+                        randomArticleViewModel.getRandomArticle()
+                    }
+
                 }.onSuccess { result ->
                     editText.setText(result)
                     success = true
@@ -116,6 +126,20 @@ class MainActivity : AppCompatActivity() {
         buttonRandomGoal.setOnClickListener {
             QuizValues.correctGoal = setRandomArticle(editTextGoalTitle)
         }
+
+        buttonRandomCategory = findViewById(R.id.btn_randomCategory)
+        buttonRandomCategory.setOnClickListener {
+            lifecycleScope.launch {
+                runCatching {
+                    randomArticleViewModel.getRandomCategory()
+                }.onSuccess { result ->
+                    editTextCategory.setText(result)
+                }.onFailure { throwable ->
+                    // Handle the error, e.g., show an error message
+                }
+            }
+        }
+
     }
 
     fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
