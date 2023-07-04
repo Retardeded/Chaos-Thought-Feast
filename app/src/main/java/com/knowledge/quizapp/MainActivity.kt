@@ -164,8 +164,8 @@ class MainActivity : AppCompatActivity() {
 
     fun startQuizActivity() {
         val intent = Intent(this, QuizQuestionActivity::class.java)
-        intent.putExtra(QuizValues.TITLE_START, editTextStartTitle.text.toString())
-        intent.putExtra(QuizValues.TITLE_GOAL, editTextGoalTitle.text.toString())
+        intent.putExtra(QuizValues.TITLE_START, editTextStartTitle.text.toString().replace(" ", "_"))
+        intent.putExtra(QuizValues.TITLE_GOAL, editTextGoalTitle.text.toString().replace(" ", "_"))
         startActivity(intent)
     }
 }
