@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonRandomCategory: Button
     private lateinit var editTextStartTitle: EditText
     private lateinit var editTextGoalTitle: EditText
+    private lateinit var editTextKeyword: EditText
     private lateinit var editTextCategory: EditText
     private val webParsing = WebParsing(this)
     private lateinit var randomArticleViewModel: RandomArticleViewModel
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         buttonStart = findViewById(R.id.btn_start)
         editTextStartTitle = findViewById(R.id.et_startTitle)
         editTextGoalTitle = findViewById(R.id.et_goalTitle)
+        editTextKeyword = findViewById(R.id.et_Keyword)
         editTextCategory = findViewById(R.id.et_Category)
 
         editTextStartTitle.addTextChangedListener(object : TextWatcher {
@@ -100,10 +102,14 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 runCatching {
                     val category = editTextCategory.text.toString()
-                    if(category.isNotEmpty()) {
+                    val keyword = editTextKeyword.text.toString()
+
+                    if(keyword.isNotEmpty()) {
+                        randomArticleViewModel.getArticleByKeyword(keyword)
+                    }
+                    else if(category.isNotEmpty()) {
                         randomArticleViewModel.getRandomArticleFromCategory("Category:$category")
                     } else {
-                        Toast.makeText(applicationContext, category, Toast.LENGTH_SHORT).show()
                         randomArticleViewModel.getRandomArticle()
                     }
 

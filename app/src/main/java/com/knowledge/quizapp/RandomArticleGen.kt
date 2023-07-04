@@ -61,7 +61,7 @@ class RandomArticleViewModel : ViewModel() {
                 }
                 reader.close()
 
-                return@withContext parseRandomArticle(response.toString())
+                return@withContext parseRandomArticleFromCategory(response.toString())
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -72,7 +72,66 @@ class RandomArticleViewModel : ViewModel() {
         return@withContext null
     }
 
-    fun parseRandomArticleTitle(response: String): String? {
+    suspend fun getArticleByKeyword(keyword: String): String? = withContext(Dispatchers.IO) {
+        var urlConnection: HttpURLConnection? = null
+        try {
+            val encodedKeyword = URLEncoder.encode(keyword, "UTF-8")
+            val urlStr = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=$encodedKeyword&format=json"
+            val url = URL(urlStr)
+            urlConnection = url.openConnection() as HttpURLConnection
+            val responseCode = urlConnection.responseCode
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
+                val response = StringBuilder()
+
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    response.append(line)
+                }
+                reader.close()
+
+                return@withContext parseRandomArticleFromKeyword(response.toString())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            urlConnection?.disconnect()
+        }
+
+        return@withContext null
+    }
+
+    fun parseRandomArticleFromKeyword(json: String): String? {
+        val articleTitles = mutableListOf<String>()
+
+        try {
+            val jsonObject = JSONObject(json)
+            val queryObject = jsonObject.optJSONObject("query")
+            val searchArray = queryObject?.optJSONArray("search")
+
+            if (searchArray != null) {
+                for (i in 0 until searchArray.length()) {
+                    val item = searchArray.optJSONObject(i)
+                    val title = item?.optString("title")
+                    if (title != null) {
+                        articleTitles.add(title)
+                    }
+                }
+            }
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        // Return a random title from the list, or null if the list is empty
+        return if (articleTitles.isNotEmpty()) {
+            articleTitles.random()
+        } else {
+            null
+        }
+    }
+
+    private fun parseRandomArticleTitle(response: String): String? {
         try {
             val jsonObject = JSONObject(response)
             val queryObject = jsonObject.getJSONObject("query")
@@ -87,7 +146,7 @@ class RandomArticleViewModel : ViewModel() {
         return null
     }
 
-    private fun parseRandomArticle(response: String): String? {
+    private fun parseRandomArticleFromCategory(response: String): String? {
         try {
             val jsonObject = JSONObject(response)
             val queryObject = jsonObject.getJSONObject("query")
