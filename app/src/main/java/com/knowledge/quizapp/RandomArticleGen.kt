@@ -138,7 +138,7 @@ class RandomArticleViewModel : ViewModel() {
             val randomArray = queryObject.getJSONArray("random")
             if (randomArray.length() > 0) {
                 val randomObject = randomArray.getJSONObject(0)
-                return randomObject.getString("title").replace(" ", "_")
+                return randomObject.getString("title")
             }
         } catch (e: JSONException) {
             e.printStackTrace()
