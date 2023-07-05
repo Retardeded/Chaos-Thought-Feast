@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Wiki Search Quiz"
+        android:text="Mindless Thought Cake"
         android:gravity="center"
         android:layout_marginBottom="30dp"
         android:textSize="25sp"
@@ -53,7 +53,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter starting title"
+                        android:hint="Enter starting concept"
                         android:text="Quiz"
                         android:textColor="#363A43"
                         android:textColorHint="#7A8089"
@@ -90,7 +90,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter goal title"
+                    android:hint="Enter concept you want to reach"
                     android:text="Europe"
                     android:textColor="#363A43"
                     android:textColorHint="#7A8089"
@@ -148,7 +148,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Enter a Keyword"
+                android:text="Enter a filter keyword (affects random buttons above)"
                 android:textColor="#363A43"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -173,18 +173,6 @@
                         />
 
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <Button
-                    android:id="@+id/btn_randomKeyword"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="Random"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/white"
-                    android:background="@color/design_default_color_primary"
-                    />
 
             </RelativeLayout>
 
