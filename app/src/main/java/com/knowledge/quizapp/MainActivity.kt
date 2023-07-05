@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -18,8 +19,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var buttonStart: Button
-    private lateinit var buttonRandomStart: Button
-    private lateinit var buttonRandomGoal: Button
+    private lateinit var buttonRandomStart: ImageButton
+    private lateinit var buttonRandomGoal: ImageButton
     private lateinit var buttonRandomCategory: Button
     private lateinit var editTextStartTitle: EditText
     private lateinit var editTextGoalTitle: EditText
@@ -31,6 +32,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        buttonRandomStart = findViewById(R.id.btn_randomStartTitle)
+        buttonRandomGoal = findViewById(R.id.btn_randomGoalTitle)
+        buttonRandomCategory = findViewById(R.id.btn_randomCategory)
 
         buttonStart = findViewById(R.id.btn_start)
         editTextStartTitle = findViewById(R.id.et_startTitle)
@@ -123,17 +128,14 @@ class MainActivity : AppCompatActivity() {
             return success
         }
 
-        buttonRandomStart = findViewById(R.id.btn_randomStartTitle)
         buttonRandomStart.setOnClickListener {
             QuizValues.correctStart = setRandomArticle(editTextStartTitle)
         }
 
-        buttonRandomGoal = findViewById(R.id.btn_randomGoalTitle)
         buttonRandomGoal.setOnClickListener {
             QuizValues.correctGoal = setRandomArticle(editTextGoalTitle)
         }
 
-        buttonRandomCategory = findViewById(R.id.btn_randomCategory)
         buttonRandomCategory.setOnClickListener {
             lifecycleScope.launch {
                 runCatching {
