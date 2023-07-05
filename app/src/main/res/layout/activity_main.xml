@@ -210,14 +210,16 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="16dp">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    >
 
                     <EditText
                         android:id="@+id/et_Category"
@@ -231,19 +233,19 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <ImageButton
                     android:id="@+id/btn_randomCategory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="Random"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/white"
-                    android:background="@color/design_default_color_primary"
+                    android:src="@drawable/ic_randomicon"
+                    android:background="@null"
+                    android:scaleType="fitCenter"
+                    android:layout_marginStart="16dp"
                     />
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
 

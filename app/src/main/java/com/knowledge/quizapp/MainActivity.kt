@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonStart: Button
     private lateinit var buttonRandomStart: ImageButton
     private lateinit var buttonRandomGoal: ImageButton
-    private lateinit var buttonRandomCategory: Button
+    private lateinit var buttonRandomCategory: ImageButton
     private lateinit var editTextStartTitle: EditText
     private lateinit var editTextGoalTitle: EditText
     private lateinit var editTextKeyword: EditText
