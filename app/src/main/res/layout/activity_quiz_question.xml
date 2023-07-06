@@ -199,7 +199,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_margin="10dp"
+                    android:layout_margin="6dp"
                     android:background="@color/color_primary"
                     android:text="End Quest"
                     android:textColor="@color/white"
