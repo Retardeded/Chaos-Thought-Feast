@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -26,8 +27,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var optionFiveView: TextView
     private var options: ArrayList<TextView> = ArrayList()
 
-    private lateinit var buttonNext: Button
-    private lateinit var buttonPrevious: Button
+    private lateinit var buttonNext: ImageButton
+    private lateinit var buttonPrevious: ImageButton
 
     private var mSelectedPositionOption:Int = 0
     private var mMoves:ArrayList<String> = ArrayList()
