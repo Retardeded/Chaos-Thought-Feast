@@ -27,10 +27,10 @@ class ResultActivity : AppCompatActivity() {
         if (path != null) {
             path = path!!.dropLast(2)
         }
+        win = intent.getBooleanExtra(QuizValues.WIN, false)
         val totalMoves: Int = intent.getIntExtra(QuizValues.TOTAL_MOVES, 0)
-        val maxProgress:Int = intent.getIntExtra(QuizValues.MAX_PROGRESS, 0)
 
-            if(totalMoves <= maxProgress)
+            if(win)
                 setContentView(R.layout.activity_result)
             else
                 setContentView(R.layout.activity_lose)
@@ -43,7 +43,6 @@ class ResultActivity : AppCompatActivity() {
 
         startTitle = intent.getStringExtra(QuizValues.TITLE_START)
         goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL)
-        win = intent.getBooleanExtra(QuizValues.WIN, false)
 
         pathView.setText(path)
 
