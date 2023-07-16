@@ -6,6 +6,9 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+
 class ResultActivity : AppCompatActivity() {
 
     private lateinit var scoreView: TextView
@@ -15,18 +18,19 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var buttonPreviousAttempts: Button
 
     private var dbWikiHelper: WikiHelper? = null
-    var startTitle:String? = ""
-    var goalTitle:String? = ""
-    var path:String? = ""
+    lateinit var startTitle:String
+    lateinit var goalTitle:String
+    var pathLength: Int = 0
+    var pathList: List<String> = ArrayList()
     var win:Boolean = false;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        path = intent.getStringExtra(QuizValues.MOVES)
-        if (path != null) {
-            path = path!!.dropLast(2)
-        }
+        pathList = intent.getStringArrayListExtra(QuizValues.MOVES)!!
+        pathLength = pathList.size ?: 0
+        val pathText = pathList.joinToString("->")
+
         win = intent.getBooleanExtra(QuizValues.WIN, false)
         val totalMoves: Int = intent.getIntExtra(QuizValues.TOTAL_MOVES, 0)
 
@@ -41,10 +45,10 @@ class ResultActivity : AppCompatActivity() {
         buttonFinish = findViewById(R.id.btn_finish)
         buttonPreviousAttempts = findViewById(R.id.btn_attempts)
 
-        startTitle = intent.getStringExtra(QuizValues.TITLE_START)
-        goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL)
+        startTitle = intent.getStringExtra(QuizValues.TITLE_START).toString()
+        goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL).toString()
 
-        pathView.setText(path)
+        pathView.text = pathText
 
             if(win)
                 scoreView.text = "You found $goalTitle in $totalMoves moves"
@@ -52,7 +56,13 @@ class ResultActivity : AppCompatActivity() {
                 scoreView.text = "You haven't found $goalTitle"
 
 
-        saveToDb()
+        if(win) {
+            saveToDb()
+        }
+
+        saveData(startTitle, goalTitle, pathList!!, pathList!!.size)
+
+
 
         buttonFinish.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))
@@ -65,18 +75,64 @@ class ResultActivity : AppCompatActivity() {
 
     }
 
+    fun saveData(startingConcept: String, goalConcept: String, path: List<String>, steps: Int) {
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val ref: DatabaseReference = database.getReference("worldRecords")
+
+        val recordRef = ref.push()
+        val recordData = mapOf(
+            "startingConcept" to startingConcept,
+            "goalConcept" to goalConcept,
+            "path" to path,
+            "steps" to steps
+        )
+
+        recordRef.setValue(recordData)
+            .addOnSuccessListener {
+                println("Data saved successfully!")
+            }
+            .addOnFailureListener { error ->
+                println("Error saving data: $error")
+            }
+    }
+
     fun saveToDb()
     {
         dbWikiHelper = WikiHelper(this)
-        dbWikiHelper!!.open()
-        dbWikiHelper!!.beginTransaction()
-        val itemUser = PathItem()
-        itemUser.titleStart = startTitle
-        itemUser.titleGoal = goalTitle
-        itemUser.path = path
-        dbWikiHelper!!.insert(itemUser)
-        dbWikiHelper!!.setTransactionSuccess()
-        dbWikiHelper!!.endTransaction()
-        dbWikiHelper!!.close()
+
+        val existingRecord = dbWikiHelper!!.getRecordByStartAndGoalTitle(startTitle, goalTitle)
+
+        if (existingRecord != null) {
+            if(existingRecord.pathLength > pathLength) {
+                dbWikiHelper!!.open()
+                dbWikiHelper!!.beginTransaction()
+                val itemUser = PathItem()
+                itemUser.titleStart = startTitle
+                itemUser.titleGoal = goalTitle
+                itemUser.path = pathList.joinToString("->")
+                itemUser.pathLength = pathLength
+                dbWikiHelper!!.insert(itemUser)
+                dbWikiHelper!!.setTransactionSuccess()
+                dbWikiHelper!!.endTransaction()
+                dbWikiHelper!!.close()
+
+                saveData(startTitle, goalTitle, pathList, pathLength)
+            }
+        } else {
+            dbWikiHelper!!.open()
+            dbWikiHelper!!.beginTransaction()
+            val itemUser = PathItem()
+            itemUser.titleStart = startTitle
+            itemUser.titleGoal = goalTitle
+            itemUser.path = pathList.joinToString("->")
+            itemUser.pathLength = pathLength
+            dbWikiHelper!!.insert(itemUser)
+            dbWikiHelper!!.setTransactionSuccess()
+            dbWikiHelper!!.endTransaction()
+            dbWikiHelper!!.close()
+
+            saveData(startTitle, goalTitle, pathList, pathLength)
+        }
+
     }
 }

@@ -30,11 +30,11 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var buttonNext: ImageButton
     private lateinit var buttonPrevious: ImageButton
 
-    private var mSelectedPositionOption:Int = 0
-    private var mMoves:ArrayList<String> = ArrayList()
-    private var mTotalMoves:Int = 0
-    private var mGoalTitle:String? = null
-    private var mStartTitle:String? = null
+    private var selectedPositionOption:Int = 0
+    private var pathList:ArrayList<String> = ArrayList()
+    private var totalMoves:Int = 0
+    private lateinit var goalTitle:String
+    private lateinit var startTitle:String
 
     private lateinit var webParsing: WebParsing
 
@@ -56,8 +56,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         buttonNext = findViewById(R.id.btn_next)
         buttonPrevious = findViewById(R.id.btn_previous)
 
-        mStartTitle = intent.getStringExtra(QuizValues.TITLE_START)
-        mGoalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL)
+        startTitle = intent.getStringExtra(QuizValues.TITLE_START).toString()
+        goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL).toString()
 
         options.add(optionOneView)
         options.add(optionTwoView)
@@ -71,10 +71,10 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         buttonNext.setOnClickListener(this)
         buttonPrevious.setOnClickListener(this)
 
-        toFoundView.setText(toFoundView.text.toString() + mGoalTitle)
+        toFoundView.text = toFoundView.text.toString() + goalTitle
         webParsing = WebParsing(this)
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + mStartTitle, currentLinkView, options)
-        mStartTitle?.let { mMoves.add(it) }
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + startTitle, currentLinkView, options)
+        pathList.add(startTitle)
 
         val btnEnd = findViewById<Button>(R.id.btn_end)
 
@@ -125,9 +125,9 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun selectedOptionView(tv: TextView, selectedOptionNum: Int)
     {
-        mMoves.add(tv.text.toString())
+        pathList.add(tv.text.toString())
         defaultOptionsView()
-        mSelectedPositionOption = selectedOptionNum
+        selectedPositionOption = selectedOptionNum
 
         tv.setTextColor(Color.parseColor("#363A43"))
         tv.setTypeface(tv.typeface, Typeface.BOLD)
@@ -143,17 +143,17 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
         webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, currentLinkView, options)
 
-        if(tv.text == mGoalTitle)
+        if(tv.text == goalTitle)
         {
-            mTotalMoves++
+            totalMoves++
             endQuiz(true)
         }
         else
         {
-            mTotalMoves++
-            progressBar.progress = mTotalMoves
-            progressView.text = mTotalMoves.toString() + "/" + progressBar.max
-            if(mTotalMoves > progressBar.max)
+            totalMoves++
+            progressBar.progress = totalMoves
+            progressView.text = totalMoves.toString() + "/" + progressBar.max
+            if(totalMoves > progressBar.max)
             {
                 endQuiz(false)
             }
@@ -164,21 +164,12 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private fun endQuiz(win: Boolean) {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra(QuizValues.WIN, win)
-        intent.putExtra(QuizValues.TITLE_START, mStartTitle)
-        intent.putExtra(QuizValues.TITLE_GOAL, mGoalTitle)
-        intent.putExtra(QuizValues.TOTAL_MOVES, mTotalMoves)
+        intent.putExtra(QuizValues.TITLE_START, startTitle)
+        intent.putExtra(QuizValues.TITLE_GOAL, goalTitle)
+        intent.putExtra(QuizValues.TOTAL_MOVES, totalMoves)
         intent.putExtra(QuizValues.MAX_PROGRESS, progressBar.max)
-        intent.putExtra(QuizValues.MOVES, parseMoves(mMoves))
+        intent.putStringArrayListExtra(QuizValues.MOVES, pathList)
         startActivity(intent)
         finish()
-    }
-
-    private fun parseMoves(moves: ArrayList<String>):String {
-        var parsedMoves = ""
-        for (move in moves) {
-            parsedMoves += move + "->"
-        }
-
-        return parsedMoves
     }
 }

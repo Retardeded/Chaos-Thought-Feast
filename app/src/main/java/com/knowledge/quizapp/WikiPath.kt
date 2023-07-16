@@ -10,6 +10,7 @@ object WikiPath {
             var STARTTITLE = "starttitle"
             var GOALTITLE = "goaltitle"
             var PATH = "path"
+            var PATHLENGTH = "pathlength"
         }
 
     }

@@ -1,74 +1,90 @@
 package com.knowledge.quizapp
 
+import DbWikiHelper
 import android.content.ContentValues
 import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-
-
-import java.util.ArrayList
-
 import android.provider.BaseColumns._ID
 import com.knowledge.quizapp.WikiPath.TABLE_USER
 import com.knowledge.quizapp.WikiPath.UserColumns.Companion.STARTTITLE
 import com.knowledge.quizapp.WikiPath.UserColumns.Companion.GOALTITLE
 import com.knowledge.quizapp.WikiPath.UserColumns.Companion.PATH
+import com.knowledge.quizapp.WikiPath.UserColumns.Companion.PATHLENGTH
+import java.util.ArrayList
 
+class WikiHelper(private val context: Context) {
+    private var dbWikiHelper: DbWikiHelper = DbWikiHelper(context)
+    private var database: SQLiteDatabase = dbWikiHelper.writableDatabase
 
-class WikiHelper(private val c: Context) {
-    private var dbWikiHelper: DbWikiHelper? = null
-    private var database: SQLiteDatabase? = null
-    val user: ArrayList<PathItem>
+    val user:  ArrayList<PathItem>
         get() {
-            val result = ""
-            val cursor = database!!.query(TABLE_USER, null, null, null, null, null, _ID + " ASC", null)
-            cursor.moveToFirst()
+            val cursor = database.query(TABLE_USER, null, null, null, null, null, null)
             val arrayList = ArrayList<PathItem>()
-            var wikiPath: PathItem
-            if (cursor.count > 0) {
-                do {
-                    wikiPath = PathItem()
-                    wikiPath._id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID))
-                    wikiPath.titleStart= cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
-                    wikiPath.titleGoal = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
-                    wikiPath.path = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
 
-                    arrayList.add(wikiPath)
-                    cursor.moveToNext()
-                } while (!cursor.isAfterLast)
+            while (cursor.moveToNext()) {
+                val wikiPath = PathItem().apply {
+                    _id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID))
+                    titleStart = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
+                    titleGoal = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
+                    path = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
+                    pathLength = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
+                }
+
+                arrayList.add(wikiPath)
             }
+
             cursor.close()
             return arrayList
         }
 
     @Throws(SQLException::class)
     fun open(): WikiHelper {
-        dbWikiHelper = DbWikiHelper(c)
-        database = dbWikiHelper!!.writableDatabase
+        database = dbWikiHelper.writableDatabase
         return this
     }
 
     fun close() {
-        dbWikiHelper!!.close()
+        dbWikiHelper.close()
     }
 
     fun insert(wikiPath: PathItem): Long {
-        val values = ContentValues()
-        values.put(STARTTITLE, wikiPath.titleStart)
-        values.put(GOALTITLE, wikiPath.titleGoal)
-        values.put(PATH, wikiPath.path)
-        return database?.insert(TABLE_USER, null, values)!!
+        val values = ContentValues().apply {
+            put(STARTTITLE, wikiPath.titleStart)
+            put(GOALTITLE, wikiPath.titleGoal)
+            put(PATH, wikiPath.path)
+            put(PATHLENGTH, wikiPath.pathLength)
+        }
+        return database.insert(TABLE_USER, null, values)
     }
 
     fun beginTransaction() {
-        database!!.beginTransaction()
+        database.beginTransaction()
     }
 
     fun setTransactionSuccess() {
-        database!!.setTransactionSuccessful()
+        database.setTransactionSuccessful()
     }
 
     fun endTransaction() {
-        database!!.endTransaction()
+        database.endTransaction()
+    }
+
+    fun getRecordByStartAndGoalTitle(startTitle: String, goalTitle: String): PathItem? {
+        val query = "SELECT * FROM $TABLE_USER WHERE $STARTTITLE = ? AND $GOALTITLE = ?"
+        val cursor = database.rawQuery(query, arrayOf(startTitle, goalTitle))
+
+        var record: PathItem? = null
+        if (cursor.moveToFirst()) {
+            record = PathItem().apply {
+                titleStart = cursor.getString(cursor.getColumnIndex(STARTTITLE))
+                titleGoal = cursor.getString(cursor.getColumnIndex(GOALTITLE))
+                path = cursor.getString(cursor.getColumnIndex(PATH))
+                pathLength = cursor.getInt(cursor.getColumnIndex(PATHLENGTH))
+            }
+        }
+
+        cursor.close()
+        return record
     }
 }
