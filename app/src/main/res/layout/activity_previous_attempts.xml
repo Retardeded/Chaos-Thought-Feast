@@ -9,40 +9,74 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
     android:orientation="vertical"
-    tools:context="com.example.quizapp.com.knowledge.quizapp.PreviousAttempts">
+    tools:context="com.knowledge.quizapp.PreviousAttempts">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="55dp"
-        tools:layout_editor_absoluteY="82dp">
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btn_try_again"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="16dp"
             android:background="@color/design_default_color_on_primary"
             android:text="Try Again"
             android:textSize="18sp"
             android:textColor="@color/white"/>
 
+        <Button
+            android:id="@+id/btn_toggle_paths"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show loses"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:onClick="togglePaths" />
+
         <TextView
-            android:layout_marginTop="26dp"
             android:padding="16dp"
-            android:id="@+id/text_view_rates"
+            android:id="@+id/tv_successful_paths"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="Previous attemps" />
+            android:text="Previous successful attempts" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyler_paths"
+        <ScrollView
+            android:id="@+id/scroll_view_paths"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="130dp" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/linear_layout_paths"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_win_paths"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="130dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_lose_paths"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="130dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
     </LinearLayout>
 </LinearLayout>

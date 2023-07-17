@@ -11,6 +11,7 @@ object WikiPath {
             var GOALTITLE = "goaltitle"
             var PATH = "path"
             var PATHLENGTH = "pathlength"
+            var SUCCESS = "success"
         }
 
     }

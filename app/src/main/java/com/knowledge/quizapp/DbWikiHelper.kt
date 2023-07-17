@@ -20,7 +20,8 @@ class DbWikiHelper(c: Context) : SQLiteOpenHelper(c, DB_NAME, null, DB_VER) {
                 "$STARTTITLE TEXT NOT NULL, " +
                 "$GOALTITLE TEXT NOT NULL, " +
                 "$PATH TEXT NOT NULL, " +
-                "$PATHLENGTH INTEGER NOT NULL DEFAULT 0);"
+                "$PATHLENGTH INTEGER NOT NULL, " +
+                "$SUCCESS INTEGER NOT NULL);"
 
         database.execSQL(createTableQuery)
     }
@@ -30,19 +31,15 @@ class DbWikiHelper(c: Context) : SQLiteOpenHelper(c, DB_NAME, null, DB_VER) {
         database.execSQL(dropTableQuery)
     }
 
-    fun clearTable(database: SQLiteDatabase) {
-        val clearTableQuery = "DELETE FROM $TABLE_USER"
-        database.execSQL(clearTableQuery)
-    }
-
     companion object {
         private const val DB_NAME = "dbuser"
-        private const val DB_VER = 4
+        private const val DB_VER = 6
 
         const val TABLE_USER = "user"
         const val STARTTITLE = "start_title"
         const val GOALTITLE = "goal_title"
         const val PATH = "path"
         const val PATHLENGTH = "path_length"
+        const val SUCCESS = "success"
     }
 }

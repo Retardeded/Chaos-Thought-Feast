@@ -55,14 +55,9 @@ class ResultActivity : AppCompatActivity() {
             else
                 scoreView.text = "You haven't found $goalTitle"
 
-
-        if(win) {
             saveToDb()
-        }
 
         saveData(startTitle, goalTitle, pathList!!, pathList!!.size)
-
-
 
         buttonFinish.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))
@@ -99,40 +94,19 @@ class ResultActivity : AppCompatActivity() {
     fun saveToDb()
     {
         dbWikiHelper = WikiHelper(this)
+        dbWikiHelper!!.open()
+        dbWikiHelper!!.beginTransaction()
+        val itemUser = PathItem()
+        itemUser.titleStart = startTitle
+        itemUser.titleGoal = goalTitle
+        itemUser.path = pathList.joinToString("->")
+        itemUser.pathLength = pathLength
+        itemUser.success = if (win) 1 else -1
+        dbWikiHelper!!.insert(itemUser)
+        dbWikiHelper!!.setTransactionSuccess()
+        dbWikiHelper!!.endTransaction()
+        dbWikiHelper!!.close()
 
-        val existingRecord = dbWikiHelper!!.getRecordByStartAndGoalTitle(startTitle, goalTitle)
-
-        if (existingRecord != null) {
-            if(existingRecord.pathLength > pathLength) {
-                dbWikiHelper!!.open()
-                dbWikiHelper!!.beginTransaction()
-                val itemUser = PathItem()
-                itemUser.titleStart = startTitle
-                itemUser.titleGoal = goalTitle
-                itemUser.path = pathList.joinToString("->")
-                itemUser.pathLength = pathLength
-                dbWikiHelper!!.insert(itemUser)
-                dbWikiHelper!!.setTransactionSuccess()
-                dbWikiHelper!!.endTransaction()
-                dbWikiHelper!!.close()
-
-                saveData(startTitle, goalTitle, pathList, pathLength)
-            }
-        } else {
-            dbWikiHelper!!.open()
-            dbWikiHelper!!.beginTransaction()
-            val itemUser = PathItem()
-            itemUser.titleStart = startTitle
-            itemUser.titleGoal = goalTitle
-            itemUser.path = pathList.joinToString("->")
-            itemUser.pathLength = pathLength
-            dbWikiHelper!!.insert(itemUser)
-            dbWikiHelper!!.setTransactionSuccess()
-            dbWikiHelper!!.endTransaction()
-            dbWikiHelper!!.close()
-
-            saveData(startTitle, goalTitle, pathList, pathLength)
-        }
-
+        saveData(startTitle, goalTitle, pathList, pathLength)
     }
 }

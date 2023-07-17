@@ -11,32 +11,54 @@ import com.knowledge.quizapp.WikiPath.UserColumns.Companion.STARTTITLE
 import com.knowledge.quizapp.WikiPath.UserColumns.Companion.GOALTITLE
 import com.knowledge.quizapp.WikiPath.UserColumns.Companion.PATH
 import com.knowledge.quizapp.WikiPath.UserColumns.Companion.PATHLENGTH
+import com.knowledge.quizapp.WikiPath.UserColumns.Companion.SUCCESS
 import java.util.ArrayList
 
 class WikiHelper(private val context: Context) {
     private var dbWikiHelper: DbWikiHelper = DbWikiHelper(context)
     private var database: SQLiteDatabase = dbWikiHelper.writableDatabase
 
-    val user:  ArrayList<PathItem>
-        get() {
-            val cursor = database.query(TABLE_USER, null, null, null, null, null, null)
-            val arrayList = ArrayList<PathItem>()
+    fun getSuccessfulPaths(): ArrayList<PathItem> {
+        val cursor = database.query(TABLE_USER, null, "$SUCCESS > 0", null, null, null, null)
+        val arrayList = ArrayList<PathItem>()
 
-            while (cursor.moveToNext()) {
-                val wikiPath = PathItem().apply {
-                    _id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID))
-                    titleStart = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
-                    titleGoal = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
-                    path = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
-                    pathLength = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
-                }
-
-                arrayList.add(wikiPath)
+        while (cursor.moveToNext()) {
+            val wikiPath = PathItem().apply {
+                _id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID))
+                titleStart = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
+                titleGoal = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
+                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
+                pathLength = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
+                success = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS))
             }
 
-            cursor.close()
-            return arrayList
+            arrayList.add(wikiPath)
         }
+
+        cursor.close()
+        return arrayList
+    }
+
+    fun getUnsuccessfulPaths(): ArrayList<PathItem> {
+        val cursor = database.query(TABLE_USER, null, "$SUCCESS < 0", null, null, null, null)
+        val arrayList = ArrayList<PathItem>()
+
+        while (cursor.moveToNext()) {
+            val wikiPath = PathItem().apply {
+                _id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID))
+                titleStart = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
+                titleGoal = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
+                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
+                pathLength = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
+                success = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS))
+            }
+
+            arrayList.add(wikiPath)
+        }
+
+        cursor.close()
+        return arrayList
+    }
 
     @Throws(SQLException::class)
     fun open(): WikiHelper {
@@ -54,6 +76,7 @@ class WikiHelper(private val context: Context) {
             put(GOALTITLE, wikiPath.titleGoal)
             put(PATH, wikiPath.path)
             put(PATHLENGTH, wikiPath.pathLength)
+            put(SUCCESS, wikiPath.success)
         }
         return database.insert(TABLE_USER, null, values)
     }
@@ -68,23 +91,5 @@ class WikiHelper(private val context: Context) {
 
     fun endTransaction() {
         database.endTransaction()
-    }
-
-    fun getRecordByStartAndGoalTitle(startTitle: String, goalTitle: String): PathItem? {
-        val query = "SELECT * FROM $TABLE_USER WHERE $STARTTITLE = ? AND $GOALTITLE = ?"
-        val cursor = database.rawQuery(query, arrayOf(startTitle, goalTitle))
-
-        var record: PathItem? = null
-        if (cursor.moveToFirst()) {
-            record = PathItem().apply {
-                titleStart = cursor.getString(cursor.getColumnIndex(STARTTITLE))
-                titleGoal = cursor.getString(cursor.getColumnIndex(GOALTITLE))
-                path = cursor.getString(cursor.getColumnIndex(PATH))
-                pathLength = cursor.getInt(cursor.getColumnIndex(PATHLENGTH))
-            }
-        }
-
-        cursor.close()
-        return record
     }
 }

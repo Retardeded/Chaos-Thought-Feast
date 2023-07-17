@@ -9,6 +9,7 @@ class PathItem : Parcelable {
     var titleGoal: String? = null
     var path: String? = null
     var pathLength: Int = 0
+    var success: Int = -1
 
 
     override fun describeContents(): Int {
@@ -21,6 +22,7 @@ class PathItem : Parcelable {
         dest.writeString(this.titleGoal)
         dest.writeString(this.path)
         dest.writeInt(this.pathLength)
+        dest.writeInt(this.success)
     }
 
     constructor() {}
@@ -31,6 +33,7 @@ class PathItem : Parcelable {
         this.titleGoal = `in`.readString()
         this.path = `in`.readString()
         this.pathLength = `in`.readInt()
+        this.success = `in`.readInt()
     }
 
     companion object {
