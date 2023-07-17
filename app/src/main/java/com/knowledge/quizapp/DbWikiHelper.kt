@@ -33,7 +33,7 @@ class DbWikiHelper(c: Context) : SQLiteOpenHelper(c, DB_NAME, null, DB_VER) {
 
     companion object {
         private const val DB_NAME = "dbuser"
-        private const val DB_VER = 6
+        private const val DB_VER = 7
 
         const val TABLE_USER = "user"
         const val STARTTITLE = "start_title"
