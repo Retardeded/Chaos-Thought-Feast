@@ -1,4 +1,4 @@
-package com.knowledge.quizapp
+package com.knowledge.testapp
 
 import android.os.Parcel
 import android.os.Parcelable

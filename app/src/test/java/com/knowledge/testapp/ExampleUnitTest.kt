@@ -1,4 +1,4 @@
-package com.knowledge.quizapp
+package com.knowledge.testapp
 
 import org.junit.Test
 

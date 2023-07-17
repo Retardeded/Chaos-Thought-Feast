@@ -1,4 +1,4 @@
-package com.knowledge.quizapp
+package com.knowledge.testapp
 
 import android.content.Intent
 import android.graphics.Color

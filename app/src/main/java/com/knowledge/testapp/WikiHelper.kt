@@ -1,4 +1,4 @@
-package com.knowledge.quizapp
+package com.knowledge.testapp
 
 import DbWikiHelper
 import android.content.ContentValues
@@ -6,12 +6,12 @@ import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns._ID
-import com.knowledge.quizapp.WikiPath.TABLE_USER
-import com.knowledge.quizapp.WikiPath.UserColumns.Companion.STARTTITLE
-import com.knowledge.quizapp.WikiPath.UserColumns.Companion.GOALTITLE
-import com.knowledge.quizapp.WikiPath.UserColumns.Companion.PATH
-import com.knowledge.quizapp.WikiPath.UserColumns.Companion.PATHLENGTH
-import com.knowledge.quizapp.WikiPath.UserColumns.Companion.SUCCESS
+import com.knowledge.testapp.WikiPath.TABLE_USER
+import com.knowledge.testapp.WikiPath.UserColumns.Companion.STARTTITLE
+import com.knowledge.testapp.WikiPath.UserColumns.Companion.GOALTITLE
+import com.knowledge.testapp.WikiPath.UserColumns.Companion.PATH
+import com.knowledge.testapp.WikiPath.UserColumns.Companion.PATHLENGTH
+import com.knowledge.testapp.WikiPath.UserColumns.Companion.SUCCESS
 import java.util.ArrayList
 
 class WikiHelper(private val context: Context) {
