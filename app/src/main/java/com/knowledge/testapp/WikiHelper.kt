@@ -1,17 +1,17 @@
 package com.knowledge.testapp
 
 import DbWikiHelper
+import DbWikiHelper.Companion.GOALTITLE
+import DbWikiHelper.Companion.PATH
+import DbWikiHelper.Companion.PATHLENGTH
+import DbWikiHelper.Companion.STARTTITLE
+import DbWikiHelper.Companion.SUCCESS
+import DbWikiHelper.Companion.TABLE_USER
 import android.content.ContentValues
 import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns._ID
-import com.knowledge.testapp.WikiPath.TABLE_USER
-import com.knowledge.testapp.WikiPath.UserColumns.Companion.STARTTITLE
-import com.knowledge.testapp.WikiPath.UserColumns.Companion.GOALTITLE
-import com.knowledge.testapp.WikiPath.UserColumns.Companion.PATH
-import com.knowledge.testapp.WikiPath.UserColumns.Companion.PATHLENGTH
-import com.knowledge.testapp.WikiPath.UserColumns.Companion.SUCCESS
 import java.util.ArrayList
 
 class WikiHelper(private val context: Context) {
