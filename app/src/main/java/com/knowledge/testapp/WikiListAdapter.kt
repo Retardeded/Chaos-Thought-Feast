@@ -17,6 +17,11 @@ class RecyclerviewAdapter(private val c: Context) : RecyclerView.Adapter<Recycle
 
     }
 
+    fun clearItems() {
+        mData.clear()
+        notifyDataSetChanged()
+    }
+
     fun addItem(mData: ArrayList<PathItem>) {
         this.mData = mData
         notifyDataSetChanged()

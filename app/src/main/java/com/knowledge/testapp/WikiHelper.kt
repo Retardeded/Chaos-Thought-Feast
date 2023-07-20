@@ -81,6 +81,15 @@ class WikiHelper(private val context: Context) {
         return database.insert(TABLE_USER, null, values)
     }
 
+    fun clearTableUser() {
+        try {
+            // Execute the SQL command to delete all rows from TABLE_USER
+            database.execSQL("DELETE FROM $TABLE_USER")
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+
     fun beginTransaction() {
         database.beginTransaction()
     }

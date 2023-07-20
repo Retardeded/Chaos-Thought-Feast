@@ -47,10 +47,15 @@ class PreviousAttempts : AppCompatActivity() {
     }
 
     private fun showList() {
-        wikiHelper.open()
         adapterWinningPaths.addItem(wikiHelper.getSuccessfulPaths())
         adapterLosingPaths.addItem(wikiHelper.getUnsuccessfulPaths())
-        wikiHelper.close()
+    }
+
+    fun clearPaths(view: View) {
+        wikiHelper.clearTableUser()
+        adapterWinningPaths.clearItems()
+        adapterLosingPaths.clearItems()
+        showList() // After clearing, refresh the data
     }
 
     fun togglePaths(view: View) {

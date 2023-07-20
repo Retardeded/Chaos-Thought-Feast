@@ -4,10 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 
 class ResultActivity : AppCompatActivity() {
 
@@ -55,9 +54,8 @@ class ResultActivity : AppCompatActivity() {
             else
                 scoreView.text = "You haven't found $goalTitle"
 
-            saveToDb()
-
-        saveData(startTitle, goalTitle, pathList!!, pathList!!.size)
+        saveToLocalDB()
+        saveWorldRecordToRemoteDB(startTitle, goalTitle, pathList, pathLength, win)
 
         buttonFinish.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))
@@ -70,28 +68,72 @@ class ResultActivity : AppCompatActivity() {
 
     }
 
-    fun saveData(startingConcept: String, goalConcept: String, path: List<String>, steps: Int) {
+    fun saveWorldRecordToRemoteDB(startingConcept: String, goalConcept: String, path: List<String>, steps: Int, win: Boolean) {
+        if (!win)
+            return
+
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.getReference("worldRecords")
 
-        val recordRef = ref.push()
-        val recordData = mapOf(
-            "startingConcept" to startingConcept,
-            "goalConcept" to goalConcept,
-            "path" to path,
-            "steps" to steps
-        )
+        // Check if there is any existing record with the same startingConcept and goalConcept and win=true
+        val query = ref.orderByChild("startingConcept").equalTo(startingConcept)
 
-        recordRef.setValue(recordData)
-            .addOnSuccessListener {
-                println("Data saved successfully!")
+        val context = this
+
+        // Use a single listener to combine the results of both queries
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var shouldSave = true
+
+                // Loop through the existing records with the same startingConcept and goalConcept
+                for (ds in dataSnapshot.children) {
+                    val existingGoalConcept = ds.child("goalConcept").getValue(String::class.java)
+                    val existingSteps = ds.child("steps").getValue(Int::class.java)
+
+                    if (existingGoalConcept == goalConcept) {
+
+                        if(existingSteps != null && existingSteps <= steps) {
+                            shouldSave = false
+                            break
+                        } else {
+                            val recordRef = ds.ref
+                            recordRef.removeValue()
+                        }
+                    }
+                }
+
+                // If there is no existing record or the new path length is greater, save the data
+                if (shouldSave) {
+                    val recordRef = ref.push()
+                    val recordData = mapOf(
+                        "startingConcept" to startingConcept,
+                        "goalConcept" to goalConcept,
+                        "path" to path,
+                        "steps" to steps,
+                        "win" to win
+                    )
+
+                    recordRef.setValue(recordData)
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "New World Record!",Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener { error ->
+                            println("Error saving data: $error")
+                    }
+                }
             }
-            .addOnFailureListener { error ->
-                println("Error saving data: $error")
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Error reading data: $error")
             }
+        }
+
+        // Add the listener to both queries
+        query.addListenerForSingleValueEvent(listener)
     }
 
-    fun saveToDb()
+
+    fun saveToLocalDB()
     {
         dbWikiHelper = WikiHelper(this)
         dbWikiHelper!!.open()
@@ -106,7 +148,5 @@ class ResultActivity : AppCompatActivity() {
         dbWikiHelper!!.setTransactionSuccess()
         dbWikiHelper!!.endTransaction()
         dbWikiHelper!!.close()
-
-        saveData(startTitle, goalTitle, pathList, pathLength)
     }
 }

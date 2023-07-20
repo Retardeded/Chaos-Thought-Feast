@@ -28,6 +28,18 @@
             android:textColor="@color/white"/>
 
         <Button
+            android:id="@+id/btn_clear_paths"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear your local data"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:onClick="clearPaths" />
+
+        <Button
             android:id="@+id/btn_toggle_paths"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
