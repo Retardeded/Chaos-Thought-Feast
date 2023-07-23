@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var editTextCategory: EditText
     private val webParsing = WebParsing(this)
     private lateinit var randomArticleViewModel: RandomArticleViewModel
+
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,6 +151,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        auth = FirebaseAuth.getInstance()
+
+        val btnLogout = findViewById<Button>(R.id.btn_logout)
+        btnLogout.setOnClickListener {
+            // Call the logout function
+            logoutUser()
+        }
+    }
+
+    private fun logoutUser() {
+        auth.signOut()
+        // Redirect to the LoginActivity after logout
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
