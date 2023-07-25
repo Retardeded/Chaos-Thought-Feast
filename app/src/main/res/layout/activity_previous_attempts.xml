@@ -9,12 +9,21 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
     android:orientation="vertical"
-    tools:context="com.knowledge.testapp.PreviousAttempts">
+    tools:context="com.knowledge.testapp.activity.PreviousAttempts">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_show_top_users"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Top Users"
+            android:layout_below="@id/recycler_lose_paths"
+            android:layout_centerHorizontal="true"
+            android:onClick="showTopUsersDialog" />
 
         <Button
             android:id="@+id/btn_try_again"

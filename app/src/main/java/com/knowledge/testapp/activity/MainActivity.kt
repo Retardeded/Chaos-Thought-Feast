@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.activity
 
 import RandomArticleViewModel
 import android.content.Intent
@@ -14,6 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
+import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.R
+import com.knowledge.testapp.WebParsing
 import kotlinx.coroutines.launch
 
 

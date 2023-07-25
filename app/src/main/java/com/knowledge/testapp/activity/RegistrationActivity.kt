@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +8,11 @@ import android.widget.EditText
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.knowledge.testapp.R
+import com.knowledge.testapp.data.User
+import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
 
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText
@@ -50,6 +55,16 @@ class RegistrationActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Registration successful, user is created and authenticated
+
+                    // Get the newly registered user's email
+                    val userEmail = email
+
+                    // Create a User object with the user's email and other initial data
+                    val user = User(userEmail, recordsHeld = 0, currentScore = 0)
+
+                    // Save the user data to the "users" table in the Firebase Realtime Database
+                    saveUserDataToDatabase(user)
+
                     // Proceed to the next activity (e.g., MainActivity)
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
@@ -65,6 +80,24 @@ class RegistrationActivity : AppCompatActivity() {
                         // Handle other exceptions
                     }
                 }
+            }
+    }
+
+    private fun saveUserDataToDatabase(user: User) {
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val usersRef: DatabaseReference = database.getReference("users")
+
+        // Sanitize the user's email and use it as the key to store their data in the "users" table
+        val sanitizedEmail = sanitizeEmail(user.email)
+        val userRecordsRef = usersRef.child(sanitizedEmail)
+
+        // Save the user data to the "users" table
+        userRecordsRef.setValue(user)
+            .addOnSuccessListener {
+                println("User data saved successfully.")
+            }
+            .addOnFailureListener { error ->
+                println("Error saving user data: $error")
             }
     }
 }

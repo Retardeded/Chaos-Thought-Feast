@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.activity
 
 import android.content.Intent
 import android.os.Bundle

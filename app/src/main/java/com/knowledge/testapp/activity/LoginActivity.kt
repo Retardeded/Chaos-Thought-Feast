@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +8,7 @@ import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.knowledge.testapp.R
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText

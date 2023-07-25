@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.activity
 
 import android.content.Intent
 import android.graphics.Color
@@ -11,6 +11,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.R
+import com.knowledge.testapp.WebParsing
 
 
 class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {

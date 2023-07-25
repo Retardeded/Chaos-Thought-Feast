@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.knowledge.testapp.R
+import com.knowledge.testapp.RecyclerviewAdapter
+import com.knowledge.testapp.WikiHelper
 
 
 class PreviousAttempts : AppCompatActivity() {
@@ -75,5 +78,10 @@ class PreviousAttempts : AppCompatActivity() {
             tvPaths.text = "Previous successful attempts"
             btnTogglePaths.text = "Show loses"
         }
+    }
+
+    fun showTopUsersDialog(view: View) {
+        val dialogFragment = TopUsersDialogFragment()
+        dialogFragment.show(supportFragmentManager, "TopUsersDialog")
     }
 }

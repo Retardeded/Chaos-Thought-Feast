@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="20dp"
-        tools:context="com.knowledge.testapp.MainActivity">
+        tools:context="com.knowledge.testapp.activity.MainActivity">
 
         <TextView
             android:id="@+id/tv_congratulations"

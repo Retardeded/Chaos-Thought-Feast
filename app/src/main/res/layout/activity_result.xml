@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/foundcorrectpathwin3"
     android:padding="20dp"
-    tools:context="com.knowledge.testapp.MainActivity">
+    tools:context="com.knowledge.testapp.activity.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
