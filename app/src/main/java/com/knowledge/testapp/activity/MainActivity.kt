@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -189,6 +190,11 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, QuizQuestionActivity::class.java)
         intent.putExtra(QuizValues.TITLE_START, editTextStartTitle.text.toString().replace(" ", "_"))
         intent.putExtra(QuizValues.TITLE_GOAL, editTextGoalTitle.text.toString().replace(" ", "_"))
+        startActivity(intent)
+    }
+
+    fun goToPreviousAttempts(view: View) {
+        val intent = Intent(this, PreviousAttempts::class.java)
         startActivity(intent)
     }
 }

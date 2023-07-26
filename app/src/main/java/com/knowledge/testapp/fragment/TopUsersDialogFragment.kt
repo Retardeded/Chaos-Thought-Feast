@@ -1,4 +1,4 @@
-package com.knowledge.testapp.activity
+package com.knowledge.testapp.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

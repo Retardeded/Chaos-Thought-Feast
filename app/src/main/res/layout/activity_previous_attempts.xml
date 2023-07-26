@@ -21,9 +21,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Show Top Users"
-            android:layout_below="@id/recycler_lose_paths"
+            android:layout_below="@id/btn_show_winning_paths"
             android:layout_centerHorizontal="true"
             android:onClick="showTopUsersDialog" />
+
+        <Button
+            android:id="@+id/btn_show_winning_paths"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Winning Paths"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:onClick="showWinningPathsDialog" />
+
+        <Button
+            android:id="@+id/btn_show_losing_paths"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Losing Paths"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:onClick="showLosingPathsDialog" />
 
         <Button
             android:id="@+id/btn_try_again"
@@ -47,57 +65,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:onClick="clearPaths" />
-
-        <Button
-            android:id="@+id/btn_toggle_paths"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show loses"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:onClick="togglePaths" />
-
-        <TextView
-            android:padding="16dp"
-            android:id="@+id/tv_successful_paths"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="Previous successful attempts" />
-
-        <ScrollView
-            android:id="@+id/scroll_view_paths"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:id="@+id/linear_layout_paths"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_win_paths"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="130dp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_lose_paths"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="130dp"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-        </ScrollView>
 
     </LinearLayout>
 </LinearLayout>

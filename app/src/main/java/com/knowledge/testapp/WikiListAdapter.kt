@@ -28,7 +28,7 @@ class RecyclerviewAdapter(private val c: Context) : RecyclerView.Adapter<Recycle
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.wiki_row, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_path, parent, false)
         return ViewHolder(view)
     }
 
@@ -53,9 +53,9 @@ class RecyclerviewAdapter(private val c: Context) : RecyclerView.Adapter<Recycle
         internal var path: TextView
 
         init {
-            startTitle = itemView.findViewById<View>(R.id.recylerStart) as TextView
-            goalTitle = itemView.findViewById<View>(R.id.recylerGoal) as TextView
-            path = itemView.findViewById<View>(R.id.recylerPath) as TextView
+            startTitle = itemView.findViewById<View>(R.id.tvTitleStart) as TextView
+            goalTitle = itemView.findViewById<View>(R.id.tvTitleGoal) as TextView
+            path = itemView.findViewById<View>(R.id.tvPath) as TextView
         }
     }
 }
