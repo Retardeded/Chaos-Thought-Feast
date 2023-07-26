@@ -87,7 +87,7 @@ class ResultActivity : AppCompatActivity() {
             finish()
         }
         buttonPreviousAttempts.setOnClickListener{
-            startActivity(Intent(this, PreviousAttempts::class.java))
+            startActivity(Intent(this, ResultsActivity::class.java))
             finish()
         }
 

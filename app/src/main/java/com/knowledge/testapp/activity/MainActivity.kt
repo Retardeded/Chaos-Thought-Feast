@@ -194,7 +194,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun goToPreviousAttempts(view: View) {
-        val intent = Intent(this, PreviousAttempts::class.java)
+        val intent = Intent(this, ResultsActivity::class.java)
         startActivity(intent)
     }
 }

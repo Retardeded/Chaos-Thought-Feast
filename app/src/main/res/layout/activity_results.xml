@@ -1,0 +1,79 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.knowledge.testapp.activity.ResultsActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/statsbackground"
+    android:scaleType="fitXY">
+
+    <!-- Top Users Button -->
+    <Button
+        android:layout_marginTop="32dp"
+        android:id="@+id/btn_show_top_users"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top Users"
+        android:layout_gravity="center"
+        android:onClick="showTopUsersDialog" />
+
+    <!-- Winning and Losing Paths Buttons -->
+    <LinearLayout
+        android:layout_margin="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btn_show_winning_paths"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Winning Paths"
+            android:onClick="showWinningPathsDialog"
+            android:layout_marginEnd="16dp" />
+
+        <Button
+            android:id="@+id/btn_show_losing_paths"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Losing Paths"
+            android:onClick="showLosingPathsDialog"
+            android:layout_marginStart="16dp" />
+
+    </LinearLayout>
+
+    <!-- Clear Local Data Button -->
+    <Button
+        android:id="@+id/btn_clear_paths"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear your local data"
+        android:layout_gravity="center"
+        android:onClick="clearPaths"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Space to push other elements to the top -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Back to Main Game Button -->
+    <Button
+        android:id="@+id/btn_try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/design_default_color_on_primary"
+        android:text="Back to Main Game"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:layout_marginBottom="32dp" />
+
+</LinearLayout>

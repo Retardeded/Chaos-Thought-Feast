@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
@@ -45,6 +46,12 @@ class TopUsersDialogFragment : DialogFragment() {
                         rootView.findViewById<RecyclerView>(R.id.rvTopUsers)
                     recyclerView.layoutManager = LinearLayoutManager(activity)
                     recyclerView.adapter = TopUsersAdapter(topUsersList)
+
+                    // Get the close button and set the click listener to dismiss the dialog
+                    val closeButton = rootView.findViewById<Button>(R.id.btn_close_dialog)
+                    closeButton.setOnClickListener {
+                        dismiss()
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {

@@ -22,7 +22,7 @@
             android:name=".activity.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".activity.PreviousAttempts"
+            android:name=".activity.ResultsActivity"
             android:exported="true" />
         <activity
             android:name=".activity.ResultActivity"
