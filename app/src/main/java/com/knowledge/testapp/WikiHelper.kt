@@ -12,24 +12,24 @@ import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.provider.BaseColumns._ID
+import com.knowledge.testapp.data.WorldRecord
 import java.util.ArrayList
 
 class WikiHelper(private val context: Context) {
     private var dbWikiHelper: DbWikiHelper = DbWikiHelper(context)
     private var database: SQLiteDatabase = dbWikiHelper.writableDatabase
 
-    fun getSuccessfulPaths(): ArrayList<PathItem> {
+    fun getSuccessfulPaths(): ArrayList<WorldRecord> {
         val cursor = database.query(TABLE_USER, null, "$SUCCESS > 0", null, null, null, null)
-        val arrayList = ArrayList<PathItem>()
+        val arrayList = ArrayList<WorldRecord>()
 
         while (cursor.moveToNext()) {
-            val wikiPath = PathItem().apply {
-                _id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID))
-                titleStart = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
-                titleGoal = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
-                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
-                pathLength = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
-                success = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS))
+            val wikiPath = WorldRecord().apply {
+                startingConcept = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
+                goalConcept = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
+                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH)).split("->").toMutableList() as ArrayList<String>
+                steps = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
+                win = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS)) > 0
             }
 
             arrayList.add(wikiPath)
@@ -39,18 +39,17 @@ class WikiHelper(private val context: Context) {
         return arrayList
     }
 
-    fun getUnsuccessfulPaths(): ArrayList<PathItem> {
+    fun getUnsuccessfulPaths(): ArrayList<WorldRecord> {
         val cursor = database.query(TABLE_USER, null, "$SUCCESS < 0", null, null, null, null)
-        val arrayList = ArrayList<PathItem>()
+        val arrayList = ArrayList<WorldRecord>()
 
         while (cursor.moveToNext()) {
-            val wikiPath = PathItem().apply {
-                _id = cursor.getInt(cursor.getColumnIndexOrThrow(_ID))
-                titleStart = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
-                titleGoal = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
-                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
-                pathLength = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
-                success = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS))
+            val wikiPath = WorldRecord().apply {
+                startingConcept = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
+                goalConcept = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
+                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH)).split("->").toMutableList() as ArrayList<String>
+                steps = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
+                win = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS)) > 0
             }
 
             arrayList.add(wikiPath)

@@ -163,6 +163,42 @@ class ResultActivity : AppCompatActivity() {
                             break
                         } else {
                             val recordRef = ds.ref
+                            val recordId = ds.key
+                            val userSanitizedEmail = recordId!!.substringBefore("_") // Extract user email from the world record ID
+
+                            // Update the user's records and score as a record is removed
+                            val userRecordsRef = usersRef.child(userSanitizedEmail)
+                            userRecordsRef.runTransaction(object : Transaction.Handler {
+                                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                                    val currentUser = currentData.getValue(User::class.java)
+
+                                    if (currentUser != null) {
+                                        // Update the user's records and current score
+                                        val newRecordsHeld = currentUser.recordsHeld - 1
+                                        val newCurrentScore = currentUser.currentScore - 100
+
+                                        currentData.child("recordsHeld").value = newRecordsHeld
+                                        currentData.child("currentScore").value = newCurrentScore
+                                    }
+
+                                    return Transaction.success(currentData)
+                                }
+
+                                override fun onComplete(
+                                    error: DatabaseError?,
+                                    committed: Boolean,
+                                    currentData: DataSnapshot?
+                                ) {
+                                    // Handle transaction completion
+                                    if (error != null) {
+                                        println("Transaction failed: ${error.message}")
+                                    } else {
+                                        println("Transaction completed successfully.")
+                                    }
+                                }
+                            })
+
+                            // Remove the world record
                             recordRef.removeValue()
                         }
                     }
@@ -170,7 +206,11 @@ class ResultActivity : AppCompatActivity() {
 
                 // If there is no existing record or the new path length is greater, save the data
                 if (shouldSave) {
-                    val recordRef = ref.push()
+                    // Generate a unique ID for the record with the user's sanitized email
+                    val recordId = "${sanitizeEmail(user.email)}_${ref.push().key}"
+
+                    val recordPath = "worldRecords/$recordId"
+
                     val recordData = mapOf(
                         "startingConcept" to startingConcept,
                         "goalConcept" to goalConcept,
@@ -179,7 +219,8 @@ class ResultActivity : AppCompatActivity() {
                         "win" to win
                     )
 
-                    recordRef.setValue(recordData)
+                    FirebaseDatabase.getInstance().getReference(recordPath)
+                        .setValue(recordData)
                         .addOnSuccessListener {
                             // Data successfully written to the "worldRecords" node
                             Toast.makeText(context, "New World Record!", Toast.LENGTH_SHORT).show()

@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
 import com.knowledge.testapp.fragment.TopUsersDialogFragment
 import com.knowledge.testapp.fragment.PathsDialogFragment
+import com.knowledge.testapp.fragment.UserWorldRecordsDialogFragment
+import com.knowledge.testapp.utils.ModyfingStrings
 
 
 class ResultsActivity : AppCompatActivity() {
@@ -38,6 +41,15 @@ class ResultsActivity : AppCompatActivity() {
     fun showTopUsersDialog(view: View) {
         val dialogFragment = TopUsersDialogFragment()
         dialogFragment.show(supportFragmentManager, "TopUsersDialog")
+    }
+
+    fun showUserWorldRecordsDialog(view: View) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val userEmail = currentUser!!.email
+        val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
+
+        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail)
+        dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 
     fun showWinningPathsDialog(view: View) {
