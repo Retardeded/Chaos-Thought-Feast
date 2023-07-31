@@ -7,16 +7,16 @@ import android.widget.TextView
 
 import androidx.recyclerview.widget.RecyclerView
 import com.knowledge.testapp.R
-import com.knowledge.testapp.data.WorldRecord
+import com.knowledge.testapp.data.PathRecord
 
-class PathDataAdapter(private val mData: ArrayList<WorldRecord>) : RecyclerView.Adapter<PathDataAdapter.ViewHolder>() {
+class PathDataAdapter(private val mData: ArrayList<PathRecord>) : RecyclerView.Adapter<PathDataAdapter.ViewHolder>() {
 
     fun clearItems() {
         mData.clear()
         notifyDataSetChanged()
     }
 
-    fun addItem(mData: ArrayList<WorldRecord>) {
+    fun addItem(mData: ArrayList<PathRecord>) {
         this.mData.clear()
         this.mData.addAll(mData)
         notifyDataSetChanged()

@@ -8,11 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.knowledge.testapp.data.PathItem
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
 import com.knowledge.testapp.data.User
+import com.knowledge.testapp.data.PathRecord
 import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
 
 class ResultActivity : AppCompatActivity() {
@@ -24,20 +24,20 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var buttonPreviousAttempts: Button
 
     private var dbWikiHelper: WikiHelper? = null
-    lateinit var startTitle:String
-    lateinit var goalTitle:String
+    lateinit var startConcept:String
+    lateinit var goalConcept:String
     var pathLength: Int = 0
-    var pathList: List<String> = ArrayList()
+    var pathList: MutableList<String> = ArrayList()
     var win:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pathList = intent.getStringArrayListExtra(QuizValues.MOVES)!!
+        pathList = intent.getStringArrayListExtra(QuizValues.PATH)!!
         pathLength = pathList.size ?: 0
         val pathText = pathList.joinToString("->")
 
         win = intent.getBooleanExtra(QuizValues.WIN, false)
-        val totalMoves: Int = intent.getIntExtra(QuizValues.TOTAL_MOVES, 0)
+        val totalSteps: Int = intent.getIntExtra(QuizValues.TOTAL_STEPS, 0)
 
             if(win)
                 setContentView(R.layout.activity_result)
@@ -50,15 +50,15 @@ class ResultActivity : AppCompatActivity() {
         buttonFinish = findViewById(R.id.btn_finish)
         buttonPreviousAttempts = findViewById(R.id.btn_attempts)
 
-        startTitle = intent.getStringExtra(QuizValues.TITLE_START).toString()
-        goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL).toString()
+        startConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
+        goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
 
         pathView.text = pathText
 
             if(win)
-                scoreView.text = "You found $goalTitle in $totalMoves moves"
+                scoreView.text = "You found $goalConcept in $totalSteps moves"
             else
-                scoreView.text = "You haven't found $goalTitle"
+                scoreView.text = "You haven't found $goalConcept"
 
         saveToLocalDB()
         val userEmail = FirebaseAuth.getInstance().currentUser?.email
@@ -73,7 +73,7 @@ class ResultActivity : AppCompatActivity() {
                     // Now you can pass the 'user' object to the saveWorldRecordToRemoteDB function
                     saveWorldRecordToRemoteDB(
                         user,
-                        startTitle, goalTitle, pathList, pathLength, win
+                        startConcept, goalConcept, pathList, pathLength, win
                     )
                 } else {
                     // User's data doesn't exist in the database (not registered?)
@@ -286,12 +286,12 @@ class ResultActivity : AppCompatActivity() {
         dbWikiHelper = WikiHelper(this)
         dbWikiHelper!!.open()
         dbWikiHelper!!.beginTransaction()
-        val itemUser = PathItem()
-        itemUser.titleStart = startTitle
-        itemUser.titleGoal = goalTitle
-        itemUser.path = pathList.joinToString("->")
-        itemUser.pathLength = pathLength
-        itemUser.success = if (win) 1 else -1
+        val itemUser = PathRecord()
+        itemUser.startingConcept = startConcept
+        itemUser.goalConcept = goalConcept
+        itemUser.path = pathList as ArrayList<String>
+        itemUser.steps = pathLength
+        itemUser.win = win
         dbWikiHelper!!.insert(itemUser)
         dbWikiHelper!!.setTransactionSuccess()
         dbWikiHelper!!.endTransaction()

@@ -35,9 +35,9 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
     private var selectedPositionOption:Int = 0
     private var pathList:ArrayList<String> = ArrayList()
-    private var totalMoves:Int = 0
-    private lateinit var goalTitle:String
-    private lateinit var startTitle:String
+    private var totalSteps:Int = 0
+    private lateinit var goalConcept:String
+    private lateinit var startingConcept:String
 
     private lateinit var webParsing: WebParsing
 
@@ -59,8 +59,8 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         buttonNext = findViewById(R.id.btn_next)
         buttonPrevious = findViewById(R.id.btn_previous)
 
-        startTitle = intent.getStringExtra(QuizValues.TITLE_START).toString()
-        goalTitle = intent.getStringExtra(QuizValues.TITLE_GOAL).toString()
+        startingConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
+        goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
 
         options.add(optionOneView)
         options.add(optionTwoView)
@@ -74,10 +74,10 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         buttonNext.setOnClickListener(this)
         buttonPrevious.setOnClickListener(this)
 
-        toFoundView.text = toFoundView.text.toString() + goalTitle
+        toFoundView.text = toFoundView.text.toString() + goalConcept
         webParsing = WebParsing(this)
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + startTitle, currentLinkView, options)
-        pathList.add(startTitle)
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + startingConcept, currentLinkView, options)
+        pathList.add(startingConcept)
 
         val btnEnd = findViewById<Button>(R.id.btn_end)
 
@@ -146,17 +146,17 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
         webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, currentLinkView, options)
 
-        if(tv.text == goalTitle)
+        if(tv.text == goalConcept)
         {
-            totalMoves++
+            totalSteps++
             endQuiz(true)
         }
         else
         {
-            totalMoves++
-            progressBar.progress = totalMoves
-            progressView.text = totalMoves.toString() + "/" + progressBar.max
-            if(totalMoves > progressBar.max)
+            totalSteps++
+            progressBar.progress = totalSteps
+            progressView.text = totalSteps.toString() + "/" + progressBar.max
+            if(totalSteps > progressBar.max)
             {
                 endQuiz(false)
             }
@@ -167,11 +167,11 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
     private fun endQuiz(win: Boolean) {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra(QuizValues.WIN, win)
-        intent.putExtra(QuizValues.TITLE_START, startTitle)
-        intent.putExtra(QuizValues.TITLE_GOAL, goalTitle)
-        intent.putExtra(QuizValues.TOTAL_MOVES, totalMoves)
+        intent.putExtra(QuizValues.STARTING_CONCEPT, startingConcept)
+        intent.putExtra(QuizValues.GOAL_CONCEPT, goalConcept)
+        intent.putExtra(QuizValues.TOTAL_STEPS, totalSteps)
         intent.putExtra(QuizValues.MAX_PROGRESS, progressBar.max)
-        intent.putStringArrayListExtra(QuizValues.MOVES, pathList)
+        intent.putStringArrayListExtra(QuizValues.PATH, pathList)
         startActivity(intent)
         finish()
     }

@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.knowledge.testapp.R
 import com.knowledge.testapp.adapters.PathDataAdapter
-import com.knowledge.testapp.data.WorldRecord
+import com.knowledge.testapp.data.PathRecord
 
-class PathsDialogFragment(private val paths: ArrayList<WorldRecord>, private val isWinning: Boolean) : DialogFragment() {
+class PathsDialogFragment(private val paths: ArrayList<PathRecord>, private val isWinning: Boolean) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())

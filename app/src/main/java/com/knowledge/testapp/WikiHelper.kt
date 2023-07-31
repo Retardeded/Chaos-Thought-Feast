@@ -11,23 +11,25 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import com.knowledge.testapp.data.PathItem
-import com.knowledge.testapp.data.WorldRecord
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.knowledge.testapp.data.PathRecord
 import java.util.ArrayList
 
 class WikiHelper(private val context: Context) {
     private var dbWikiHelper: DbWikiHelper = DbWikiHelper(context)
     private var database: SQLiteDatabase = dbWikiHelper.writableDatabase
 
-    fun getSuccessfulPaths(): ArrayList<WorldRecord> {
+    fun getSuccessfulPaths(): ArrayList<PathRecord> {
         val cursor = database.query(TABLE_USER, null, "$SUCCESS > 0", null, null, null, null)
-        val arrayList = ArrayList<WorldRecord>()
+        val arrayList = ArrayList<PathRecord>()
 
         while (cursor.moveToNext()) {
-            val wikiPath = WorldRecord().apply {
+            val wikiPath = PathRecord().apply {
                 startingConcept = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
                 goalConcept = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
-                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH)).split("->").toMutableList() as ArrayList<String>
+                val pathJson = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
+                path = Gson().fromJson(pathJson, object : TypeToken<List<String>>() {}.type)
                 steps = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
                 win = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS)) > 0
             }
@@ -39,15 +41,16 @@ class WikiHelper(private val context: Context) {
         return arrayList
     }
 
-    fun getUnsuccessfulPaths(): ArrayList<WorldRecord> {
+    fun getUnsuccessfulPaths(): ArrayList<PathRecord> {
         val cursor = database.query(TABLE_USER, null, "$SUCCESS < 0", null, null, null, null)
-        val arrayList = ArrayList<WorldRecord>()
+        val arrayList = ArrayList<PathRecord>()
 
         while (cursor.moveToNext()) {
-            val wikiPath = WorldRecord().apply {
+            val wikiPath = PathRecord().apply {
                 startingConcept = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
                 goalConcept = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
-                path = cursor.getString(cursor.getColumnIndexOrThrow(PATH)).split("->").toMutableList() as ArrayList<String>
+                val pathJson = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
+                path = Gson().fromJson(pathJson, object : TypeToken<List<String>>() {}.type)
                 steps = cursor.getInt(cursor.getColumnIndexOrThrow(PATHLENGTH))
                 win = cursor.getInt(cursor.getColumnIndexOrThrow(SUCCESS)) > 0
             }
@@ -69,13 +72,14 @@ class WikiHelper(private val context: Context) {
         dbWikiHelper.close()
     }
 
-    fun insert(wikiPath: PathItem): Long {
+    fun insert(wikiPath: PathRecord): Long {
         val values = ContentValues().apply {
-            put(STARTTITLE, wikiPath.titleStart)
-            put(GOALTITLE, wikiPath.titleGoal)
-            put(PATH, wikiPath.path)
-            put(PATHLENGTH, wikiPath.pathLength)
-            put(SUCCESS, wikiPath.success)
+            put(STARTTITLE, wikiPath.startingConcept)
+            put(GOALTITLE, wikiPath.goalConcept)
+            val pathJson = Gson().toJson(wikiPath.path)
+            put(PATH, pathJson)
+            put(PATHLENGTH, wikiPath.steps)
+            put(SUCCESS, wikiPath.win)
         }
         return database.insert(TABLE_USER, null, values)
     }

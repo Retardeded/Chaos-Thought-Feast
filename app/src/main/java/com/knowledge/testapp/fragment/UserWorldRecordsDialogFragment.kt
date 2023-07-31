@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.knowledge.testapp.adapters.PathDataAdapter
 import com.knowledge.testapp.R
-import com.knowledge.testapp.data.WorldRecord
+import com.knowledge.testapp.data.PathRecord
 
 class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String) : DialogFragment() {
 
@@ -28,7 +28,7 @@ class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String) : D
         databaseReference.orderByKey().startAt(userSanitizedEmail).endAt(userSanitizedEmail + "\uf8ff")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val userWorldRecordsList = ArrayList<WorldRecord>()
+                    val userPathRecordsList = ArrayList<PathRecord>()
 
                     for (recordSnapshot in snapshot.children) {
                         val startingConcept = recordSnapshot.child("startingConcept").getValue(String::class.java)
@@ -39,8 +39,8 @@ class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String) : D
                         // Get the path as an ArrayList<String>
                         val pathList = recordSnapshot.child("path").getValue(object : GenericTypeIndicator<ArrayList<String>>() {})
 
-                        val worldRecord = WorldRecord(startingConcept ?: "", goalConcept ?: "", pathList ?: ArrayList(), steps ?: 0, win ?: false)
-                        userWorldRecordsList.add(worldRecord)
+                        val pathRecord = PathRecord(startingConcept ?: "", goalConcept ?: "", pathList ?: ArrayList(), steps ?: 0, win ?: false)
+                        userPathRecordsList.add(pathRecord)
                     }
 
                     // Now you have the world records held by the logged-in user in the userWorldRecordsList
@@ -50,7 +50,7 @@ class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String) : D
                     // create an instance of the RecyclerView and set its layout manager and adapter.
                     val recyclerView = rootView.findViewById<RecyclerView>(R.id.rvUserWorldRecords)
                     recyclerView.layoutManager = LinearLayoutManager(activity)
-                    recyclerView.adapter = PathDataAdapter(userWorldRecordsList)
+                    recyclerView.adapter = PathDataAdapter(userPathRecordsList)
 
                     // Get the close button and set the click listener to dismiss the dialog
                     val closeButton = rootView.findViewById<Button>(R.id.btn_close_dialog)

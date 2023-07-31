@@ -1,6 +1,6 @@
 package com.knowledge.testapp.data
 
-data class WorldRecord(
+data class PathRecord(
     var startingConcept: String = "",
     var goalConcept: String = "",
     var path: ArrayList<String> = ArrayList(),

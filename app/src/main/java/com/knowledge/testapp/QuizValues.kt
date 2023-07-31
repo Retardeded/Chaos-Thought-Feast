@@ -2,10 +2,10 @@ package com.knowledge.testapp
 
 object QuizValues {
 
-    const val TITLE_START:String = "start_title"
-    const val TITLE_GOAL:String = "goal_title"
-    const val TOTAL_MOVES = "total_moves"
-    const val MOVES:String = "moves"
+    const val STARTING_CONCEPT:String = "start_concept"
+    const val GOAL_CONCEPT:String = "goal_concept"
+    const val TOTAL_STEPS:String = "total_steps"
+    const val PATH:String = "path"
     const val MAX_PROGRESS:String = "max_progress"
     const val BASIC_LINK:String = "https://en.wikipedia.org/wiki/"
     const val WIN:String = "win"
