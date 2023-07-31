@@ -8,9 +8,8 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.knowledge.testapp.PathItem
 import com.knowledge.testapp.R
-import com.knowledge.testapp.PathDataAdapter
+import com.knowledge.testapp.adapters.PathDataAdapter
 import com.knowledge.testapp.data.WorldRecord
 
 class PathsDialogFragment(private val paths: ArrayList<WorldRecord>, private val isWinning: Boolean) : DialogFragment() {

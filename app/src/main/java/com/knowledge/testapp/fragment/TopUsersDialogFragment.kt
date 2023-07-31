@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.knowledge.testapp.R
-import com.knowledge.testapp.TopUsersAdapter
+import com.knowledge.testapp.adapters.TopUsersAdapter
 import com.knowledge.testapp.data.User
 
 import androidx.fragment.app.DialogFragment

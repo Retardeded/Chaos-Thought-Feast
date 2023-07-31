@@ -11,7 +11,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
-import android.provider.BaseColumns._ID
+import com.knowledge.testapp.data.PathItem
 import com.knowledge.testapp.data.WorldRecord
 import java.util.ArrayList
 

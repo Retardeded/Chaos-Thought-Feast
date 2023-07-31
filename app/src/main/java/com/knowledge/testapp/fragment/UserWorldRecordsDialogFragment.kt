@@ -1,7 +1,6 @@
 package com.knowledge.testapp.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
-import com.knowledge.testapp.PathDataAdapter
+import com.knowledge.testapp.adapters.PathDataAdapter
 import com.knowledge.testapp.R
 import com.knowledge.testapp.data.WorldRecord
 

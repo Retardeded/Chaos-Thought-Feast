@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 import androidx.recyclerview.widget.RecyclerView
+import com.knowledge.testapp.R
 import com.knowledge.testapp.data.WorldRecord
 
 class PathDataAdapter(private val mData: ArrayList<WorldRecord>) : RecyclerView.Adapter<PathDataAdapter.ViewHolder>() {

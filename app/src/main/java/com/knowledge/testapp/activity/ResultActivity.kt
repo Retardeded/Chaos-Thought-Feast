@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.knowledge.testapp.PathItem
+import com.knowledge.testapp.data.PathItem
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
@@ -142,7 +142,10 @@ class ResultActivity : AppCompatActivity() {
         val usersRef: DatabaseReference = database.getReference("users")
 
         // Check if there is any existing record with the same startingConcept and goalConcept and win=true
-        val query = ref.orderByChild("startingConcept").equalTo(startingConcept)
+        //val query = ref.orderByChild("startingConcept").equalTo(startingConcept)
+        //val query = ref.orderByKey().startAt("\uf8ff" + "${startingConcept}_${goalConcept}").endAt("${startingConcept}_${goalConcept}")
+        val startingGoalConcept = "${startingConcept}_$goalConcept"
+        val query = ref.orderByChild("startingGoalConcept").equalTo(startingGoalConcept)
 
         val context = this
 
@@ -150,20 +153,22 @@ class ResultActivity : AppCompatActivity() {
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 var shouldSave = true
+                    val existingRecord = dataSnapshot.children.firstOrNull()
 
-                // Loop through the existing records with the same startingConcept and goalConcept
-                for (ds in dataSnapshot.children) {
-                    val existingGoalConcept = ds.child("goalConcept").getValue(String::class.java)
-                    val existingSteps = ds.child("steps").getValue(Int::class.java)
+                System.out.println("null??:$existingRecord")
 
-                    if (existingGoalConcept == goalConcept) {
+                    if (existingRecord != null) {
+                        System.out.println("not nullnull:$existingRecord")
+                        // The record already exists
+                        val existingSteps = existingRecord.child("steps").getValue(Int::class.java)
+
+                        System.out.println("not nullnull steps:$existingSteps")
 
                         if (existingSteps != null && existingSteps <= steps) {
                             shouldSave = false
-                            break
                         } else {
-                            val recordRef = ds.ref
-                            val recordId = ds.key
+                            val recordRef = existingRecord.ref
+                            val recordId = existingRecord.key
                             val userSanitizedEmail = recordId!!.substringBefore("_") // Extract user email from the world record ID
 
                             // Update the user's records and score as a record is removed
@@ -202,12 +207,11 @@ class ResultActivity : AppCompatActivity() {
                             recordRef.removeValue()
                         }
                     }
-                }
 
                 // If there is no existing record or the new path length is greater, save the data
                 if (shouldSave) {
                     // Generate a unique ID for the record with the user's sanitized email
-                    val recordId = "${sanitizeEmail(user.email)}_${ref.push().key}"
+                    val recordId = "${sanitizeEmail(user.email)}_${startingConcept}_${goalConcept}"
 
                     val recordPath = "worldRecords/$recordId"
 
@@ -216,7 +220,8 @@ class ResultActivity : AppCompatActivity() {
                         "goalConcept" to goalConcept,
                         "path" to path,
                         "steps" to steps,
-                        "win" to win
+                        "win" to win,
+                        "startingGoalConcept" to startingGoalConcept
                     )
 
                     FirebaseDatabase.getInstance().getReference(recordPath)

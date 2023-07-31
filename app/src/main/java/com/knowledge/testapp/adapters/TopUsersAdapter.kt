@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.adapters
 
 import android.view.LayoutInflater
 import android.view.View

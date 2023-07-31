@@ -10,6 +10,12 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        decideActivityToStart()
+        // Close the SplashActivity to prevent the user from going back to it
+        finish()
+    }
+
+    private fun decideActivityToStart() {
         // Check if the user is already logged in
         if (isLoggedIn()) {
             // User is logged in, start MainActivity
@@ -18,14 +24,10 @@ class SplashActivity : AppCompatActivity() {
             // User is not logged in, start LoginActivity
             startActivity(Intent(this, LoginActivity::class.java))
         }
-
-        // Close the SplashActivity to prevent the user from going back to it
-        finish()
     }
 
     private fun isLoggedIn(): Boolean {
         val currentUser = FirebaseAuth.getInstance().currentUser
         return currentUser != null
-        return false
     }
 }

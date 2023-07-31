@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.data
 
 import android.os.Parcel
 import android.os.Parcelable
