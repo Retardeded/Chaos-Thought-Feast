@@ -12,8 +12,10 @@ android {
         applicationId "com.knowledge.testapp"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 5
-        versionName "1.31"
+        versionCode 6
+        versionName "1.33"
+
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

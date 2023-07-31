@@ -42,7 +42,7 @@ class WikiHelper(private val context: Context) {
     }
 
     fun getUnsuccessfulPaths(): ArrayList<PathRecord> {
-        val cursor = database.query(TABLE_USER, null, "$SUCCESS < 0", null, null, null, null)
+        val cursor = database.query(TABLE_USER, null, "$SUCCESS == 0", null, null, null, null)
         val arrayList = ArrayList<PathRecord>()
 
         while (cursor.moveToNext()) {
