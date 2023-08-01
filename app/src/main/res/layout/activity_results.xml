@@ -74,6 +74,24 @@
         android:onClick="clearPaths"
         android:layout_marginBottom="32dp" />
 
+    <Button
+        android:id="@+id/btn_delete_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Account"
+        android:layout_gravity="center"
+        android:onClick="deleteAccount"
+        android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:onClick="logoutUser"
+        android:layout_gravity="center"
+        android:textColor="@color/white" />
+
     <!-- Space to push other elements to the top -->
     <Space
         android:layout_width="match_parent"

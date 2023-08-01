@@ -156,20 +156,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
-
-        val btnLogout = findViewById<Button>(R.id.btn_logout)
-        btnLogout.setOnClickListener {
-            // Call the logout function
-            logoutUser()
-        }
-    }
-
-    private fun logoutUser() {
-        auth.signOut()
-        // Redirect to the LoginActivity after logout
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
     }
 
     fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {

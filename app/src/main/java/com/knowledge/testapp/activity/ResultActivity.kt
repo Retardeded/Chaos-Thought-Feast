@@ -158,11 +158,9 @@ class ResultActivity : AppCompatActivity() {
                 System.out.println("null??:$existingRecord")
 
                     if (existingRecord != null) {
-                        System.out.println("not nullnull:$existingRecord")
                         // The record already exists
                         val existingSteps = existingRecord.child("steps").getValue(Int::class.java)
 
-                        System.out.println("not nullnull steps:$existingSteps")
 
                         if (existingSteps != null && existingSteps <= steps) {
                             shouldSave = false
