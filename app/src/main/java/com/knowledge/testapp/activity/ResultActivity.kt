@@ -27,8 +27,12 @@ class ResultActivity : AppCompatActivity() {
     lateinit var startConcept:String
     lateinit var goalConcept:String
     var pathLength: Int = 0
+    private var totalSteps = 0
     var pathList: MutableList<String> = ArrayList()
     var win:Boolean = false
+    var worldRecord = true
+    var brandNewPath = true
+    var diff = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +41,7 @@ class ResultActivity : AppCompatActivity() {
         val pathText = pathList.joinToString("->")
 
         win = intent.getBooleanExtra(QuizValues.WIN, false)
-        val totalSteps: Int = intent.getIntExtra(QuizValues.TOTAL_STEPS, 0)
+        totalSteps = intent.getIntExtra(QuizValues.TOTAL_STEPS, 0)
 
             if(win)
                 setContentView(R.layout.activity_result)
@@ -54,33 +58,8 @@ class ResultActivity : AppCompatActivity() {
         goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
 
         pathView.text = pathText
-
-            if(win)
-                scoreView.text = "You found $goalConcept in $totalSteps moves"
-            else
-                scoreView.text = "You haven't found $goalConcept"
-
+        processTheResult()
         saveToLocalDB()
-        val userEmail = FirebaseAuth.getInstance().currentUser?.email
-        if (userEmail != null) {
-            // Call the function to fetch the user's data and handle the result in the callback
-            getUserDataByEmail(userEmail) { user ->
-                if (user != null) {
-                    // Example: Display the user's recordsHeld and currentScore
-                    println("Records Held: ${user.recordsHeld}")
-                    println("Current Score: ${user.currentScore}")
-
-                    // Now you can pass the 'user' object to the saveWorldRecordToRemoteDB function
-                    saveWorldRecordToRemoteDB(
-                        user,
-                        startConcept, goalConcept, pathList, pathLength, win
-                    )
-                } else {
-                    // User's data doesn't exist in the database (not registered?)
-                    println("User data not found.")
-                }
-            }
-        }
 
         buttonFinish.setOnClickListener{
             startActivity(Intent(this, MainActivity::class.java))
@@ -91,6 +70,34 @@ class ResultActivity : AppCompatActivity() {
             finish()
         }
 
+    }
+
+    fun processTheResult() {
+
+        val userEmail = FirebaseAuth.getInstance().currentUser?.email
+        if (userEmail != null) {
+            // Call the function to fetch the user's data and handle the result in the callback
+            getUserDataByEmail(userEmail) { user ->
+                if (user != null) {
+                    // Example: Display the user's recordsHeld and currentScore
+                    println("Records Held: ${user.recordsHeld}")
+                    println("Current Score: ${user.currentScore}")
+
+                    if(win) {
+                        saveWorldRecordToRemoteDB(
+                            user,
+                            startConcept, goalConcept, pathList, totalSteps
+                        )
+                    } else {
+                        scoreView.text = "You haven't found $goalConcept"
+                    }
+
+                } else {
+                    // User's data doesn't exist in the database (not registered?)
+                    println("User data not found.")
+                }
+            }
+        }
     }
 
     fun getUserDataByEmail(userEmail: String, onDataLoaded: (User?) -> Unit) {
@@ -131,11 +138,8 @@ class ResultActivity : AppCompatActivity() {
         startingConcept: String,
         goalConcept: String,
         path: List<String>,
-        steps: Int,
-        win: Boolean
+        totalSteps: Int
     ) {
-        if (!win)
-            return
 
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.getReference("worldRecords")
@@ -152,18 +156,16 @@ class ResultActivity : AppCompatActivity() {
         // Use a single listener to combine the results of both queries
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                var shouldSave = true
                     val existingRecord = dataSnapshot.children.firstOrNull()
 
-                System.out.println("null??:$existingRecord")
-
                     if (existingRecord != null) {
+                        brandNewPath = false
                         // The record already exists
                         val existingSteps = existingRecord.child("steps").getValue(Int::class.java)
-
-
-                        if (existingSteps != null && existingSteps <= steps) {
-                            shouldSave = false
+                        diff = totalSteps - existingSteps!!
+                        if (existingSteps <= totalSteps) {
+                            worldRecord = false
+                            Toast.makeText(context, "$diff steps too much for World Record", Toast.LENGTH_SHORT).show()
                         } else {
                             val recordRef = existingRecord.ref
                             val recordId = existingRecord.key
@@ -207,7 +209,7 @@ class ResultActivity : AppCompatActivity() {
                     }
 
                 // If there is no existing record or the new path length is greater, save the data
-                if (shouldSave) {
+                if (worldRecord) {
                     // Generate a unique ID for the record with the user's sanitized email
                     val recordId = "${sanitizeEmail(user.email)}_${startingConcept}_${goalConcept}"
 
@@ -217,8 +219,8 @@ class ResultActivity : AppCompatActivity() {
                         "startingConcept" to startingConcept,
                         "goalConcept" to goalConcept,
                         "path" to path,
-                        "steps" to steps,
-                        "win" to win,
+                        "steps" to totalSteps,
+                        "win" to true,
                         "startingGoalConcept" to startingGoalConcept
                     )
 
@@ -259,6 +261,7 @@ class ResultActivity : AppCompatActivity() {
                                         println("Transaction failed: ${error.message}")
                                     } else {
                                         println("Transaction completed successfully.")
+                                        updateUI(worldRecord, diff, totalSteps)
                                     }
                                 }
                             })
@@ -266,6 +269,8 @@ class ResultActivity : AppCompatActivity() {
                         .addOnFailureListener { error ->
                             println("Error saving data: $error")
                         }
+                } else {
+                    updateUI(worldRecord, diff, totalSteps)
                 }
             }
 
@@ -276,6 +281,24 @@ class ResultActivity : AppCompatActivity() {
 
         // Add the listener to the query
         query.addListenerForSingleValueEvent(listener)
+
+
+    }
+
+    private fun updateUI(worldRecord: Boolean, diff: Int, totalSteps: Int) {
+        scoreView.text = "You found $goalConcept in $totalSteps steps"
+        val addText = if (worldRecord) {
+            if(brandNewPath) {
+                "That's a new World Record!, no one ever before tried this path"
+            } else {
+                "That's a new World Record!, beaten the old one by ${-diff} steps."
+            }
+
+        } else {
+            "$diff steps too much for World Record"
+        }
+
+        scoreView.text = "${scoreView.text}\n$addText"
     }
 
 
