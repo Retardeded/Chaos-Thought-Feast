@@ -259,13 +259,22 @@
             android:layout_marginTop="16dp">
 
             <Button
-                android:id="@+id/btn_previous_attempts"
+                android:id="@+id/btn_rankings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your endeavours and rankings"
+                android:text="Rankings"
                 android:textColor="@color/white"
                 android:layout_marginStart="16dp"
-                android:onClick="goToPreviousAttempts" />
+                android:onClick="goToRankingsActivity" />
+
+            <Button
+                android:id="@+id/btn_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profile"
+                android:textColor="@color/white"
+                android:layout_marginStart="16dp"
+                android:onClick="goToProfileActivity" />
 
         </LinearLayout>
 

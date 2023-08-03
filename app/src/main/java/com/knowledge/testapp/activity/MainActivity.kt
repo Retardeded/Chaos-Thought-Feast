@@ -179,8 +179,12 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun goToPreviousAttempts(view: View) {
-        val intent = Intent(this, ResultsActivity::class.java)
+    fun goToRankingsActivity(view: View) {
+        val intent = Intent(this, RankingsActivity::class.java)
         startActivity(intent)
+    }
+
+    fun goToProfileActivity(view: View) {
+        startActivity(Intent(this, ProfileActivity::class.java))
     }
 }

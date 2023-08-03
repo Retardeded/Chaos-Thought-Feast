@@ -66,7 +66,7 @@ class ResultActivity : AppCompatActivity() {
             finish()
         }
         buttonPreviousAttempts.setOnClickListener{
-            startActivity(Intent(this, ResultsActivity::class.java))
+            startActivity(Intent(this, RankingsActivity::class.java))
             finish()
         }
 

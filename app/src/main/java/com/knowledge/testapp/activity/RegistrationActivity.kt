@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.database.DatabaseReference
@@ -16,6 +15,7 @@ import com.knowledge.testapp.data.User
 import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
 
 class RegistrationActivity : AppCompatActivity() {
+    private lateinit var usernameEditText: EditText
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var registerButton: Button
@@ -30,17 +30,19 @@ class RegistrationActivity : AppCompatActivity() {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
+        usernameEditText = findViewById(R.id.editTextUsername)
         emailEditText = findViewById(R.id.editTextEmail)
         passwordEditText = findViewById(R.id.editTextPassword)
         registerButton = findViewById(R.id.btnRegister)
         loginTextView = findViewById(R.id.textViewLogin)
 
         registerButton.setOnClickListener {
+            val user = usernameEditText.text.toString()
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString()
 
             // Call the register function with email and password
-            registerUser(email, password)
+            registerUser(user, email, password)
         }
 
         loginTextView.setOnClickListener {
@@ -51,17 +53,12 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerUser(email: String, password: String) {
+    private fun registerUser(username: String, email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Registration successful, user is created and authenticated
-
-                    // Get the newly registered user's email
-                    val userEmail = email
-
                     // Create a User object with the user's email and other initial data
-                    val user = User(userEmail, recordsHeld = 0, currentScore = 0)
+                    val user = User(username, email, recordsHeld = 0, currentScore = 0)
 
                     // Save the user data to the "users" table in the Firebase Realtime Database
                     saveUserDataToDatabase(user)
