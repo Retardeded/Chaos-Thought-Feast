@@ -102,9 +102,25 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         })
 
-        editTextStartTitle.afterTextChanged { webParsing.isStartTitleCorrect(QuizValues.BASIC_LINK +it.replace(" ", "_")) }
-        editTextGoalTitle.afterTextChanged { webParsing.isGoalTitleCorrect(QuizValues.BASIC_LINK +it.replace(" ", "_")) }
+        editTextStartTitle.afterTextChanged { text ->
+            val articleUrl = QuizValues.BASIC_LINK + text.replace(" ", "_")
 
+            webParsing.isTitleCorrect(articleUrl) { isCorrect ->
+                // Update QuizValues or perform other actions based on isCorrect
+                QuizValues.correctStart = isCorrect
+                // Perform other tasks if needed
+            }
+        }
+
+        editTextGoalTitle.afterTextChanged { text ->
+            val articleUrl = QuizValues.BASIC_LINK + text.replace(" ", "_")
+
+            webParsing.isTitleCorrect(articleUrl) { isCorrect ->
+                // Update QuizValues or perform other actions based on isCorrect
+                QuizValues.correctGoal = isCorrect
+                // Perform other tasks if needed
+            }
+        }
         randomArticleViewModel = ViewModelProvider(this).get(RandomArticleViewModel::class.java)
 
         fun setRandomArticle(

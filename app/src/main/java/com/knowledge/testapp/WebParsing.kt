@@ -2,8 +2,8 @@ package com.knowledge.testapp
 
 import android.content.Context
 import android.widget.TextView
-import com.koushikdutta.async.future.FutureCallback
-import com.koushikdutta.ion.Ion
+import okhttp3.*
+import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -14,66 +14,64 @@ class WebParsing(var applicationContext: Context) {
     private lateinit var mUrls:MutableList<String>
     private var currentIndex = 0
 
+    fun isTitleCorrect(url: String, callback: (Boolean) -> Unit) {
+        val client = OkHttpClient()
 
+        val request = Request.Builder()
+            .url(url)
+            .build()
 
-    fun isGoalTitleCorrect(url: String) {
-        Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
-        QuizValues.correctGoal = false
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback(false)
+            }
 
-        Ion.with(applicationContext).load(url).asString()
-            .setCallback(object :
-                    FutureCallback<String?> {
-                override fun onCompleted(e: Exception?, result: String?) {
-                    if (result != null) {
-                        if(!result.contains("Wikipedia does not have an article with this exact name"))
-                            QuizValues.correctGoal = true
-                        }
-                }
-            })
-    }
-
-    fun isStartTitleCorrect(url: String) {
-        System.out.println("start2 url:::::::" + url)
-        Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
-        QuizValues.correctStart = false
-
-        Ion.with(applicationContext).load(url).asString()
-                .setCallback(object :
-                        FutureCallback<String?> {
-                    override fun onCompleted(e: Exception?, result: String?) {
-                        if (result != null) {
-                            if(!result.contains("Wikipedia does not have an article with this exact name"))
-                                QuizValues.correctStart = true
-                        }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val result = response.body?.string()
+                    if (result != null && !result.contains("Wikipedia does not have an article with this exact name")) {
+                        callback(true)
+                    } else {
+                        callback(false)
                     }
-                })
+                } else {
+                    callback(false)
+                }
+            }
+        })
     }
 
     fun getHtmlFromUrl(url: String, tv: TextView, options: ArrayList<TextView>) {
-        System.out.println("ini url:::::::" + url)
-        Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
-        Ion.with(applicationContext).load(url).asString()
-            .setCallback(object :
-                    FutureCallback<String?> {
-                override fun onCompleted(e: Exception?, result: String?) {
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Handle the failure
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val result = response.body?.string()
                     if (result != null) {
-                        System.out.println("w result:::::::" + result)
-                        System.out.println("w url:::::::" + url)
+                        // Process the result
                         mCurrentHtml = result
                         currentIndex = 0
-                    } else {
-                        System.out.println("f result:::::::" + result)
-                        System.out.println("f url:::::::" + url)
-                        return
-                    }
-                    System.out.println("ini result:::::::" + result)
-                    System.out.println("ini url:::::::" + url)
 
-                    mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
-                    tv.setText(url)
-                    setNextLinks(options)
+                        mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
+                        // Use runOnUiThread to update the UI safely
+                        tv.post {
+                            tv.setText(url)
+                            setNextLinks(options)
+                        }
+                    }
                 }
-            })
+            }
+        })
     }
 
     fun setNextLinks(options: ArrayList<TextView>) {
