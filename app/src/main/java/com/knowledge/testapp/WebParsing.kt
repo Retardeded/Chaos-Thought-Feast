@@ -13,15 +13,15 @@ class WebParsing(var applicationContext: Context) {
     private lateinit var mCurrentHtml:String
     private lateinit var mUrls:MutableList<String>
     private var currentIndex = 0
+    private val okHttpClient = OkHttpClient()
 
     fun isTitleCorrect(url: String, callback: (Boolean) -> Unit) {
-        val client = OkHttpClient()
 
         val request = Request.Builder()
             .url(url)
             .build()
 
-        client.newCall(request).enqueue(object : Callback {
+        okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 callback(false)
             }
@@ -42,13 +42,12 @@ class WebParsing(var applicationContext: Context) {
     }
 
     fun getHtmlFromUrl(url: String, tv: TextView, options: ArrayList<TextView>) {
-        val client = OkHttpClient()
 
         val request = Request.Builder()
             .url(url)
             .build()
 
-        client.newCall(request).enqueue(object : Callback {
+        okHttpClient.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 // Handle the failure
                 e.printStackTrace()
