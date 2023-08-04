@@ -39,7 +39,7 @@ class RankingsActivity : AppCompatActivity() {
     }
 
     fun onTryAgainButtonClick(view: View) {
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, MainGameSetupActivity::class.java))
         finish()
     }
 }

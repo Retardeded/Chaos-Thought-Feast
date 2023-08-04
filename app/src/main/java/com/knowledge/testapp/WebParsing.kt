@@ -33,6 +33,7 @@ class WebParsing(var applicationContext: Context) {
     }
 
     fun isStartTitleCorrect(url: String) {
+        System.out.println("start2 url:::::::" + url)
         Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
         QuizValues.correctStart = false
 
@@ -49,17 +50,25 @@ class WebParsing(var applicationContext: Context) {
     }
 
     fun getHtmlFromUrl(url: String, tv: TextView, options: ArrayList<TextView>) {
+        System.out.println("ini url:::::::" + url)
         Ion.getDefault(applicationContext).getConscryptMiddleware().enable(false);
         Ion.with(applicationContext).load(url).asString()
             .setCallback(object :
                     FutureCallback<String?> {
                 override fun onCompleted(e: Exception?, result: String?) {
                     if (result != null) {
+                        System.out.println("w result:::::::" + result)
+                        System.out.println("w url:::::::" + url)
                         mCurrentHtml = result
                         currentIndex = 0
                     } else {
+                        System.out.println("f result:::::::" + result)
+                        System.out.println("f url:::::::" + url)
                         return
                     }
+                    System.out.println("ini result:::::::" + result)
+                    System.out.println("ini url:::::::" + url)
+
                     mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
                     tv.setText(url)
                     setNextLinks(options)

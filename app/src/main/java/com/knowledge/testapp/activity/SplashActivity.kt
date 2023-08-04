@@ -19,7 +19,7 @@ class SplashActivity : AppCompatActivity() {
         // Check if the user is already logged in
         if (isLoggedIn()) {
             // User is logged in, start MainActivity
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, MainMenuActivity::class.java))
         } else {
             // User is not logged in, start LoginActivity
             startActivity(Intent(this, LoginActivity::class.java))

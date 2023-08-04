@@ -2,6 +2,7 @@ package com.knowledge.testapp.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -21,7 +22,6 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var pathView: TextView
 
     private lateinit var buttonFinish: Button
-    private lateinit var buttonPreviousAttempts: Button
 
     private var dbWikiHelper: WikiHelper? = null
     lateinit var startConcept:String
@@ -52,7 +52,6 @@ class ResultActivity : AppCompatActivity() {
         scoreView = findViewById(R.id.tv_score)
         pathView = findViewById(R.id.tv_path)
         buttonFinish = findViewById(R.id.btn_finish)
-        buttonPreviousAttempts = findViewById(R.id.btn_attempts)
 
         startConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
         goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
@@ -62,14 +61,14 @@ class ResultActivity : AppCompatActivity() {
         saveToLocalDB()
 
         buttonFinish.setOnClickListener{
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, MainGameSetupActivity::class.java))
             finish()
         }
-        buttonPreviousAttempts.setOnClickListener{
-            startActivity(Intent(this, RankingsActivity::class.java))
-            finish()
-        }
+    }
 
+    fun goToMainMenu(view: View) {
+        startActivity(Intent(this, MainMenuActivity::class.java))
+        finish()
     }
 
     fun processTheResult() {

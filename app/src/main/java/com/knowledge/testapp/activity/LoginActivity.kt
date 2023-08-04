@@ -51,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Login successful, user is authenticated
                     // Proceed to the next activity (e.g., MainActivity)
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, MainGameSetupActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

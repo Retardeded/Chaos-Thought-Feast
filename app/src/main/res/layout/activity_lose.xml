@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="20dp"
-        tools:context="com.knowledge.testapp.activity.MainActivity">
+        tools:context="com.knowledge.testapp.activity.MainGameSetupActivity">
 
         <TextView
             android:id="@+id/tv_congratulations"
@@ -72,16 +72,17 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btn_attempts"
+                android:id="@+id/btn_main_menu_result"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="10dp"
                 android:background="@color/color_primary"
-                android:text="Previous attempts"
-                android:textColor="@color/white"
+                android:text="Main Menu"
+                android:textColor="@color/black"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="goToMainMenu" />
 
         </LinearLayout>
     </LinearLayout>
