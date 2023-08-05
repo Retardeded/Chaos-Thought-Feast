@@ -15,6 +15,7 @@ import com.knowledge.testapp.WikiHelper
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.data.PathRecord
 import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
+import com.knowledge.testapp.utils.NavigationUtils
 
 class ResultActivity : AppCompatActivity() {
 
@@ -67,8 +68,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     fun goToMainMenu(view: View) {
-        startActivity(Intent(this, MainMenuActivity::class.java))
-        finish()
+        NavigationUtils.goToMainMenu(this)
     }
 
     fun processTheResult() {

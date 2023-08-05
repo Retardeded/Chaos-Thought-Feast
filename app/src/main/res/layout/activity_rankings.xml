@@ -41,25 +41,29 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/btn_go_to_profile"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Go to Profile"
-        android:layout_gravity="center"
-        android:onClick="goToProfile" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
 
-    <!-- Back to Main Game Button -->
-    <Button
-        android:id="@+id/btn_try_again"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:background="@color/design_default_color_on_primary"
-        android:text="Back to Main Game"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:layout_marginBottom="32dp"
-        android:onClick="onTryAgainButtonClick" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Main Menu"
+            android:textColor="@color/white"
+            android:layout_marginStart="16dp"
+            android:onClick="goToMainMenu" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:textColor="@color/white"
+            android:layout_marginStart="16dp"
+            android:onClick="goToProfile" />
+
+    </LinearLayout>
 
 </LinearLayout>

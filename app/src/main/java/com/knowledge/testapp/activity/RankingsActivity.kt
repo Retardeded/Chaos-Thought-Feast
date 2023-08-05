@@ -10,6 +10,7 @@ import com.knowledge.testapp.R
 import com.knowledge.testapp.fragment.TopUsersDialogFragment
 import com.knowledge.testapp.fragment.UserWorldRecordsDialogFragment
 import com.knowledge.testapp.utils.ModyfingStrings
+import com.knowledge.testapp.utils.NavigationUtils
 
 
 class RankingsActivity : AppCompatActivity() {
@@ -35,11 +36,10 @@ class RankingsActivity : AppCompatActivity() {
     }
 
     fun goToProfile(view: View) {
-        startActivity(Intent(this, ProfileActivity::class.java))
+        NavigationUtils.goToProfile(this)
     }
 
-    fun onTryAgainButtonClick(view: View) {
-        startActivity(Intent(this, MainGameSetupActivity::class.java))
-        finish()
+    fun goToMainMenu(view: View) {
+        NavigationUtils.goToMainMenu(this)
     }
 }

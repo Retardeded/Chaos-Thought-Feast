@@ -12,6 +12,7 @@ import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
 import com.knowledge.testapp.fragment.PathsDialogFragment
 import com.knowledge.testapp.utils.ModyfingStrings
+import com.knowledge.testapp.utils.NavigationUtils
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -48,6 +49,10 @@ class ProfileActivity : AppCompatActivity() {
 
     fun goToRankings(view: View) {
         startActivity(Intent(this, RankingsActivity::class.java))
+    }
+
+    fun goToMainMenu(view: View) {
+        NavigationUtils.goToMainMenu(this)
     }
 
     fun logoutUser(view: View) {

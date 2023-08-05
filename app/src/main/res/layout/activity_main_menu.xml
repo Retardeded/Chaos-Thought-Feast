@@ -70,6 +70,14 @@
         android:gravity="center"
         android:layout_marginTop="128dp">
 
+        <Button
+            android:id="@+id/btn_profile_main_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:textColor="@color/white"
+            android:layout_marginStart="16dp"
+            android:onClick="goToProfileActivity" />
 
         <Button
             android:id="@+id/btn_rankings_main_menu"
@@ -79,15 +87,6 @@
             android:textColor="@color/white"
             android:layout_marginStart="16dp"
             android:onClick="goToRankingsActivity" />
-
-        <Button
-            android:id="@+id/btn_profile_main_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Profile"
-            android:textColor="@color/white"
-            android:layout_marginStart="16dp"
-            android:onClick="goToProfileActivity" />
 
     </LinearLayout>
 
