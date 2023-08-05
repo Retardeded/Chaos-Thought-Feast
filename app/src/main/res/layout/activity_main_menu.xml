@@ -3,7 +3,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/forestpathofknowledge">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mindless Thought Cake"
+            android:gravity="center"
+            android:layout_marginBottom="30dp"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <Button
+            android:id="@+id/btn_find_likings_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Find your Likings"
+            android:textColor="@color/white"
+            android:onClick="goToFindYourLikings" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <Button
+            android:id="@+id/btn_likings_spectrum_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Liking Spectrum Journey"
+            android:textColor="@color/white"
+            android:onClick="goToLikingSpectrumJourney" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <Button
+            android:id="@+id/btn_any_happening_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Anyfin Can Happen"
+            android:textColor="@color/white"
+            android:onClick="goToFindYourLikings" />
+
+    </LinearLayout>
 
 
     <LinearLayout
@@ -11,7 +68,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="128dp">
+
 
         <Button
             android:id="@+id/btn_rankings_main_menu"
@@ -30,42 +88,6 @@
             android:textColor="@color/white"
             android:layout_marginStart="16dp"
             android:onClick="goToProfileActivity" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="16dp">
-
-        <Button
-            android:id="@+id/btn_find_likings_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Find your Likings"
-            android:textColor="@color/white"
-            android:layout_marginStart="16dp"
-            android:onClick="goToFindYourLikings" />
-
-        <Button
-            android:id="@+id/btn_likings_spectrum_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Liking Spectrum Journey"
-            android:textColor="@color/white"
-            android:layout_marginStart="16dp"
-            android:onClick="goToLikingSpectrumJourney" />
-
-        <Button
-            android:id="@+id/btn_any_happening_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Anyfin Can Happen"
-            android:textColor="@color/white"
-            android:layout_marginStart="16dp"
-            android:onClick="goToFindYourLikings" />
 
     </LinearLayout>
 

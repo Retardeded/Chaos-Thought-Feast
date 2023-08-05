@@ -34,12 +34,17 @@ class MainGameSetupActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+
+    private lateinit var scrollView: ScrollView
+    private lateinit var textViewGameModeTitle: TextView
     private var gameMode:GameMode? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_game_setup)
 
+        scrollView = findViewById(R.id.sv_game_setup)
+        textViewGameModeTitle = findViewById(R.id.tv_game_mode_title)
         // Continue with the rest of your activity setup
 
         buttonRandomStart = findViewById(R.id.btn_randomStartTitle)
@@ -61,6 +66,8 @@ class MainGameSetupActivity : AppCompatActivity() {
 
         when (gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> {
+                scrollView.setBackgroundResource(R.drawable.findyourlikings)
+                textViewGameModeTitle.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
                 // Handle "Find Your Likings" mode
                 buttonStart.setOnClickListener {
                     // Your first game mode logic here
@@ -68,6 +75,8 @@ class MainGameSetupActivity : AppCompatActivity() {
                 }
             }
             GameMode.LIKING_SPECTRUM_JOURNEY -> {
+                scrollView.setBackgroundResource(R.drawable.likingspecturmjourney2)
+                textViewGameModeTitle.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
                 val layoutToHide: LinearLayout = findViewById(R.id.layout_randomStartTitle)
                 editTextStartTitle.text.clear()
                 layoutToHide.visibility = View.GONE
@@ -282,8 +291,8 @@ class MainGameSetupActivity : AppCompatActivity() {
         }
     }
 
-    fun goToRankingsActivity(view: View) {
-        val intent = Intent(this, RankingsActivity::class.java)
+    fun goToMainMenuActivity(view: View) {
+        val intent = Intent(this, MainMenuActivity::class.java)
         startActivity(intent)
     }
 
