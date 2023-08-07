@@ -79,7 +79,7 @@
                 android:layout_margin="10dp"
                 android:background="@color/color_primary"
                 android:text="Main Menu"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:onClick="goToMainMenu" />

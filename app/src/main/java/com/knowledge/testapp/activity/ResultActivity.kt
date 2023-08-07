@@ -22,8 +22,6 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var scoreView: TextView
     private lateinit var pathView: TextView
 
-    private lateinit var buttonFinish: Button
-
     private var dbWikiHelper: WikiHelper? = null
     lateinit var startConcept:String
     lateinit var goalConcept:String
@@ -52,19 +50,16 @@ class ResultActivity : AppCompatActivity() {
 
         scoreView = findViewById(R.id.tv_score)
         pathView = findViewById(R.id.tv_path)
-        buttonFinish = findViewById(R.id.btn_finish)
-
         startConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
         goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
 
         pathView.text = pathText
         processTheResult()
         saveToLocalDB()
+    }
 
-        buttonFinish.setOnClickListener{
-            startActivity(Intent(this, MainGameSetupActivity::class.java))
-            finish()
-        }
+    fun tryAgain(view: View) {
+        NavigationUtils.tryAgain(this)
     }
 
     fun goToMainMenu(view: View) {

@@ -1,5 +1,7 @@
 package com.knowledge.testapp
 
+import com.knowledge.testapp.data.GameMode
+
 object QuizValues {
 
     const val STARTING_CONCEPT:String = "start_concept"
@@ -11,4 +13,5 @@ object QuizValues {
     const val WIN:String = "win"
     var correctStart = true
     var correctGoal = true
+    var gameMode = GameMode.FIND_YOUR_LIKINGS
 }

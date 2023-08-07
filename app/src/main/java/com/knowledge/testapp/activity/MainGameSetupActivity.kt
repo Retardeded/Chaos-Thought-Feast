@@ -37,7 +37,6 @@ class MainGameSetupActivity : AppCompatActivity() {
 
     private lateinit var scrollView: ScrollView
     private lateinit var textViewGameModeTitle: TextView
-    private var gameMode:GameMode? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,14 +56,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         editTextKeyword = findViewById(R.id.et_Keyword)
         editTextCategory = findViewById(R.id.et_Category)
 
-        val gameModeString = intent.getStringExtra("gameMode")
-        gameMode = when (gameModeString) {
-            "findYourLikings" -> GameMode.FIND_YOUR_LIKINGS
-            "likingSpectrumJourney" -> GameMode.LIKING_SPECTRUM_JOURNEY
-            else -> GameMode.FIND_YOUR_LIKINGS // Default to a mode
-        }
-
-        when (gameMode) {
+        when (QuizValues.gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> {
                 scrollView.setBackgroundResource(R.drawable.findyourlikings)
                 textViewGameModeTitle.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
