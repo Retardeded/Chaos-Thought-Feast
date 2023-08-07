@@ -208,7 +208,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Specify the Category you want to get article from"
+                android:text="Specify the Category you want to get concept from"
                 android:textColor="#363A43"
                 android:textSize="18sp"
                 android:textStyle="bold"/>

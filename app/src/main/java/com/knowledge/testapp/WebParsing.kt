@@ -64,7 +64,7 @@ class WebParsing(var applicationContext: Context) {
                         mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
                         // Use runOnUiThread to update the UI safely
                         tv.post {
-                            tv.setText(url)
+                            tv.setText(url.substring(QuizValues.BASIC_LINK.length))
                             setNextLinks(options)
                         }
                     }
@@ -156,7 +156,7 @@ class WebParsing(var applicationContext: Context) {
             }
         }
 
-        return urls
+        return urls.subList(3, urls.size)
     }
 
 }
