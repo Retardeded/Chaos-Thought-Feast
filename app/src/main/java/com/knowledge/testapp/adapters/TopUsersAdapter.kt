@@ -11,6 +11,7 @@ import com.knowledge.testapp.data.User
 class TopUsersAdapter(private val topUsersList: List<User>) : RecyclerView.Adapter<TopUsersAdapter.TopUsersViewHolder>() {
 
     inner class TopUsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val rankingPositionTextView: TextView = itemView.findViewById(R.id.tvRankingPosition)
         val userTextView: TextView = itemView.findViewById(R.id.tvUsername)
         val scoreTextView: TextView = itemView.findViewById(R.id.tvScore)
     }
@@ -22,8 +23,11 @@ class TopUsersAdapter(private val topUsersList: List<User>) : RecyclerView.Adapt
 
     override fun onBindViewHolder(holder: TopUsersViewHolder, position: Int) {
         val user = topUsersList[position]
+        val positionNumber = 1+position
+        val scoreText = user.currentScore.toString() + " Points"
+        holder.rankingPositionTextView.text = positionNumber.toString()
         holder.userTextView.text = user.username
-        holder.scoreTextView.text = user.currentScore.toString()
+        holder.scoreTextView.text = scoreText
     }
 
     override fun getItemCount(): Int {

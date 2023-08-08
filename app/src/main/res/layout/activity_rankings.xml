@@ -15,7 +15,8 @@
         android:layout_height="wrap_content"
         android:text="Top users in each mode"
         android:gravity="center"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
@@ -28,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/white"
-        android:layout_marginTop="16dp" />
+        />
 
     <!-- User-Specific World Records Buttons -->
     <LinearLayout
@@ -68,7 +69,8 @@
         android:layout_height="wrap_content"
         android:text="Your personal World Record"
         android:gravity="center"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
@@ -81,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/white"
-        android:layout_marginTop="16dp" />
+        />
 
     <!-- User-Specific World Records Buttons -->
     <LinearLayout
