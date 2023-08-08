@@ -12,6 +12,7 @@ import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
+import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.data.PathRecord
 import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
@@ -136,7 +137,11 @@ class ResultActivity : AppCompatActivity() {
     ) {
 
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-        val ref: DatabaseReference = database.getReference("worldRecords")
+        val refString = when (QuizValues.gameMode) {
+            GameMode.FIND_YOUR_LIKINGS -> (QuizValues.tableName_FIND_YOUR_LIKINGS)
+            GameMode.LIKING_SPECTRUM_JOURNEY -> (QuizValues.tableName_LIKING_SPECTRUM_JOURNEY)
+        }
+        val ref = database.getReference(refString)
         val usersRef: DatabaseReference = database.getReference("users")
 
         // Check if there is any existing record with the same startingConcept and goalConcept and win=true
@@ -207,7 +212,7 @@ class ResultActivity : AppCompatActivity() {
                     // Generate a unique ID for the record with the user's sanitized email
                     val recordId = "${sanitizeEmail(user.email)}_${startingConcept}_${goalConcept}"
 
-                    val recordPath = "worldRecords/$recordId"
+                    val recordPath = "$refString/$recordId"
 
                     val recordData = mapOf(
                         "startingConcept" to startingConcept,

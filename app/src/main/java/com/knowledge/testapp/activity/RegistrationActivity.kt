@@ -64,7 +64,7 @@ class RegistrationActivity : AppCompatActivity() {
                     saveUserDataToDatabase(user)
 
                     // Proceed to the next activity (e.g., MainActivity)
-                    val intent = Intent(this, MainGameSetupActivity::class.java)
+                    val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

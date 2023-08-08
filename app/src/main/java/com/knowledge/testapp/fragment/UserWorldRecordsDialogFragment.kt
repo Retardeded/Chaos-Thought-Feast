@@ -5,15 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
+import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.adapters.PathDataAdapter
 import com.knowledge.testapp.R
+import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.PathRecord
 
-class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String) : DialogFragment() {
+class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String, private val tableName: String) : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,7 +26,28 @@ class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String) : D
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_user_world_records_dialog, container, false)
 
-        val databaseReference = FirebaseDatabase.getInstance().getReference("worldRecords")
+        // Find the LinearLayout with the background
+        val linearLayout = rootView.findViewById<LinearLayout>(R.id.ll_user_records_dialog)
+
+        val titleTextViewRecord = rootView.findViewById<TextView>(R.id.titleTextViewWorldRecords)
+        val titleTextViewUser = rootView.findViewById<TextView>(R.id.titleTextViewUserName)
+        // Set background drawable based on tableName
+        when (tableName) {
+            QuizValues.tableName_FIND_YOUR_LIKINGS -> {
+                linearLayout.setBackgroundResource(R.drawable.findyourlikings)
+                titleTextViewRecord.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
+            }
+
+            QuizValues.tableName_LIKING_SPECTRUM_JOURNEY -> {
+                linearLayout.setBackgroundResource(R.drawable.likingspecturmjourney2)
+                titleTextViewRecord.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
+
+            }
+            // Add more cases as needed
+        }
+        titleTextViewUser.text = QuizValues.USER!!.username
+
+        val databaseReference = FirebaseDatabase.getInstance().getReference(tableName)
 
         // Query to get all world records for the logged-in user
         databaseReference.orderByKey().startAt(userSanitizedEmail).endAt(userSanitizedEmail + "\uf8ff")

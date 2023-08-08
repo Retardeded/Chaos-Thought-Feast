@@ -25,13 +25,28 @@
             android:layout_gravity="center"
             android:onClick="showTopUsersDialog" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
         <Button
-            android:id="@+id/btn_show_user_world_records"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User World Records"
+            android:text="your FIND YOUR LIKINGS records"
             android:layout_gravity="center"
-            android:onClick="showUserWorldRecordsDialog" />
+            android:onClick="showUserWorldRecordsDialog_FIND_YOUR_LIKINGS" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="your LIKING SPECTRUM JOURNEY records"
+            android:layout_gravity="center"
+            android:onClick="showUserWorldRecordsDialog_LIKING_SPECTRUM_JOURNEY" />
 
     </LinearLayout>
 

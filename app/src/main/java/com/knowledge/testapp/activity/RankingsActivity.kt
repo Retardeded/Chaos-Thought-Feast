@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.fragment.TopUsersDialogFragment
 import com.knowledge.testapp.fragment.UserWorldRecordsDialogFragment
@@ -27,11 +28,19 @@ class RankingsActivity : AppCompatActivity() {
         dialogFragment.show(supportFragmentManager, "TopUsersDialog")
     }
 
-    fun showUserWorldRecordsDialog(view: View) {
+    fun showUserWorldRecordsDialog_FIND_YOUR_LIKINGS(view: View) {
         val userEmail = currentUser!!.email
         val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
 
-        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail)
+        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.tableName_FIND_YOUR_LIKINGS)
+        dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
+    }
+
+    fun showUserWorldRecordsDialog_LIKING_SPECTRUM_JOURNEY(view: View) {
+        val userEmail = currentUser!!.email
+        val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
+
+        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.tableName_LIKING_SPECTRUM_JOURNEY)
         dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 

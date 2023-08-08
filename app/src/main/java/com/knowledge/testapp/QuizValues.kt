@@ -1,6 +1,7 @@
 package com.knowledge.testapp
 
 import com.knowledge.testapp.data.GameMode
+import com.knowledge.testapp.data.User
 
 object QuizValues {
 
@@ -14,4 +15,7 @@ object QuizValues {
     var correctStart = true
     var correctGoal = true
     var gameMode = GameMode.FIND_YOUR_LIKINGS
+    const val tableName_FIND_YOUR_LIKINGS = "worldRecords_FIND_YOUR_LIKINGS"
+    const val tableName_LIKING_SPECTRUM_JOURNEY = "worldRecords_LIKING_SPECTRUM_JOURNEY"
+    var USER: User? = null
 }
