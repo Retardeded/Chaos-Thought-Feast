@@ -9,46 +9,111 @@
     android:background="@drawable/statsbackground"
     android:scaleType="fitXY">
 
-    <!-- Top Users Button -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Top users in each mode"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:id="@+id/tv_top_users"
+        />
+
+
+    <!-- Seperation Line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/white"
+        android:layout_marginTop="16dp" />
+
+    <!-- User-Specific World Records Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
 
         <Button
-            android:id="@+id/btn_show_top_users"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Top Users"
+            android:text="TOP USERS FIND YOUR LIKINGS"
             android:layout_gravity="center"
-            android:onClick="showTopUsersDialog" />
+            android:onClick="showTopUsersDialog_FIND_YOUR_LIKINGS" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TOP USERS LIKING SPECTRUM JOURNEY"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:onClick="showUserTopUsersDialog_LIKING_SPECTRUM_JOURNEY" />
 
     </LinearLayout>
 
+    <!-- Seperation Line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/white"
+        android:layout_marginTop="16dp" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your personal World Record"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:id="@+id/tv_game_mode_title"
+        />
+
+
+    <!-- Seperation Line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/white"
+        android:layout_marginTop="16dp" />
+
+    <!-- User-Specific World Records Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="your FIND YOUR LIKINGS records"
+            android:text="FIND YOUR LIKINGS Records"
             android:layout_gravity="center"
             android:onClick="showUserWorldRecordsDialog_FIND_YOUR_LIKINGS" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="your LIKING SPECTRUM JOURNEY records"
+            android:text="LIKING SPECTRUM JOURNEY Records"
             android:layout_gravity="center"
+            android:layout_marginTop="8dp"
             android:onClick="showUserWorldRecordsDialog_LIKING_SPECTRUM_JOURNEY" />
 
     </LinearLayout>
+
+    <!-- Seperation Line -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/white"
+        android:layout_marginTop="16dp" />
 
     <!-- Space to push other elements to the top -->
     <Space
@@ -56,6 +121,7 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- Main Menu and Profile Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,6 +1,5 @@
 package com.knowledge.testapp.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -23,8 +22,13 @@ class RankingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_rankings)
     }
 
-    fun showTopUsersDialog(view: View) {
-        val dialogFragment = TopUsersDialogFragment()
+    fun showTopUsersDialog_FIND_YOUR_LIKINGS(view: View) {
+        val dialogFragment = TopUsersDialogFragment(QuizValues.topUsers_FIND_YOUR_LIKINGS)
+        dialogFragment.show(supportFragmentManager, "TopUsersDialog")
+    }
+
+    fun showUserTopUsersDialog_LIKING_SPECTRUM_JOURNEY(view: View) {
+        val dialogFragment = TopUsersDialogFragment(QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY)
         dialogFragment.show(supportFragmentManager, "TopUsersDialog")
     }
 
@@ -32,7 +36,7 @@ class RankingsActivity : AppCompatActivity() {
         val userEmail = currentUser!!.email
         val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
 
-        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.tableName_FIND_YOUR_LIKINGS)
+        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.worldRecords_FIND_YOUR_LIKINGS)
         dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 
@@ -40,7 +44,7 @@ class RankingsActivity : AppCompatActivity() {
         val userEmail = currentUser!!.email
         val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
 
-        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.tableName_LIKING_SPECTRUM_JOURNEY)
+        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY)
         dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 

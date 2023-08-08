@@ -33,12 +33,12 @@ class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String, pri
         val titleTextViewUser = rootView.findViewById<TextView>(R.id.titleTextViewUserName)
         // Set background drawable based on tableName
         when (tableName) {
-            QuizValues.tableName_FIND_YOUR_LIKINGS -> {
+            QuizValues.worldRecords_FIND_YOUR_LIKINGS -> {
                 linearLayout.setBackgroundResource(R.drawable.findyourlikings)
                 titleTextViewRecord.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
             }
 
-            QuizValues.tableName_LIKING_SPECTRUM_JOURNEY -> {
+            QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY -> {
                 linearLayout.setBackgroundResource(R.drawable.likingspecturmjourney2)
                 titleTextViewRecord.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
 

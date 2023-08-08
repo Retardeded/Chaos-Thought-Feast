@@ -1,9 +1,7 @@
 package com.knowledge.testapp.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -137,18 +135,29 @@ class ResultActivity : AppCompatActivity() {
     ) {
 
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-        val refString = when (QuizValues.gameMode) {
-            GameMode.FIND_YOUR_LIKINGS -> (QuizValues.tableName_FIND_YOUR_LIKINGS)
-            GameMode.LIKING_SPECTRUM_JOURNEY -> (QuizValues.tableName_LIKING_SPECTRUM_JOURNEY)
+
+        val refStringWorldsRecords: String
+        val refStringUsers: String
+
+        if (QuizValues.gameMode == GameMode.FIND_YOUR_LIKINGS) {
+            refStringWorldsRecords = QuizValues.worldRecords_FIND_YOUR_LIKINGS
+            refStringUsers = QuizValues.topUsers_FIND_YOUR_LIKINGS
+        } else if (QuizValues.gameMode == GameMode.LIKING_SPECTRUM_JOURNEY) {
+            refStringWorldsRecords = QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY
+            refStringUsers = QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY
+        } else {
+            // Handle other game modes here
+            refStringWorldsRecords = QuizValues.worldRecords_FIND_YOUR_LIKINGS
+            refStringUsers = QuizValues.topUsers_FIND_YOUR_LIKINGS
         }
-        val ref = database.getReference(refString)
-        val usersRef: DatabaseReference = database.getReference("users")
+
+        val usersRef: DatabaseReference = database.getReference(refStringUsers)
 
         // Check if there is any existing record with the same startingConcept and goalConcept and win=true
         //val query = ref.orderByChild("startingConcept").equalTo(startingConcept)
         //val query = ref.orderByKey().startAt("\uf8ff" + "${startingConcept}_${goalConcept}").endAt("${startingConcept}_${goalConcept}")
         val startingGoalConcept = "${startingConcept}_$goalConcept"
-        val query = ref.orderByChild("startingGoalConcept").equalTo(startingGoalConcept)
+        val query = usersRef.orderByChild("startingGoalConcept").equalTo(startingGoalConcept)
 
         val context = this
 
@@ -212,7 +221,7 @@ class ResultActivity : AppCompatActivity() {
                     // Generate a unique ID for the record with the user's sanitized email
                     val recordId = "${sanitizeEmail(user.email)}_${startingConcept}_${goalConcept}"
 
-                    val recordPath = "$refString/$recordId"
+                    val recordPath = "$refStringWorldsRecords/$recordId"
 
                     val recordData = mapOf(
                         "startingConcept" to startingConcept,
@@ -237,14 +246,15 @@ class ResultActivity : AppCompatActivity() {
 
                                     if (currentUser == null) {
                                         // User doesn't exist in the database, create a new entry
-                                        currentData.value = user
+                                        val newUser = user.copy(recordsHeld = 1, currentScore = 100)
+                                        currentData.setValue(newUser)
                                     } else {
                                         // Update the user's records and current score
                                         val newRecordsHeld = currentUser.recordsHeld + 1
                                         val newCurrentScore = currentUser.currentScore + 100
 
-                                        currentData.child("recordsHeld").value = newRecordsHeld
-                                        currentData.child("currentScore").value = newCurrentScore
+                                        currentData.child("recordsHeld").setValue(newRecordsHeld)
+                                        currentData.child("currentScore").setValue(newCurrentScore)
                                     }
 
                                     return Transaction.success(currentData)

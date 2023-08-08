@@ -15,7 +15,7 @@ import com.knowledge.testapp.data.User
 import androidx.fragment.app.DialogFragment
 
 
-class TopUsersDialogFragment : DialogFragment() {
+class TopUsersDialogFragment(private val tableName: String) : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -24,7 +24,7 @@ class TopUsersDialogFragment : DialogFragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_top_users, container, false)
 
-        val databaseReference = FirebaseDatabase.getInstance().getReference("users")
+        val databaseReference = FirebaseDatabase.getInstance().getReference(tableName)
 
         // Query to get the top 10 users with the highest scores
         databaseReference.orderByChild("currentScore").limitToLast(10)
