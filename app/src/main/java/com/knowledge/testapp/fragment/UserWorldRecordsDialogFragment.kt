@@ -43,7 +43,12 @@ class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String, pri
                 titleTextViewRecord.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
 
             }
-            // Add more cases as needed
+
+            QuizValues.worldsRecords_ANYFIN_CAN_HAPPEN -> {
+                linearLayout.setBackgroundResource(R.drawable.anyfin_can_happen)
+                titleTextViewRecord.text = GameMode.ANYFIN_CAN_HAPPEN.toString().replace("_"," ")
+
+            }
         }
         titleTextViewUser.text = QuizValues.USER!!.username
 

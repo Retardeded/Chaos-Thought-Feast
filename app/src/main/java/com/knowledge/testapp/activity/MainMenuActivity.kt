@@ -80,4 +80,10 @@ class MainMenuActivity : AppCompatActivity() {
         QuizValues.gameMode = GameMode.LIKING_SPECTRUM_JOURNEY
         startActivity(intent)
     }
+
+    fun goToAnyfinCanHappen(view: View) {
+        val intent = Intent(this, MainGameSetupActivity::class.java)
+        QuizValues.gameMode = GameMode.ANYFIN_CAN_HAPPEN
+        startActivity(intent)
+    }
 }

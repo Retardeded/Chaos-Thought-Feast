@@ -45,6 +45,12 @@ class TopUsersDialogFragment(private val tableName: String) : DialogFragment() {
                 titleTextViewGameMode.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
 
             }
+
+            QuizValues.topUsers_ANYFIN_CAN_HAPPEN -> {
+                linearLayout.setBackgroundResource(R.drawable.anyfin_can_happen)
+                titleTextViewGameMode.text = GameMode.ANYFIN_CAN_HAPPEN.toString().replace("_"," ")
+
+            }
             // Add more cases as needed
         }
 

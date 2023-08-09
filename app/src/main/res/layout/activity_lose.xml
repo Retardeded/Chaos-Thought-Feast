@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="20dp"
-        tools:context="com.knowledge.testapp.activity.MainGameSetupActivity">
+        tools:context="com.knowledge.testapp.activity.ResultActivity">
 
         <TextView
             android:id="@+id/tv_congratulations"
@@ -69,7 +69,8 @@
                 android:text="Another try"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="tryAgain"/>
 
             <Button
                 android:id="@+id/btn_main_menu_result"

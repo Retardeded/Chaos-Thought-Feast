@@ -42,17 +42,25 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TOP USERS FIND YOUR LIKINGS"
+            android:text="FIND YOUR LIKINGS"
             android:layout_gravity="center"
             android:onClick="showTopUsersDialog_FIND_YOUR_LIKINGS" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TOP USERS LIKING SPECTRUM JOURNEY"
+            android:text="LIKING SPECTRUM JOURNEY"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:onClick="showUserTopUsersDialog_LIKING_SPECTRUM_JOURNEY" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ANYFIN CAN HAPPEN"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:onClick="showUserTopUsersDialog_ANYFIN_CAN_HAPPEN" />
 
     </LinearLayout>
 
@@ -107,6 +115,14 @@
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:onClick="showUserWorldRecordsDialog_LIKING_SPECTRUM_JOURNEY" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ANYFIN CAN HAPPEN Records"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:onClick="showUserWorldRecordsDialog_ANYFIN_CAN_HAPPEN" />
 
     </LinearLayout>
 

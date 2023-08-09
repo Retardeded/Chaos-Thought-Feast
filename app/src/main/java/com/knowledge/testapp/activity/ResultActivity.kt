@@ -1,6 +1,7 @@
 package com.knowledge.testapp.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -139,16 +140,19 @@ class ResultActivity : AppCompatActivity() {
         val refStringWorldsRecords: String
         val refStringUsers: String
 
-        if (QuizValues.gameMode == GameMode.FIND_YOUR_LIKINGS) {
-            refStringWorldsRecords = QuizValues.worldRecords_FIND_YOUR_LIKINGS
-            refStringUsers = QuizValues.topUsers_FIND_YOUR_LIKINGS
-        } else if (QuizValues.gameMode == GameMode.LIKING_SPECTRUM_JOURNEY) {
-            refStringWorldsRecords = QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY
-            refStringUsers = QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY
-        } else {
-            // Handle other game modes here
-            refStringWorldsRecords = QuizValues.worldRecords_FIND_YOUR_LIKINGS
-            refStringUsers = QuizValues.topUsers_FIND_YOUR_LIKINGS
+        when (QuizValues.gameMode) {
+            GameMode.FIND_YOUR_LIKINGS -> {
+                refStringWorldsRecords = QuizValues.worldRecords_FIND_YOUR_LIKINGS
+                refStringUsers = QuizValues.topUsers_FIND_YOUR_LIKINGS
+            }
+            GameMode.LIKING_SPECTRUM_JOURNEY -> {
+                refStringWorldsRecords = QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY
+                refStringUsers = QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY
+            }
+            GameMode.ANYFIN_CAN_HAPPEN -> {
+                refStringWorldsRecords = QuizValues.worldsRecords_ANYFIN_CAN_HAPPEN
+                refStringUsers = QuizValues.topUsers_ANYFIN_CAN_HAPPEN
+            }
         }
 
         val usersRef: DatabaseReference = database.getReference(refStringUsers)

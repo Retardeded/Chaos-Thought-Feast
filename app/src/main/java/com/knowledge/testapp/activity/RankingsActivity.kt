@@ -32,6 +32,11 @@ class RankingsActivity : AppCompatActivity() {
         dialogFragment.show(supportFragmentManager, "TopUsersDialog")
     }
 
+    fun showUserTopUsersDialog_ANYFIN_CAN_HAPPEN(view: View) {
+        val dialogFragment = TopUsersDialogFragment(QuizValues.topUsers_ANYFIN_CAN_HAPPEN)
+        dialogFragment.show(supportFragmentManager, "TopUsersDialog")
+    }
+
     fun showUserWorldRecordsDialog_FIND_YOUR_LIKINGS(view: View) {
         val userEmail = currentUser!!.email
         val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
@@ -45,6 +50,14 @@ class RankingsActivity : AppCompatActivity() {
         val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
 
         val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY)
+        dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
+    }
+
+    fun showUserWorldRecordsDialog_ANYFIN_CAN_HAPPEN(view: View) {
+        val userEmail = currentUser!!.email
+        val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
+
+        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.worldsRecords_ANYFIN_CAN_HAPPEN)
         dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 

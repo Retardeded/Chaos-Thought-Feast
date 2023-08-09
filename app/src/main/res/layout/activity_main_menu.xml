@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:text="Anyfin Can Happen"
             android:textColor="@color/white"
-            android:onClick="goToFindYourLikings" />
+            android:onClick="goToAnyfinCanHappen" />
 
     </LinearLayout>
 
