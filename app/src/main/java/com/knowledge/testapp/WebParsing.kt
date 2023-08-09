@@ -75,16 +75,20 @@ class WebParsing(var applicationContext: Context) {
 
     fun setNextLinks(options: ArrayList<TextView>) {
 
-        if(currentIndex + options.size >= mUrls.size)
+        if(currentIndex >= mUrls.size) {
             return
+        }
 
         for (i in options.indices) {
-            val line = mUrls[currentIndex]
+            var line= ""
+            if(currentIndex < mUrls.size) {
+                line = mUrls[currentIndex]
+            }
             val pattern = "([^/]+\$)"
             val r = Pattern.compile(pattern)
             val m = r.matcher(line)
             if (m.find()) {
-                options[i].setText(m.group(0))
+                options[i].text = m.group(0)
             }
             currentIndex++
         }
