@@ -31,7 +31,7 @@
             android:name=".activity.ResultActivity"
             android:exported="true" />
         <activity
-            android:name=".activity.QuizQuestionActivity"
+            android:name=".activity.GameActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity

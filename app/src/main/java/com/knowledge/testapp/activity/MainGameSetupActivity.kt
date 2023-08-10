@@ -16,7 +16,6 @@ import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
 import com.knowledge.testapp.data.GameMode
-import com.knowledge.testapp.databinding.ActivityLoginBinding
 import com.knowledge.testapp.databinding.ActivityMainGameSetupBinding
 import kotlinx.coroutines.launch
 
@@ -229,7 +228,7 @@ class MainGameSetupActivity : AppCompatActivity() {
     }
 
     fun startQuizActivity(startingConceptPresent: Boolean, goalConceptPresent: Boolean) {
-        val intent = Intent(this, QuizQuestionActivity::class.java)
+        val intent = Intent(this, GameActivity::class.java)
 
         if (startingConceptPresent) {
             intent.putExtra(QuizValues.STARTING_CONCEPT, binding.etStartTitle.text.toString().replace(" ", "_"))

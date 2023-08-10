@@ -6,32 +6,22 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
+import com.knowledge.testapp.databinding.ActivityGameBinding
 
 
-class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
+class GameActivity : AppCompatActivity(), View.OnClickListener {
 
-    private lateinit var progressBar: ProgressBar
-    private lateinit var progressView: TextView
-    private lateinit var currentLinkView: TextView
-    private lateinit var toFoundView: TextView
 
-    private lateinit var optionOneView: TextView
-    private lateinit var optionTwoView: TextView
-    private lateinit var optionThreeView: TextView
-    private lateinit var optionFourView: TextView
-    private lateinit var optionFiveView: TextView
+    private lateinit var binding: ActivityGameBinding
+
+
     private var options: ArrayList<TextView> = ArrayList()
-
-    private lateinit var buttonNext: ImageButton
-    private lateinit var buttonPrevious: ImageButton
 
     private var selectedPositionOption:Int = 0
     private var pathList:ArrayList<String> = ArrayList()
@@ -43,40 +33,28 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_quiz_question)
-
-        progressBar = findViewById(R.id.progessBar)
-        progressView = findViewById(R.id.tv_progress)
-        currentLinkView = findViewById(R.id.tv_current_link)
-        toFoundView = findViewById(R.id.tv_to_found)
-
-        optionOneView = findViewById(R.id.tv_option_one)
-        optionTwoView = findViewById(R.id.tv_option_two)
-        optionThreeView = findViewById(R.id.tv_option_three)
-        optionFourView = findViewById(R.id.tv_option_four)
-        optionFiveView = findViewById(R.id.tv_option_five)
-
-        buttonNext = findViewById(R.id.btn_next)
-        buttonPrevious = findViewById(R.id.btn_previous)
+        binding = ActivityGameBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         startingConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
         goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
 
-        options.add(optionOneView)
-        options.add(optionTwoView)
-        options.add(optionThreeView)
-        options.add(optionFourView)
-        options.add(optionFiveView)
+        options.add(binding.tvOptionOne)
+        options.add(binding.tvOptionTwo)
+        options.add(binding.tvOptionThree)
+        options.add(binding.tvOptionFour)
+        options.add(binding.tvOptionFive)
 
         for(option in options) {
             option.setOnClickListener(this)
         }
-        buttonNext.setOnClickListener(this)
-        buttonPrevious.setOnClickListener(this)
+        binding.btnNext.setOnClickListener(this)
+        binding.btnPrevious.setOnClickListener(this)
 
-        toFoundView.text = toFoundView.text.toString() + goalConcept
+        val text = binding.tvToFound.text.toString() + goalConcept
+        binding.tvToFound.text = text
         webParsing = WebParsing(this)
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + startingConcept, currentLinkView, options)
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + startingConcept, binding.tvCurrentLink, options)
         pathList.add(startingConcept)
 
         val btnEnd = findViewById<Button>(R.id.btn_end)
@@ -101,20 +79,20 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
 
         when(v?.id) {
             R.id.tv_option_one -> {
-                selectedOptionView(optionOneView, 1)
+                selectedOptionView(binding.tvOptionOne, 1)
             }
             R.id.tv_option_two -> {
-                selectedOptionView(optionTwoView, 2)
+                selectedOptionView(binding.tvOptionTwo, 2)
             }
             R.id.tv_option_three -> {
-                selectedOptionView(optionThreeView, 3)
+                selectedOptionView(binding.tvOptionThree, 3)
             }
             R.id.tv_option_four -> {
-                selectedOptionView(optionFourView, 4)
+                selectedOptionView(binding.tvOptionFour, 4)
 
             }
             R.id.tv_option_five -> {
-                selectedOptionView(optionFiveView, 5)
+                selectedOptionView(binding.tvOptionFive, 5)
 
             }
             R.id.btn_next -> {
@@ -144,7 +122,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         }, 300) // Delay of 0.3 seconds (300 milliseconds)
 
 
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, currentLinkView, options)
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, binding.tvCurrentLink, options)
 
         if(tv.text == goalConcept)
         {
@@ -154,9 +132,9 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         else
         {
             totalSteps++
-            progressBar.progress = totalSteps
-            progressView.text = totalSteps.toString() + "/" + progressBar.max
-            if(totalSteps > progressBar.max)
+            binding.progessBar.progress = totalSteps
+            binding.tvProgress.text = totalSteps.toString() + "/" + binding.progessBar.max
+            if(totalSteps > binding.progessBar.max)
             {
                 endQuiz(false)
             }
@@ -170,7 +148,7 @@ class QuizQuestionActivity : AppCompatActivity(), View.OnClickListener {
         intent.putExtra(QuizValues.STARTING_CONCEPT, startingConcept)
         intent.putExtra(QuizValues.GOAL_CONCEPT, goalConcept)
         intent.putExtra(QuizValues.TOTAL_STEPS, totalSteps)
-        intent.putExtra(QuizValues.MAX_PROGRESS, progressBar.max)
+        intent.putExtra(QuizValues.MAX_PROGRESS, binding.progessBar.max)
         intent.putStringArrayListExtra(QuizValues.PATH, pathList)
         startActivity(intent)
         finish()
