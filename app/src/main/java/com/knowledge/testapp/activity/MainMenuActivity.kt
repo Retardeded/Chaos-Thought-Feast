@@ -10,12 +10,17 @@ import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
+import com.knowledge.testapp.databinding.ActivityMainGameSetupBinding
+import com.knowledge.testapp.databinding.ActivityMainMenuBinding
 import com.knowledge.testapp.utils.ModyfingStrings
 
 class MainMenuActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainMenuBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_menu)
+        binding = ActivityMainMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         QuizValues.USER = null
         FirebaseAuth.getInstance().currentUser?.email?.let {

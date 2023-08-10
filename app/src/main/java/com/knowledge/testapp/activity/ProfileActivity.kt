@@ -10,6 +10,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
+import com.knowledge.testapp.databinding.ActivityMainMenuBinding
+import com.knowledge.testapp.databinding.ActivityProfileActivtyBinding
 import com.knowledge.testapp.fragment.PathsDialogFragment
 import com.knowledge.testapp.utils.ModyfingStrings
 import com.knowledge.testapp.utils.NavigationUtils
@@ -19,10 +21,13 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var wikiHelper: WikiHelper
     private val currentUser = FirebaseAuth.getInstance().currentUser
+    private lateinit var binding: ActivityProfileActivtyBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile_activty)
+        binding = ActivityProfileActivtyBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
 
         setupRecyclerViews()
     }

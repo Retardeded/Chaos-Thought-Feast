@@ -16,82 +16,60 @@ import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
 import com.knowledge.testapp.data.GameMode
+import com.knowledge.testapp.databinding.ActivityLoginBinding
+import com.knowledge.testapp.databinding.ActivityMainGameSetupBinding
 import kotlinx.coroutines.launch
 
 
 class MainGameSetupActivity : AppCompatActivity() {
 
-    private lateinit var buttonStart: Button
-    private lateinit var buttonRandomStart: ImageButton
-    private lateinit var buttonRandomGoal: ImageButton
-    private lateinit var buttonRandomCategory: ImageButton
-    private lateinit var editTextStartTitle: EditText
-    private lateinit var editTextGoalTitle: EditText
-    private lateinit var editTextKeyword: EditText
-    private lateinit var editTextCategory: EditText
+    private lateinit var binding: ActivityMainGameSetupBinding
     private val webParsing = WebParsing(this)
     private lateinit var randomArticleViewModel: RandomArticleViewModel
 
     private lateinit var auth: FirebaseAuth
 
-
-    private lateinit var scrollView: ScrollView
-    private lateinit var textViewGameModeTitle: TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_game_setup)
-
-        scrollView = findViewById(R.id.sv_game_setup)
-        textViewGameModeTitle = findViewById(R.id.tv_game_mode_title)
-        // Continue with the rest of your activity setup
-
-        buttonRandomStart = findViewById(R.id.btn_randomStartTitle)
-        buttonRandomGoal = findViewById(R.id.btn_randomGoalTitle)
-        buttonRandomCategory = findViewById(R.id.btn_randomCategory)
-
-        buttonStart = findViewById(R.id.btn_start)
-        editTextStartTitle = findViewById(R.id.et_startTitle)
-        editTextGoalTitle = findViewById(R.id.et_goalTitle)
-        editTextKeyword = findViewById(R.id.et_Keyword)
-        editTextCategory = findViewById(R.id.et_Category)
+        binding = ActivityMainGameSetupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         when (QuizValues.gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> {
-                scrollView.setBackgroundResource(R.drawable.findyourlikings)
-                textViewGameModeTitle.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
-                buttonStart.setOnClickListener {
+                binding.svGameSetup.setBackgroundResource(R.drawable.findyourlikings)
+                binding.tvGameModeTitle.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
+                binding.btnStart.setOnClickListener {
                     validateStartAndGoalAndProceed()
                 }
             }
             GameMode.LIKING_SPECTRUM_JOURNEY -> {
-                scrollView.setBackgroundResource(R.drawable.likingspecturmjourney2)
-                textViewGameModeTitle.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
+                binding.svGameSetup.setBackgroundResource(R.drawable.likingspecturmjourney2)
+                binding.tvGameModeTitle.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
                 val layoutStartConceptToHide: LinearLayout = findViewById(R.id.layout_randomStartTitle)
                 layoutStartConceptToHide.visibility = View.GONE
-                editTextStartTitle.text.clear()
-                buttonStart.setOnClickListener {
+                binding.etStartTitle.text.clear()
+                binding.btnStart.setOnClickListener {
                     // Your first game mode logic here
                     validateGoalAndProceed()
                 }
             }
             GameMode.ANYFIN_CAN_HAPPEN -> {
-                scrollView.setBackgroundResource(R.drawable.anyfin_can_happen)
-                textViewGameModeTitle.text = GameMode.ANYFIN_CAN_HAPPEN.toString().replace("_"," ")
+                binding.svGameSetup.setBackgroundResource(R.drawable.anyfin_can_happen)
+                binding.tvGameModeTitle.text = GameMode.ANYFIN_CAN_HAPPEN.toString().replace("_"," ")
                 val layoutStartConceptToHide: LinearLayout = findViewById(R.id.layout_randomStartTitle)
                 layoutStartConceptToHide.visibility = View.GONE
                 val layoutGoalConceptToHide: LinearLayout = findViewById(R.id.layout_randomGoalTitle)
                 layoutGoalConceptToHide.visibility = View.GONE
-                editTextStartTitle.text.clear()
-                editTextGoalTitle.text.clear()
-                buttonStart.setOnClickListener {
+                binding.etStartTitle.text.clear()
+                binding.etGoalTitle.text.clear()
+                binding.btnStart.setOnClickListener {
                     proceed()
                 }
             }
             else -> {}
         }
 
-        editTextStartTitle.addTextChangedListener(object : TextWatcher {
+        binding.etStartTitle.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -102,7 +80,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         })
 
-        editTextGoalTitle.addTextChangedListener(object : TextWatcher {
+        binding.etGoalTitle.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -113,7 +91,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         })
 
-        editTextStartTitle.afterTextChanged { text ->
+        binding.etStartTitle.afterTextChanged { text ->
             val articleUrl = QuizValues.BASIC_LINK + text.replace(" ", "_")
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
@@ -123,7 +101,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         }
 
-        editTextGoalTitle.afterTextChanged { text ->
+        binding.etGoalTitle.afterTextChanged { text ->
             val articleUrl = QuizValues.BASIC_LINK + text.replace(" ", "_")
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
@@ -140,8 +118,8 @@ class MainGameSetupActivity : AppCompatActivity() {
         ) {
             lifecycleScope.launch {
                 runCatching {
-                    val category = editTextCategory.text.toString()
-                    val keyword = editTextKeyword.text.toString()
+                    val category = binding.etCategory.text.toString()
+                    val keyword = binding.etKeyword.text.toString()
 
                     val result = if (keyword.isNotEmpty()) {
                         randomArticleViewModel.getArticleByKeyword(keyword)
@@ -161,24 +139,24 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         }
 
-        buttonRandomStart.setOnClickListener {
-            setRandomArticle(editTextStartTitle) { success ->
+        binding.btnRandomStartTitle.setOnClickListener {
+            setRandomArticle(binding.etStartTitle) { success ->
                 QuizValues.correctStart = success
             }
         }
 
-        buttonRandomGoal.setOnClickListener {
-            setRandomArticle(editTextGoalTitle) { success ->
+        binding.btnRandomGoalTitle.setOnClickListener {
+            setRandomArticle(binding.etGoalTitle) { success ->
                 QuizValues.correctGoal = success
             }
         }
 
-        buttonRandomCategory.setOnClickListener {
+        binding.btnRandomCategory.setOnClickListener {
             lifecycleScope.launch {
                 runCatching {
                     randomArticleViewModel.getRandomCategory()
                 }.onSuccess { result ->
-                    editTextCategory.setText(result)
+                    binding.etCategory.setText(result)
                 }.onFailure { throwable ->
                     // Handle the error, e.g., show an error message
                 }
@@ -189,7 +167,7 @@ class MainGameSetupActivity : AppCompatActivity() {
     }
 
     fun validateStartAndGoalAndProceed() {
-        if (editTextStartTitle.text.isEmpty() || editTextGoalTitle.text.isEmpty()) {
+        if (binding.etStartTitle.text.isEmpty() || binding.etGoalTitle.text.isEmpty()) {
             val text = "Fill in Start and Goal title!"
             val duration = Toast.LENGTH_SHORT
             val toast = Toast.makeText(applicationContext, text, duration)
@@ -200,21 +178,21 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
 
             if (!QuizValues.correctStart) {
-                editTextStartTitle.setPaintFlags(editTextStartTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG)
+                binding.etStartTitle.paintFlags = binding.etStartTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             } else {
-                editTextStartTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
+                binding.etStartTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
 
             if (!QuizValues.correctGoal) {
-                editTextGoalTitle.setPaintFlags(editTextGoalTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG)
+                binding.etGoalTitle.paintFlags = binding.etGoalTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             } else {
-                editTextGoalTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
+                binding.etGoalTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
         }
     }
 
     fun validateGoalAndProceed() {
-        if (editTextGoalTitle.text.isEmpty()) {
+        if (binding.etGoalTitle.text.isEmpty()) {
             val text = "Fill in Goal title!"
             val duration = Toast.LENGTH_SHORT
             val toast = Toast.makeText(applicationContext, text, duration)
@@ -225,9 +203,9 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
 
             if (!QuizValues.correctGoal) {
-                editTextGoalTitle.setPaintFlags(editTextGoalTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG)
+                binding.etGoalTitle.paintFlags = binding.etGoalTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             } else {
-                editTextGoalTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
+                binding.etGoalTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
         }
     }
@@ -254,8 +232,8 @@ class MainGameSetupActivity : AppCompatActivity() {
         val intent = Intent(this, QuizQuestionActivity::class.java)
 
         if (startingConceptPresent) {
-            intent.putExtra(QuizValues.STARTING_CONCEPT, editTextStartTitle.text.toString().replace(" ", "_"))
-            intent.putExtra(QuizValues.GOAL_CONCEPT, editTextGoalTitle.text.toString().replace(" ", "_"))
+            intent.putExtra(QuizValues.STARTING_CONCEPT, binding.etStartTitle.text.toString().replace(" ", "_"))
+            intent.putExtra(QuizValues.GOAL_CONCEPT, binding.etGoalTitle.text.toString().replace(" ", "_"))
             startActivity(intent)
         } else if(goalConceptPresent) {
             lifecycleScope.launch {
@@ -264,7 +242,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                 }.onSuccess { result ->
                     System.out.println("article:: " + result.toString().replace(" ", "_"))
                     intent.putExtra(QuizValues.STARTING_CONCEPT, result.toString().replace(" ", "_"))
-                    intent.putExtra(QuizValues.GOAL_CONCEPT, editTextGoalTitle.text.toString().replace(" ", "_"))
+                    intent.putExtra(QuizValues.GOAL_CONCEPT, binding.etGoalTitle.text.toString().replace(" ", "_"))
                     startActivity(intent)
                 }.onFailure { throwable ->
                     // Handle the error, e.g., show an error message
@@ -274,8 +252,8 @@ class MainGameSetupActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 val firstResult = runCatching {
-                    val category = editTextCategory.text.toString()
-                    val keyword = editTextKeyword.text.toString()
+                    val category = binding.etCategory.text.toString()
+                    val keyword = binding.etKeyword.text.toString()
 
                     val result = if (keyword.isNotEmpty()) {
                         randomArticleViewModel.getArticleByKeyword(keyword)
@@ -293,8 +271,8 @@ class MainGameSetupActivity : AppCompatActivity() {
                 }.getOrNull()
 
                 val secondResult = runCatching {
-                    val category = editTextCategory.text.toString()
-                    val keyword = editTextKeyword.text.toString()
+                    val category = binding.etCategory.text.toString()
+                    val keyword = binding.etKeyword.text.toString()
 
                     val result = if (keyword.isNotEmpty()) {
                         randomArticleViewModel.getArticleByKeyword(keyword)

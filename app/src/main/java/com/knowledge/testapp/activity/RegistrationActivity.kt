@@ -3,49 +3,37 @@ package com.knowledge.testapp.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.knowledge.testapp.R
 import com.knowledge.testapp.data.User
+import com.knowledge.testapp.databinding.ActivityRegistrationBinding
 import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
 
 class RegistrationActivity : AppCompatActivity() {
-    private lateinit var usernameEditText: EditText
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var registerButton: Button
-    private lateinit var loginTextView: TextView
 
+    private lateinit var binding: ActivityRegistrationBinding
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registration)
+        binding = ActivityRegistrationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        usernameEditText = findViewById(R.id.editTextUsername)
-        emailEditText = findViewById(R.id.editTextEmail)
-        passwordEditText = findViewById(R.id.editTextPassword)
-        registerButton = findViewById(R.id.btnRegister)
-        loginTextView = findViewById(R.id.textViewLogin)
-
-        registerButton.setOnClickListener {
-            val user = usernameEditText.text.toString()
-            val email = emailEditText.text.toString().trim()
-            val password = passwordEditText.text.toString()
+        binding.btnRegister.setOnClickListener {
+            val user = binding.etUsername.text.toString()
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString()
 
             // Call the register function with email and password
             registerUser(user, email, password)
         }
 
-        loginTextView.setOnClickListener {
+        binding.tvLogin.setOnClickListener {
             // Redirect to LoginActivity when "Already have an account? Login here" is clicked
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)

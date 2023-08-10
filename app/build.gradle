@@ -8,12 +8,16 @@ android {
     compileSdkVersion 33
     buildToolsVersion "30.0.3"
 
+    viewBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "com.knowledge.testapp"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 8
-        versionName "1.35"
+        versionCode 9
+        versionName "1.36"
 
         multiDexEnabled true
 

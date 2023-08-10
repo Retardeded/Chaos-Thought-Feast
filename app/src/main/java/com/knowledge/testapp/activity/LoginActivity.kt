@@ -9,36 +9,30 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.knowledge.testapp.R
+import com.knowledge.testapp.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var loginButton: Button
-    private lateinit var registerButton: Button
 
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        emailEditText = findViewById(R.id.editTextEmail)
-        passwordEditText = findViewById(R.id.editTextPassword)
-        loginButton = findViewById(R.id.btnLogin)
-        registerButton = findViewById(R.id.btnRegister)
-
-        loginButton.setOnClickListener {
-            val email = emailEditText.text.toString().trim()
-            val password = passwordEditText.text.toString()
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString()
 
             // Call the login function with email and password
             loginUser(email, password)
         }
 
-        registerButton.setOnClickListener {
+        binding.btnRegister.setOnClickListener {
             // Redirect to RegistrationActivity when "Register here" button is clicked
             val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)

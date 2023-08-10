@@ -14,10 +14,15 @@ import com.knowledge.testapp.WikiHelper
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.data.PathRecord
+import com.knowledge.testapp.databinding.ActivityLoseBinding
+import com.knowledge.testapp.databinding.ActivityResultBinding
 import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
 import com.knowledge.testapp.utils.NavigationUtils
 
 class ResultActivity : AppCompatActivity() {
+
+    private lateinit var bindingResult: ActivityResultBinding
+    private lateinit var bindingLose: ActivityLoseBinding
 
     private lateinit var scoreView: TextView
     private lateinit var pathView: TextView
@@ -42,14 +47,18 @@ class ResultActivity : AppCompatActivity() {
         win = intent.getBooleanExtra(QuizValues.WIN, false)
         totalSteps = intent.getIntExtra(QuizValues.TOTAL_STEPS, 0)
 
-            if(win)
-                setContentView(R.layout.activity_result)
-            else
-                setContentView(R.layout.activity_lose)
+        if (win) {
+            bindingResult = ActivityResultBinding.inflate(layoutInflater)
+            setContentView(bindingResult.root)
+            scoreView = bindingResult.tvScore
+            pathView = bindingResult.tvPath
+        } else {
+            bindingLose = ActivityLoseBinding.inflate(layoutInflater)
+            setContentView(bindingLose.root)
+            scoreView = bindingLose.tvScore
+            pathView = bindingLose.tvPath
+        }
 
-
-        scoreView = findViewById(R.id.tv_score)
-        pathView = findViewById(R.id.tv_path)
         startConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
         goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
 

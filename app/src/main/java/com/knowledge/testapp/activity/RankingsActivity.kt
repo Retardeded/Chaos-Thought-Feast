@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
+import com.knowledge.testapp.databinding.ActivityMainMenuBinding
+import com.knowledge.testapp.databinding.ActivityProfileActivtyBinding
+import com.knowledge.testapp.databinding.ActivityRankingsBinding
 import com.knowledge.testapp.fragment.TopUsersDialogFragment
 import com.knowledge.testapp.fragment.UserWorldRecordsDialogFragment
 import com.knowledge.testapp.utils.ModyfingStrings
@@ -14,12 +17,15 @@ import com.knowledge.testapp.utils.NavigationUtils
 
 
 class RankingsActivity : AppCompatActivity() {
-    private lateinit var buttonFinish: Button
     private val currentUser = FirebaseAuth.getInstance().currentUser
+    private lateinit var binding: ActivityRankingsBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_rankings)
+        binding = ActivityRankingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
     }
 
     fun showTopUsersDialog_FIND_YOUR_LIKINGS(view: View) {
