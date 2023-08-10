@@ -2,6 +2,7 @@ package com.knowledge.testapp
 
 import android.content.Context
 import android.widget.TextView
+import com.knowledge.testapp.utils.ModyfingStrings
 import okhttp3.*
 import java.io.IOException
 import java.util.regex.Matcher
@@ -88,7 +89,7 @@ class WebParsing(var applicationContext: Context) {
             val r = Pattern.compile(pattern)
             val m = r.matcher(line)
             if (m.find()) {
-                options[i].text = m.group(0)
+                options[i].text = ModyfingStrings.encodedURLToText(m.group(0)!!)
             }
             currentIndex++
         }
@@ -107,7 +108,7 @@ class WebParsing(var applicationContext: Context) {
             val r = Pattern.compile(pattern)
             val m = r.matcher(line)
             if (m.find()) {
-                options[i].setText(m.group(0))
+                options[i].text = ModyfingStrings.encodedURLToText(m.group(0)!!)
             }
             currentIndex++
         }
