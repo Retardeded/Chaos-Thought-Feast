@@ -60,6 +60,19 @@
             android:textColor="@color/white"
             android:onClick="goToAnyfinCanHappen" />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+        <Button
+            android:id="@+id/btn_p_v_p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PvP"
+            android:textColor="@color/white"
+            android:onClick="goToPvP"
+            android:visibility="invisible"/>
+
     </LinearLayout>
 
 

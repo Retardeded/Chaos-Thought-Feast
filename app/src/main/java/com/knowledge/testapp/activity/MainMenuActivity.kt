@@ -91,4 +91,9 @@ class MainMenuActivity : AppCompatActivity() {
         QuizValues.gameMode = GameMode.ANYFIN_CAN_HAPPEN
         startActivity(intent)
     }
+
+    fun goToPvP(view: View) {
+        val intent = Intent(this, QueueActivity::class.java)
+        startActivity(intent)
+    }
 }
