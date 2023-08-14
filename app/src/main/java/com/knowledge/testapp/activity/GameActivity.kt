@@ -13,6 +13,7 @@ import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
 import com.knowledge.testapp.databinding.ActivityGameBinding
+import com.knowledge.testapp.utils.ModifyingStrings
 
 
 class GameActivity : AppCompatActivity(), View.OnClickListener {
@@ -54,7 +55,9 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         val text = binding.tvToFound.text.toString() + goalConcept
         binding.tvToFound.text = text
         webParsing = WebParsing(this)
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + startingConcept, binding.tvCurrentLink, options)
+        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, startingConcept)
+        System.out.println("URL::" + articleUrl)
+        webParsing.getHtmlFromUrl(articleUrl, binding.tvCurrentLink, options)
         pathList.add(startingConcept)
 
         val btnEnd = findViewById<Button>(R.id.btn_end)
@@ -122,7 +125,8 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         }, 300) // Delay of 0.3 seconds (300 milliseconds)
 
 
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, binding.tvCurrentLink, options)
+        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, tv.text.toString())
+        webParsing.getHtmlFromUrl(articleUrl, binding.tvCurrentLink, options)
 
         if(tv.text == goalConcept)
         {

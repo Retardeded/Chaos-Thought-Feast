@@ -8,12 +8,10 @@ import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
-import com.knowledge.testapp.databinding.ActivityMainMenuBinding
 import com.knowledge.testapp.databinding.ActivityProfileActivtyBinding
 import com.knowledge.testapp.fragment.PathsDialogFragment
-import com.knowledge.testapp.utils.ModyfingStrings
+import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
 
 class ProfileActivity : AppCompatActivity() {
@@ -76,7 +74,7 @@ class ProfileActivity : AppCompatActivity() {
 
             val database: FirebaseDatabase = FirebaseDatabase.getInstance()
             val usersRef: DatabaseReference = database.getReference("users")
-            val sanitizedEmail = currentUser.email?.let { ModyfingStrings.sanitizeEmail(it) }
+            val sanitizedEmail = currentUser.email?.let { ModifyingStrings.sanitizeEmail(it) }
             val userRecordsRef = sanitizedEmail?.let { usersRef.child(it) }
             if (userRecordsRef != null) {
                 userRecordsRef.removeValue()

@@ -7,12 +7,12 @@ import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.databinding.ActivityRankingsBinding
 import com.knowledge.testapp.fragment.TopUsersDialogFragment
 import com.knowledge.testapp.fragment.UserWorldRecordsDialogFragment
-import com.knowledge.testapp.utils.ModyfingStrings
+import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
 
 
 class RankingsActivity : AppCompatActivity() {
-    private val currentUserSanitizedEmail = ModyfingStrings.sanitizeEmail(QuizValues.USER!!.email)
+    private val currentUserSanitizedEmail = ModifyingStrings.sanitizeEmail(QuizValues.USER!!.email)
     private lateinit var binding: ActivityRankingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

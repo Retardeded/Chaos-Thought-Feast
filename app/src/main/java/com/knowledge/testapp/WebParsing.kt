@@ -2,7 +2,7 @@ package com.knowledge.testapp
 
 import android.content.Context
 import android.widget.TextView
-import com.knowledge.testapp.utils.ModyfingStrings
+import com.knowledge.testapp.utils.ModifyingStrings
 import okhttp3.*
 import java.io.IOException
 import java.util.regex.Matcher
@@ -44,6 +44,8 @@ class WebParsing(var applicationContext: Context) {
 
     fun getHtmlFromUrl(url: String, tv: TextView, options: ArrayList<TextView>) {
 
+        println("inner url:: " + url)
+
         val request = Request.Builder()
             .url(url)
             .build()
@@ -65,7 +67,7 @@ class WebParsing(var applicationContext: Context) {
                         mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
                         // Use runOnUiThread to update the UI safely
                         tv.post {
-                            tv.setText(url.substring(QuizValues.BASIC_LINK.length))
+                            tv.text = url.substring(QuizValues.BASIC_LINK_PREFIX.length)
                             setNextLinks(options)
                         }
                     }
@@ -89,7 +91,7 @@ class WebParsing(var applicationContext: Context) {
             val r = Pattern.compile(pattern)
             val m = r.matcher(line)
             if (m.find()) {
-                options[i].text = ModyfingStrings.encodedURLToText(m.group(0)!!)
+                options[i].text = ModifyingStrings.encodedURLToText(m.group(0)!!)
             }
             currentIndex++
         }
@@ -108,7 +110,7 @@ class WebParsing(var applicationContext: Context) {
             val r = Pattern.compile(pattern)
             val m = r.matcher(line)
             if (m.find()) {
-                options[i].text = ModyfingStrings.encodedURLToText(m.group(0)!!)
+                options[i].text = ModifyingStrings.encodedURLToText(m.group(0)!!)
             }
             currentIndex++
         }

@@ -34,4 +34,7 @@
     <string name="liking_spectrum_journey_records">Liking Spectrum Journey Records</string>
     <string name="anyfin_can_happen_records">Anyfin Can Happen</string>
     <string name="top_users">Top Users</string>
+
+    <string name="example_starting_concept">Quiz</string>
+    <string name="example_goal_concept">Europe</string>
 </resources>

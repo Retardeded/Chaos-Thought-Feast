@@ -4,16 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.R
 import com.knowledge.testapp.data.GameMode
-import com.knowledge.testapp.data.User
-import com.knowledge.testapp.databinding.ActivityMainGameSetupBinding
 import com.knowledge.testapp.databinding.ActivityMainMenuBinding
-import com.knowledge.testapp.utils.LocaleHelper
-import com.knowledge.testapp.utils.ModyfingStrings
 
 class MainMenuActivity : AppCompatActivity() {
 

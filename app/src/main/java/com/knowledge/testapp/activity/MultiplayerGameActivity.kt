@@ -54,7 +54,7 @@ class MultiplayerGameActivity : AppCompatActivity(), View.OnClickListener {
         val text = binding.tvToFound.text.toString() + goalConcept
         binding.tvToFound.text = text
         webParsing = WebParsing(this)
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + startingConcept, binding.tvCurrentLink, options)
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK_PREFIX + startingConcept, binding.tvCurrentLink, options)
         pathList.add(startingConcept)
 
         val btnEnd = findViewById<Button>(R.id.btn_end)
@@ -127,7 +127,7 @@ class MultiplayerGameActivity : AppCompatActivity(), View.OnClickListener {
         }, 300) // Delay of 0.3 seconds (300 milliseconds)
 
 
-        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK + tv.text, binding.tvCurrentLink, options)
+        webParsing.getHtmlFromUrl(QuizValues.BASIC_LINK_PREFIX + tv.text, binding.tvCurrentLink, options)
 
         if(tv.text == goalConcept)
         {

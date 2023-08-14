@@ -17,6 +17,7 @@ import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.databinding.ActivityMainGameSetupBinding
+import com.knowledge.testapp.utils.ModifyingStrings
 import kotlinx.coroutines.launch
 
 
@@ -91,7 +92,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         })
 
         binding.etStartTitle.afterTextChanged { text ->
-            val articleUrl = QuizValues.BASIC_LINK + text.replace(" ", "_")
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, text)
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
                 // Update QuizValues or perform other actions based on isCorrect
@@ -101,7 +102,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         }
 
         binding.etGoalTitle.afterTextChanged { text ->
-            val articleUrl = QuizValues.BASIC_LINK + text.replace(" ", "_")
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, text)
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
                 // Update QuizValues or perform other actions based on isCorrect
@@ -109,7 +110,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                 // Perform other tasks if needed
             }
         }
-        randomArticleViewModel = ViewModelProvider(this).get(RandomArticleViewModel::class.java)
+        randomArticleViewModel = ViewModelProvider(this)[RandomArticleViewModel::class.java]
 
         fun setRandomArticle(
             editText: EditText,
@@ -239,7 +240,6 @@ class MainGameSetupActivity : AppCompatActivity() {
                 runCatching {
                     randomArticleViewModel.getRandomArticle()
                 }.onSuccess { result ->
-                    System.out.println("article:: " + result.toString().replace(" ", "_"))
                     intent.putExtra(QuizValues.STARTING_CONCEPT, result.toString().replace(" ", "_"))
                     intent.putExtra(QuizValues.GOAL_CONCEPT, binding.etGoalTitle.text.toString().replace(" ", "_"))
                     startActivity(intent)

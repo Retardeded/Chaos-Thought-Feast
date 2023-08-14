@@ -1,7 +1,6 @@
 package com.knowledge.testapp.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -9,14 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.R
 import com.knowledge.testapp.WikiHelper
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.data.PathRecord
 import com.knowledge.testapp.databinding.ActivityLoseBinding
 import com.knowledge.testapp.databinding.ActivityResultBinding
-import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
+import com.knowledge.testapp.utils.ModifyingStrings.Companion.sanitizeEmail
 import com.knowledge.testapp.utils.NavigationUtils
 
 class ResultActivity : AppCompatActivity() {

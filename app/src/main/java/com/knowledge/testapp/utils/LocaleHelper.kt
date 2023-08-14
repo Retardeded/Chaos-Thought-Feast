@@ -1,12 +1,9 @@
 package com.knowledge.testapp.utils
 
 import android.content.Context
-import android.content.res.Configuration
-import android.os.Build
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.data.User
 import java.util.Locale
 
@@ -18,13 +15,13 @@ object LocaleHelper {
                 // This code block will be executed when the data is loaded
                 // Update QuizValues.USER with the loaded user data
                 QuizValues.USER = user
-                LocaleHelper.setAppLocale(context, user!!.language)
+                LocaleHelper.setAppLocale(context, user!!.languageCode)
             }
         }
     }
 
-    fun setAppLocale(context: Context, language: Language) {
-        val locale = Locale(language.name) // Convert Language enum to locale
+    fun setAppLocale(context: Context, language: String) {
+        val locale = Locale(language) // Convert Language enum to locale
         Locale.setDefault(locale)
         val config = context.resources.configuration
         config.setLocale(locale)
@@ -36,7 +33,7 @@ object LocaleHelper {
         val usersRef: DatabaseReference = database.getReference("users")
 
         // Construct the DatabaseReference using the user's email
-        val userRecordsRef = usersRef.child(ModyfingStrings.sanitizeEmail(userEmail))
+        val userRecordsRef = usersRef.child(ModifyingStrings.sanitizeEmail(userEmail))
 
         // Use a ValueEventListener to fetch the user's data from the "users" table
         userRecordsRef.addListenerForSingleValueEvent(object : ValueEventListener {

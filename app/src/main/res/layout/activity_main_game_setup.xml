@@ -58,7 +58,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/enter_starting_concept"
-                        android:text="Quiz"
+                        android:text="@string/example_starting_concept"
                         android:textColor="#363A43"
                         android:textColorHint="#7A8089"
                         />
@@ -98,7 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/enter_concept_you_want_reach"
-                    android:text="Europe"
+                    android:text="@string/example_goal_concept"
                     android:textColor="#363A43"
                     android:textColorHint="#7A8089"
                     />

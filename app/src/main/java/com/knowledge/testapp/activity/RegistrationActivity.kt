@@ -1,9 +1,7 @@
 package com.knowledge.testapp.activity
 
 import android.R
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -12,14 +10,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.databinding.ActivityRegistrationBinding
 import com.knowledge.testapp.utils.LocaleHelper
-import com.knowledge.testapp.utils.LocaleHelper.getUserDataByEmail
-import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
-import java.util.*
+import com.knowledge.testapp.utils.ModifyingStrings.Companion.sanitizeEmail
 
 class RegistrationActivity : AppCompatActivity() {
 

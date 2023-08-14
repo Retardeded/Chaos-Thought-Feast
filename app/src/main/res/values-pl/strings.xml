@@ -35,4 +35,6 @@
     <string name="liking_spectrum_journey_records">Rekordy Podróż przez Spektrum Upodobań</string>
     <string name="anyfin_can_happen_records">Rekordy Wszystko się może zdarzyć</string>
     <string name="top_users">Najlepsi użytkownicy</string>
+    <string name="example_starting_concept">Quiz</string>
+    <string name="example_goal_concept">Europa</string>
 </resources>
