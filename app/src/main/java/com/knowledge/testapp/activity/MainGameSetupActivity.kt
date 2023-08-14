@@ -36,14 +36,14 @@ class MainGameSetupActivity : AppCompatActivity() {
         when (QuizValues.gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> {
                 binding.svGameSetup.setBackgroundResource(R.drawable.findyourlikings)
-                binding.tvGameModeTitle.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
+                binding.tvGameModeTitle.text = getString(R.string.find_your_likings);
                 binding.btnStart.setOnClickListener {
                     validateStartAndGoalAndProceed()
                 }
             }
             GameMode.LIKING_SPECTRUM_JOURNEY -> {
                 binding.svGameSetup.setBackgroundResource(R.drawable.likingspecturmjourney2)
-                binding.tvGameModeTitle.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
+                binding.tvGameModeTitle.text = getString(R.string.liking_spectrum_journey);
                 val layoutStartConceptToHide: LinearLayout = findViewById(R.id.layout_randomStartTitle)
                 layoutStartConceptToHide.visibility = View.GONE
                 binding.etStartTitle.text.clear()
@@ -54,7 +54,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
             GameMode.ANYFIN_CAN_HAPPEN -> {
                 binding.svGameSetup.setBackgroundResource(R.drawable.anyfin_can_happen)
-                binding.tvGameModeTitle.text = GameMode.ANYFIN_CAN_HAPPEN.toString().replace("_"," ")
+                binding.tvGameModeTitle.text = getString(R.string.anyfin_can_happen);
                 val layoutStartConceptToHide: LinearLayout = findViewById(R.id.layout_randomStartTitle)
                 layoutStartConceptToHide.visibility = View.GONE
                 val layoutGoalConceptToHide: LinearLayout = findViewById(R.id.layout_randomGoalTitle)

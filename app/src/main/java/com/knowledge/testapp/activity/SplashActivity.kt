@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.LocaleHelper
 
 class SplashActivity : AppCompatActivity() {
 
@@ -19,7 +21,15 @@ class SplashActivity : AppCompatActivity() {
         // Check if the user is already logged in
         if (isLoggedIn()) {
             // User is logged in, start MainActivity
-            startActivity(Intent(this, MainMenuActivity::class.java))
+            FirebaseAuth.getInstance().currentUser?.email?.let {
+                LocaleHelper.getUserDataByEmail(it) { user ->
+                    // This code block will be executed when the data is loaded
+                    // Update QuizValues.USER with the loaded user data
+                    QuizValues.USER = user
+                    LocaleHelper.setAppLocale(this, QuizValues.USER!!.language)
+                    startActivity(Intent(this, MainMenuActivity::class.java))
+                }
+            }
         } else {
             // User is not logged in, start LoginActivity
             startActivity(Intent(this, LoginActivity::class.java))

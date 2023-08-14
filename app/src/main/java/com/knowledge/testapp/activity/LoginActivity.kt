@@ -8,8 +8,10 @@ import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.databinding.ActivityLoginBinding
+import com.knowledge.testapp.utils.LocaleHelper
 
 class LoginActivity : AppCompatActivity() {
 
@@ -45,6 +47,7 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Login successful, user is authenticated
                     // Proceed to the next activity (e.g., MainActivity)
+                    LocaleHelper.seUserAndLanguage(this)
                     val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bezmyślny Tort Myśli</string>
+    <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
+    <string name="mindless_thought_cake">Bezmyślny Tort Myśli</string>
+    <string name="find_your_likings">Znajdź swoje Upodobania</string>
+    <string name="liking_spectrum_journey">Podróż przez Spektrum Upodobań</string>
+    <string name="anyfin_can_happen">Wszystko się może zdarzyć</string>
+    <string name="pvp">PvP</string>
+    <string name="profile">Profil</string>
+    <string name="rankings">Rankingi</string>
+
+    <string name="enter_starting_concept">Wprowadź początkowe pojęcie</string>
+    <string name="enter_concept_you_want_reach">Wprowadź pojęcie, do którego chcesz dojść</string>
+    <string name="enter_a_filter_keyword">Wprowadź słowo kluczowe filtru (wpływa na przyciski powyżej)</string>
+    <string name="enter_a_keyword">Wprowadź słowo kluczowe</string>
+    <string name="specify_the_category">Określ kategorię, z której chcesz uzyskać pojęcie</string>
+    <string name="enter_specified_category">Wprowadź określoną kategorię</string>
+    <string name="main_menu">Menu główne</string>
+
+    <string name="concept_to_found">Pojęcie do znalezienia:</string>
+    <string name="end_quest">Zakończ zadanie</string>
+    <string name="you_connected_da_dots">Połączyłeś kropki!</string>
+    <string name="your_wiki_path">Twój ścieżka w wiki:</string>
+    <string name="another_try">Kolejna próba</string>
+    <string name="you_failed">Nie udało się!</string>
+    <string name="winning_paths">Ścieżki zwycięstwa</string>
+    <string name="losing_paths">Ścieżki porażki</string>
+    <string name="clear_your_local_data">Wyczyść swoje dane lokalne</string>
+    <string name="delete_account">Usuń konto</string>
+    <string name="logout">Wyloguj</string>
+    <string name="top_users_in_each_mode">Topowi użytkownicy w każdym trybie</string>
+    <string name="your_personal_bests">Twoje osobiste rekordy</string>
+    <string name="find_your_likings_records">Rekordy Znajdź swoje Upodobania</string>
+    <string name="liking_spectrum_journey_records">Rekordy Podróż przez Spektrum Upodobań</string>
+    <string name="anyfin_can_happen_records">Rekordy Wszystko się może zdarzyć</string>
+    <string name="top_users">Najlepsi użytkownicy</string>
+</resources>

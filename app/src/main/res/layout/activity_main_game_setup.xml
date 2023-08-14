@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Find Your Likings"
+        android:text="@string/find_your_likings"
         android:gravity="center"
         android:layout_marginBottom="30dp"
         android:textSize="25sp"
@@ -57,7 +57,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter starting concept"
+                        android:hint="@string/enter_starting_concept"
                         android:text="Quiz"
                         android:textColor="#363A43"
                         android:textColorHint="#7A8089"
@@ -97,7 +97,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter concept you want to reach"
+                    android:hint="@string/enter_concept_you_want_reach"
                     android:text="Europe"
                     android:textColor="#363A43"
                     android:textColorHint="#7A8089"
@@ -155,7 +155,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Enter a filter keyword (affects random buttons above)"
+                android:hint="@string/enter_a_filter_keyword"
                 android:textColor="#363A43"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -174,7 +174,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter a keyword"
+                        android:hint="@string/enter_a_keyword"
                         android:textColor="#363A43"
                         android:textColorHint="#7A8089"
                         />
@@ -209,7 +209,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Specify the Category you want to get concept from"
+                android:hint="@string/specify_the_category"
                 android:textColor="#363A43"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -230,7 +230,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Enter specified category"
+                        android:hint="@string/enter_specified_category"
                         android:textColor="#363A43"
                         android:textColorHint="#7A8089"
                         />
@@ -266,7 +266,7 @@
                 android:id="@+id/btn_main_menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Main Menu"
+                android:hint="@string/main_menu"
                 android:textColor="@color/white"
                 android:layout_marginStart="16dp"
                 android:onClick="goToMainMenuActivity" />
@@ -275,7 +275,7 @@
                 android:id="@+id/btn_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profile"
+                android:hint="@string/profile"
                 android:textColor="@color/white"
                 android:layout_marginStart="16dp"
                 android:onClick="goToProfileActivity" />

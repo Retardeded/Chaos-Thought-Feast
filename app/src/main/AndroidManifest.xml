@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuizApp">
         <activity
-            android:name=".MultiplayerGameActivity"
+            android:name=".activity.MultiplayerGameActivity"
             android:exported="false" />
         <activity
             android:name=".activity.QueueActivity"

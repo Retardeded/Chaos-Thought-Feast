@@ -1,5 +1,37 @@
 <resources>
     <string name="app_name">Mindless Thought Cake</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mindless_thought_cake">Mindless Thought Cake</string>
+    <string name="find_your_likings">Find Your Likings</string>
+    <string name="liking_spectrum_journey">Liking Spectrum Journey</string>
+    <string name="anyfin_can_happen">Anyfin Can Happen</string>
+    <string name="pvp">PvP</string>
+    <string name="profile">Profile</string>
+    <string name="rankings">Rankings</string>
+
+    <string name="enter_starting_concept">Enter starting concept</string>
+    <string name="enter_concept_you_want_reach">Enter concept you want to reach</string>
+    <string name="enter_a_filter_keyword">Enter a filter keyword (affects random buttons above)</string>
+    <string name="enter_a_keyword">Enter a keyword</string>
+    <string name="specify_the_category">Specify the Category you want to get concept from</string>
+    <string name="enter_specified_category">Enter specified category</string>
+    <string name="main_menu">Main Menu</string>
+
+    <string name="concept_to_found">Concept to found:</string>
+    <string name="end_quest">End Quest</string>
+    <string name="you_connected_da_dots">You connected da dots!</string>
+    <string name="your_wiki_path">Your wiki path:</string>
+    <string name="another_try">Another try</string>
+    <string name="you_failed">You failed!</string>
+    <string name="winning_paths">Winning Paths</string>
+    <string name="losing_paths">Losing Paths</string>
+    <string name="clear_your_local_data">Clear your local data</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="logout">Logout</string>
+    <string name="top_users_in_each_mode">Top users in each mode</string>
+    <string name="your_personal_bests">Your personal Bests</string>
+    <string name="find_your_likings_records">Find Your Likings Records</string>
+    <string name="liking_spectrum_journey_records">Liking Spectrum Journey Records</string>
+    <string name="anyfin_can_happen_records">Anyfin Can Happen</string>
+    <string name="top_users">Top Users</string>
 </resources>

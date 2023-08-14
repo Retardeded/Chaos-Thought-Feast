@@ -2,13 +2,8 @@ package com.knowledge.testapp.activity
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
 import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.R
-import com.knowledge.testapp.databinding.ActivityMainMenuBinding
-import com.knowledge.testapp.databinding.ActivityProfileActivtyBinding
 import com.knowledge.testapp.databinding.ActivityRankingsBinding
 import com.knowledge.testapp.fragment.TopUsersDialogFragment
 import com.knowledge.testapp.fragment.UserWorldRecordsDialogFragment
@@ -17,9 +12,8 @@ import com.knowledge.testapp.utils.NavigationUtils
 
 
 class RankingsActivity : AppCompatActivity() {
-    private val currentUser = FirebaseAuth.getInstance().currentUser
+    private val currentUserSanitizedEmail = ModyfingStrings.sanitizeEmail(QuizValues.USER!!.email)
     private lateinit var binding: ActivityRankingsBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,26 +38,17 @@ class RankingsActivity : AppCompatActivity() {
     }
 
     fun showUserWorldRecordsDialog_FIND_YOUR_LIKINGS(view: View) {
-        val userEmail = currentUser!!.email
-        val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
-
-        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.worldRecords_FIND_YOUR_LIKINGS)
+        val dialogFragment = UserWorldRecordsDialogFragment(currentUserSanitizedEmail, QuizValues.worldRecords_FIND_YOUR_LIKINGS)
         dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 
     fun showUserWorldRecordsDialog_LIKING_SPECTRUM_JOURNEY(view: View) {
-        val userEmail = currentUser!!.email
-        val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
-
-        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY)
+        val dialogFragment = UserWorldRecordsDialogFragment(currentUserSanitizedEmail, QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY)
         dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 
     fun showUserWorldRecordsDialog_ANYFIN_CAN_HAPPEN(view: View) {
-        val userEmail = currentUser!!.email
-        val sanitizedEmail = ModyfingStrings.sanitizeEmail(userEmail!!)
-
-        val dialogFragment = UserWorldRecordsDialogFragment(sanitizedEmail, QuizValues.worldsRecords_ANYFIN_CAN_HAPPEN)
+        val dialogFragment = UserWorldRecordsDialogFragment(currentUserSanitizedEmail, QuizValues.worldsRecords_ANYFIN_CAN_HAPPEN)
         dialogFragment.show(supportFragmentManager, "UserWorldRecordsDialogFragment")
     }
 

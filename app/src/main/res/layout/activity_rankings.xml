@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Top users in each mode"
+        android:text="@string/top_users_in_each_mode"
         android:gravity="center"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
@@ -42,14 +42,14 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FIND YOUR LIKINGS"
+            android:text="@string/find_your_likings"
             android:layout_gravity="center"
             android:onClick="showTopUsersDialog_FIND_YOUR_LIKINGS" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LIKING SPECTRUM JOURNEY"
+            android:text="@string/liking_spectrum_journey"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:onClick="showUserTopUsersDialog_LIKING_SPECTRUM_JOURNEY" />
@@ -57,7 +57,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ANYFIN CAN HAPPEN"
+            android:text="@string/anyfin_can_happen"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:onClick="showUserTopUsersDialog_ANYFIN_CAN_HAPPEN" />
@@ -75,7 +75,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Your personal World Record"
+        android:text="@string/your_personal_bests"
         android:gravity="center"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
@@ -104,14 +104,14 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FIND YOUR LIKINGS Records"
+            android:text="@string/find_your_likings_records"
             android:layout_gravity="center"
             android:onClick="showUserWorldRecordsDialog_FIND_YOUR_LIKINGS" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LIKING SPECTRUM JOURNEY Records"
+            android:text="@string/liking_spectrum_journey_records"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:onClick="showUserWorldRecordsDialog_LIKING_SPECTRUM_JOURNEY" />
@@ -119,7 +119,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ANYFIN CAN HAPPEN Records"
+            android:text="@string/anyfin_can_happen_records"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:onClick="showUserWorldRecordsDialog_ANYFIN_CAN_HAPPEN" />
@@ -150,7 +150,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Main Menu"
+            android:text="@string/main_menu"
             android:textColor="@color/white"
             android:layout_marginStart="16dp"
             android:onClick="goToMainMenu" />
@@ -158,7 +158,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:text="@string/profile"
             android:textColor="@color/white"
             android:layout_marginStart="16dp"
             android:onClick="goToProfile" />

@@ -32,6 +32,8 @@ class ProfileActivity : AppCompatActivity() {
         setupRecyclerViews()
     }
 
+
+
     private fun setupRecyclerViews() {
         wikiHelper = WikiHelper(this)
     }

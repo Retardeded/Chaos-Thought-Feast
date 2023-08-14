@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:gravity="center"
-            android:text="Concept to found: "
+            android:text="@string/concept_to_found"
             android:textColor="#363143"
             android:textStyle="bold"
             android:textSize="20dp" />
@@ -201,7 +201,7 @@
                     android:layout_weight="1"
                     android:layout_margin="6dp"
                     android:background="@color/color_primary"
-                    android:text="End Quest"
+                    android:text="@string/end_quest"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold" />

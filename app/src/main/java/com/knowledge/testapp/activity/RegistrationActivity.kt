@@ -1,15 +1,25 @@
 package com.knowledge.testapp.activity
 
+import android.R
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.databinding.ActivityRegistrationBinding
+import com.knowledge.testapp.utils.LocaleHelper
+import com.knowledge.testapp.utils.LocaleHelper.getUserDataByEmail
 import com.knowledge.testapp.utils.ModyfingStrings.Companion.sanitizeEmail
+import java.util.*
 
 class RegistrationActivity : AppCompatActivity() {
 
@@ -21,16 +31,25 @@ class RegistrationActivity : AppCompatActivity() {
         binding = ActivityRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase Auth
+        val languageSpinner: Spinner = binding.languageSpinner
+
+        val languageOptions = Language.values()
+        val languageLabels = languageOptions.map { it.name }
+        val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, languageLabels)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        languageSpinner.adapter = adapter
+
         auth = FirebaseAuth.getInstance()
 
         binding.btnRegister.setOnClickListener {
             val user = binding.etUsername.text.toString()
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString()
+            val selectedLanguageLabel = binding.languageSpinner.selectedItem as String
+            val selectedLanguage = Language.valueOf(selectedLanguageLabel)
 
             // Call the register function with email and password
-            registerUser(user, email, password)
+            registerUser(user, email, password, selectedLanguage)
         }
 
         binding.tvLogin.setOnClickListener {
@@ -41,17 +60,18 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerUser(username: String, email: String, password: String) {
+    private fun registerUser(username: String, email: String, password: String, selectedLanguage : Language) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Create a User object with the user's email and other initial data
-                    val user = User(username, email, recordsHeld = 0, currentScore = 0)
+                    val user = User(username, email, selectedLanguage, recordsHeld = 0, currentScore = 0)
 
                     // Save the user data to the "users" table in the Firebase Realtime Database
                     saveUserDataToDatabase(user)
 
                     // Proceed to the next activity (e.g., MainActivity)
+                    LocaleHelper.seUserAndLanguage(this)
                     val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()

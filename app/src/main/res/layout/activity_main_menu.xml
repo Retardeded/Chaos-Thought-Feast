@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mindless Thought Cake"
+            android:text="@string/mindless_thought_cake"
             android:gravity="center"
             android:layout_marginBottom="30dp"
             android:textSize="25sp"
@@ -32,7 +32,7 @@
             android:id="@+id/btn_find_likings_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Find your Likings"
+            android:text="@string/find_your_likings"
             android:textColor="@color/white"
             android:onClick="goToFindYourLikings" />
 
@@ -44,7 +44,7 @@
             android:id="@+id/btn_likings_spectrum_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Liking Spectrum Journey"
+            android:text="@string/liking_spectrum_journey"
             android:textColor="@color/white"
             android:onClick="goToLikingSpectrumJourney" />
 
@@ -56,7 +56,7 @@
             android:id="@+id/btn_any_happening_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anyfin Can Happen"
+            android:text="@string/anyfin_can_happen"
             android:textColor="@color/white"
             android:onClick="goToAnyfinCanHappen" />
 
@@ -68,7 +68,7 @@
             android:id="@+id/btn_p_v_p"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PvP"
+            android:text="@string/pvp"
             android:textColor="@color/white"
             android:onClick="goToPvP"
             android:visibility="invisible"/>
@@ -87,7 +87,7 @@
             android:id="@+id/btn_profile_main_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Profile"
+            android:text="@string/profile"
             android:textColor="@color/white"
             android:layout_marginStart="16dp"
             android:onClick="goToProfileActivity" />
@@ -96,7 +96,7 @@
             android:id="@+id/btn_rankings_main_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rankings"
+            android:text="@string/rankings"
             android:textColor="@color/white"
             android:layout_marginStart="16dp"
             android:onClick="goToRankingsActivity" />
