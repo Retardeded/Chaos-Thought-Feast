@@ -17,7 +17,8 @@ import com.knowledge.testapp.R
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.PathRecord
 
-class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String, private val tableName: String) : DialogFragment() {
+class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String, private val tableName: String,
+    private val background:Int, private val gameModeText: String) : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,24 +33,9 @@ class UserWorldRecordsDialogFragment(private val userSanitizedEmail: String, pri
         val titleTextViewRecord = rootView.findViewById<TextView>(R.id.titleTextViewWorldRecords)
         val titleTextViewUser = rootView.findViewById<TextView>(R.id.titleTextViewUserName)
         // Set background drawable based on tableName
-        when (tableName) {
-            QuizValues.worldRecords_FIND_YOUR_LIKINGS -> {
-                linearLayout.setBackgroundResource(R.drawable.findyourlikings)
-                titleTextViewRecord.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
-            }
 
-            QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY -> {
-                linearLayout.setBackgroundResource(R.drawable.likingspecturmjourney2)
-                titleTextViewRecord.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
-
-            }
-
-            QuizValues.worldsRecords_ANYFIN_CAN_HAPPEN -> {
-                linearLayout.setBackgroundResource(R.drawable.anyfin_can_happen)
-                titleTextViewRecord.text = GameMode.ANYFIN_CAN_HAPPEN.toString().replace("_"," ")
-
-            }
-        }
+        linearLayout.setBackgroundResource(background)
+        titleTextViewRecord.text = gameModeText
         titleTextViewUser.text = QuizValues.USER!!.username
 
         val databaseReference = FirebaseDatabase.getInstance().getReference(tableName)

@@ -14,8 +14,10 @@ import com.knowledge.testapp.data.User
 import com.knowledge.testapp.data.PathRecord
 import com.knowledge.testapp.databinding.ActivityLoseBinding
 import com.knowledge.testapp.databinding.ActivityResultBinding
+import com.knowledge.testapp.utils.ModifyingStrings.Companion.createTableName
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.sanitizeEmail
 import com.knowledge.testapp.utils.NavigationUtils
+import com.knowledge.testapp.R
 
 class ResultActivity : AppCompatActivity() {
 
@@ -149,16 +151,16 @@ class ResultActivity : AppCompatActivity() {
 
         when (QuizValues.gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> {
-                refStringWorldsRecords = QuizValues.worldRecords_FIND_YOUR_LIKINGS
-                refStringUsers = QuizValues.topUsers_FIND_YOUR_LIKINGS
+                refStringWorldsRecords = createTableName(QuizValues.worldRecords_FIND_YOUR_LIKINGS, user.languageCode)
+                refStringUsers = createTableName(QuizValues.topUsers_FIND_YOUR_LIKINGS, user.languageCode)
             }
             GameMode.LIKING_SPECTRUM_JOURNEY -> {
-                refStringWorldsRecords = QuizValues.worldsRecords_LIKING_SPECTRUM_JOURNEY
-                refStringUsers = QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY
+                refStringWorldsRecords = createTableName(QuizValues.worldRecords_LIKING_SPECTRUM_JOURNEY, user.languageCode)
+                refStringUsers = createTableName(QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY, user.languageCode)
             }
             GameMode.ANYFIN_CAN_HAPPEN -> {
-                refStringWorldsRecords = QuizValues.worldsRecords_ANYFIN_CAN_HAPPEN
-                refStringUsers = QuizValues.topUsers_ANYFIN_CAN_HAPPEN
+                refStringWorldsRecords = createTableName(QuizValues.worldRecords_ANYFIN_CAN_HAPPEN, user.languageCode)
+                refStringUsers = createTableName(QuizValues.topUsers_ANYFIN_CAN_HAPPEN, user.languageCode)
             }
         }
 
@@ -184,7 +186,8 @@ class ResultActivity : AppCompatActivity() {
                         diff = totalSteps - existingSteps!!
                         if (existingSteps <= totalSteps) {
                             worldRecord = false
-                            Toast.makeText(context, "$diff steps too much for World Record", Toast.LENGTH_SHORT).show()
+                            val textNotEnoughForWR = getString(R.string.not_enough_for_wr)
+                            Toast.makeText(context, "$diff $textNotEnoughForWR", Toast.LENGTH_SHORT).show()
                         } else {
                             val recordRef = existingRecord.ref
                             val recordId = existingRecord.key
@@ -247,7 +250,8 @@ class ResultActivity : AppCompatActivity() {
                         .setValue(recordData)
                         .addOnSuccessListener {
                             // Data successfully written to the "worldRecords" node
-                            Toast.makeText(context, "New World Record!", Toast.LENGTH_SHORT).show()
+                            val textEnoughForWR = getString(R.string.enough_for_wr)
+                            Toast.makeText(context, textEnoughForWR, Toast.LENGTH_SHORT).show()
 
                             // Update user's records and current score
                             val userRecordsRef = usersRef.child(sanitizeEmail(user.email))
@@ -306,16 +310,21 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun updateUI(worldRecord: Boolean, diff: Int, totalSteps: Int) {
-        scoreView.text = "You found $goalConcept in $totalSteps steps"
+        val formattedString = getString(R.string.found_concept_steps)
+        val resultInformationText = formattedString.format(goalConcept, totalSteps)
+        scoreView.text = resultInformationText
         val addText = if (worldRecord) {
             if(brandNewPath) {
-                "That's a new World Record!, no one ever before tried this path"
+                val textWRomantic = getString(R.string.new_world_record_romantic)
+                textWRomantic
             } else {
-                "That's a new World Record!, beaten the old one by ${-diff} steps."
+                val newWorldRecordWithDiff = getString(R.string.new_world_record_with_diff, -diff)
+                newWorldRecordWithDiff
             }
 
         } else {
-            "$diff steps too much for World Record"
+            val textNotEnoughForWR = getString(R.string.not_enough_for_wr)
+            "$diff $textNotEnoughForWR"
         }
 
         scoreView.text = "${scoreView.text}\n$addText"

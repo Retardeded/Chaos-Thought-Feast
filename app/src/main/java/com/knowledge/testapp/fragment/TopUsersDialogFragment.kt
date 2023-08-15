@@ -19,7 +19,8 @@ import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.data.GameMode
 
 
-class TopUsersDialogFragment(private val tableName: String) : DialogFragment() {
+class TopUsersDialogFragment(private val tableName: String, private val background:Int,
+                             private val gameModeText: String) : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,26 +34,10 @@ class TopUsersDialogFragment(private val tableName: String) : DialogFragment() {
         val linearLayout = rootView.findViewById<LinearLayout>(R.id.ll_top_users_dialog)
 
         val titleTextViewGameMode = rootView.findViewById<TextView>(R.id.tv_top_users_game_mode)
+
+        linearLayout.setBackgroundResource(background)
+        titleTextViewGameMode.text = gameModeText
         // Set background drawable based on tableName
-        when (tableName) {
-            QuizValues.topUsers_FIND_YOUR_LIKINGS -> {
-                linearLayout.setBackgroundResource(R.drawable.findyourlikings)
-                titleTextViewGameMode.text = GameMode.FIND_YOUR_LIKINGS.toString().replace("_"," ")
-            }
-
-            QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY -> {
-                linearLayout.setBackgroundResource(R.drawable.likingspecturmjourney2)
-                titleTextViewGameMode.text = GameMode.LIKING_SPECTRUM_JOURNEY.toString().replace("_"," ")
-
-            }
-
-            QuizValues.topUsers_ANYFIN_CAN_HAPPEN -> {
-                linearLayout.setBackgroundResource(R.drawable.anyfin_can_happen)
-                titleTextViewGameMode.text = GameMode.ANYFIN_CAN_HAPPEN.toString().replace("_"," ")
-
-            }
-            // Add more cases as needed
-        }
 
         databaseReference.orderByChild("currentScore").limitToLast(10)
             .addListenerForSingleValueEvent(object : ValueEventListener {

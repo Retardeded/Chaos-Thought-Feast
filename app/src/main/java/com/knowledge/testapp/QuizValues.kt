@@ -17,8 +17,8 @@ object QuizValues {
     var correctGoal = true
     var gameMode = GameMode.FIND_YOUR_LIKINGS
     const val worldRecords_FIND_YOUR_LIKINGS = "worldRecords_FIND_YOUR_LIKINGS"
-    const val worldsRecords_LIKING_SPECTRUM_JOURNEY = "worldRecords_LIKING_SPECTRUM_JOURNEY"
-    const val worldsRecords_ANYFIN_CAN_HAPPEN = "worldRecords_ANYFIN_CAN_HAPPEN"
+    const val worldRecords_LIKING_SPECTRUM_JOURNEY = "worldRecords_LIKING_SPECTRUM_JOURNEY"
+    const val worldRecords_ANYFIN_CAN_HAPPEN = "worldRecords_ANYFIN_CAN_HAPPEN"
 
     const val topUsers_FIND_YOUR_LIKINGS = "topUsers_FIND_YOUR_LIKINGS"
     const val topUsers_LIKING_SPECTRUM_JOURNEY = "topUsers_LIKING_SPECTRUM_JOURNEY"

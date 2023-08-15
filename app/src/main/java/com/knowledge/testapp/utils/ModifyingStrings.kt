@@ -26,5 +26,13 @@ class ModifyingStrings {
             val basicLinkSuffix = QuizValues.BASIC_LINK_SUFFIX
             return "$basicLinkPrefix$userLanguageCode$basicLinkSuffix${articleTitle.replace(" ", "_")}"
         }
+
+        fun createTableName(
+            tableNameSpecification: String,
+            lang: String
+        ): String {
+            return tableNameSpecification + "_" + lang
+        }
     }
+
 }
