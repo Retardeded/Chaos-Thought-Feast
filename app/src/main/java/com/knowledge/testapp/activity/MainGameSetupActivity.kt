@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 class MainGameSetupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainGameSetupBinding
-    private val webParsing = WebParsing(this)
+    private val webParsing = WebParsing()
     private lateinit var randomArticleViewModel: RandomArticleViewModel
 
     private lateinit var auth: FirebaseAuth

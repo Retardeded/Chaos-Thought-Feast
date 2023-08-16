@@ -9,26 +9,26 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
+import com.knowledge.testapp.adapters.OptionsAdapter
+import com.knowledge.testapp.adapters.PathDataAdapter
 import com.knowledge.testapp.databinding.ActivityGameBinding
 import com.knowledge.testapp.utils.ModifyingStrings
 
 
-class GameActivity : AppCompatActivity(), View.OnClickListener {
+class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
 
 
     private lateinit var binding: ActivityGameBinding
-
-
-    private var options: ArrayList<TextView> = ArrayList()
-
-    private var selectedPositionOption:Int = 0
-    private var pathList:ArrayList<String> = ArrayList()
-    private var totalSteps:Int = 0
     private lateinit var goalConcept:String
     private lateinit var startingConcept:String
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: OptionsAdapter
 
     private lateinit var webParsing: WebParsing
 
@@ -39,114 +39,57 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
 
         startingConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
         goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
-
-        options.add(binding.tvOptionOne)
-        options.add(binding.tvOptionTwo)
-        options.add(binding.tvOptionThree)
-        options.add(binding.tvOptionFour)
-        options.add(binding.tvOptionFive)
-
-        for(option in options) {
-            option.setOnClickListener(this)
-        }
-        binding.btnNext.setOnClickListener(this)
-        binding.btnPrevious.setOnClickListener(this)
-
         val text = binding.tvToFound.text.toString() + goalConcept
         binding.tvToFound.text = text
-        webParsing = WebParsing(this)
+
+        recyclerView = binding.rvGameOptions
+
+        webParsing = WebParsing()
         val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, startingConcept)
         System.out.println("URL::" + articleUrl)
-        webParsing.getHtmlFromUrl(articleUrl, binding.tvCurrentLink, options)
-        pathList.add(startingConcept)
+
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        webParsing.getHtmlFromUrl(articleUrl, binding.tvCurrentLink) { urls ->
+            adapter = OptionsAdapter(this,this, urls, goalConcept,
+                binding.progessBar, binding.tvProgress, binding.tvCurrentLink)
+            adapter.notifyDataSetChanged()
+            recyclerView.adapter = adapter
+        }
+
+        //recyclerView.addOnScrollListener(scrollListener)
 
         val btnEnd = findViewById<Button>(R.id.btn_end)
 
         btnEnd.setOnClickListener {
-            endQuiz(false)
+            endQuiz(false, adapter.totalSteps, adapter.pathList)
         }
-    }
 
-
-    private fun defaultOptionsView(){
-
-        for (option in options) {
-            option.setTextColor(Color.parseColor("#7A8089"))
-            option.typeface = Typeface.DEFAULT
-            option.background = ContextCompat.getDrawable(this, R.drawable.defulat_option_border_bg)
-        }
 
     }
 
-    override fun onClick(v: View?) {
+    /*
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
 
-        when(v?.id) {
-            R.id.tv_option_one -> {
-                selectedOptionView(binding.tvOptionOne, 1)
-            }
-            R.id.tv_option_two -> {
-                selectedOptionView(binding.tvOptionTwo, 2)
-            }
-            R.id.tv_option_three -> {
-                selectedOptionView(binding.tvOptionThree, 3)
-            }
-            R.id.tv_option_four -> {
-                selectedOptionView(binding.tvOptionFour, 4)
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+            val totalItemCount = layoutManager.itemCount
 
-            }
-            R.id.tv_option_five -> {
-                selectedOptionView(binding.tvOptionFive, 5)
+            println("posss  $lastVisibleItemPosition")
+            println("totalcount  $totalItemCount")
 
-            }
-            R.id.btn_next -> {
-                webParsing.setNextLinks(options)
-            }
-            R.id.btn_previous -> {
-                webParsing.setPreviousLinks(options)
+            if (lastVisibleItemPosition == totalItemCount - 1) {
+                adapter.isLoadingMore = true
+                adapter.appendMoreData()
             }
         }
     }
 
-    private fun selectedOptionView(tv: TextView, selectedOptionNum: Int)
-    {
-        pathList.add(tv.text.toString())
-        defaultOptionsView()
-        selectedPositionOption = selectedOptionNum
+     */
 
-        tv.setTextColor(Color.parseColor("#363A43"))
-        tv.setTypeface(tv.typeface, Typeface.BOLD)
-        tv.background = ContextCompat.getDrawable(this, R.drawable.selected_option_border_bg)
-
-
-        tv.postDelayed({
-            tv.setTextColor(Color.parseColor("#7A8089"))
-            tv.typeface = Typeface.DEFAULT
-            tv.background = ContextCompat.getDrawable(this, R.drawable.defulat_option_border_bg)
-        }, 300) // Delay of 0.3 seconds (300 milliseconds)
-
-
-        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, tv.text.toString())
-        webParsing.getHtmlFromUrl(articleUrl, binding.tvCurrentLink, options)
-
-        if(tv.text == goalConcept)
-        {
-            totalSteps++
-            endQuiz(true)
-        }
-        else
-        {
-            totalSteps++
-            binding.progessBar.progress = totalSteps
-            binding.tvProgress.text = totalSteps.toString() + "/" + binding.progessBar.max
-            if(totalSteps > binding.progessBar.max)
-            {
-                endQuiz(false)
-            }
-        }
-
-    }
-
-    private fun endQuiz(win: Boolean) {
+    override fun endQuiz(win: Boolean, totalSteps:Int, pathList:ArrayList<String> ) {
         val intent = Intent(this, ResultActivity::class.java)
         intent.putExtra(QuizValues.WIN, win)
         intent.putExtra(QuizValues.STARTING_CONCEPT, startingConcept)

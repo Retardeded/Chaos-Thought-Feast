@@ -3,17 +3,18 @@ package com.knowledge.testapp
 import android.content.Context
 import android.widget.TextView
 import com.knowledge.testapp.utils.ModifyingStrings
+import com.knowledge.testapp.utils.ModifyingStrings.Companion.encodedURLToText
 import okhttp3.*
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-
-class WebParsing(var applicationContext: Context) {
+class WebParsing() {
 
     private lateinit var mCurrentHtml:String
-    private lateinit var mUrls:MutableList<String>
+    private lateinit var mUrls:ArrayList<String>
     private var currentIndex = 0
+    private var currentOverloadedIndex = 0
     private val okHttpClient = OkHttpClient()
 
     fun isTitleCorrect(url: String, callback: (Boolean) -> Unit) {
@@ -28,23 +29,25 @@ class WebParsing(var applicationContext: Context) {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val result = response.body?.string()
-                    if (result != null && !result.contains("Wikipedia does not have an article with this exact name")) {
-                        callback(true)
+                try {
+                    if (response.isSuccessful) {
+                        val result = response.body?.string()
+                        if (result != null && !result.contains("Wikipedia does not have an article with this exact name")) {
+                            callback(true)
+                        } else {
+                            callback(false)
+                        }
                     } else {
                         callback(false)
                     }
-                } else {
-                    callback(false)
+                } finally {
+                    response.body?.close()
                 }
             }
         })
     }
-
-    fun getHtmlFromUrl(url: String, tv: TextView, options: ArrayList<TextView>) {
-
-        println("inner url:: " + url)
+    fun getHtmlFromUrl(url: String, tv: TextView, callback: (ArrayList<String>) -> Unit) {
+        println("inner webparse url:: $url")
 
         val request = Request.Builder()
             .url(url)
@@ -57,18 +60,17 @@ class WebParsing(var applicationContext: Context) {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val result = response.body?.string()
-                    if (result != null) {
-                        // Process the result
-                        mCurrentHtml = result
-                        currentIndex = 0
-
-                        mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
-                        // Use runOnUiThread to update the UI safely
-                        tv.post {
-                            tv.text = url.substring(QuizValues.BASIC_LINK_PREFIX.length)
-                            setNextLinks(options)
+                response.use { responseBody ->
+                    if (response.isSuccessful) {
+                        val result = responseBody.body?.string()
+                        if (result != null) {
+                            mCurrentHtml = result
+                            mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
+                            tv.post {
+                                val lastPart = url.substringAfterLast("/")
+                                tv.text = lastPart
+                                callback(mUrls) // Call the callback with mUrls
+                            }
                         }
                     }
                 }
@@ -76,94 +78,30 @@ class WebParsing(var applicationContext: Context) {
         })
     }
 
-    fun setNextLinks(options: ArrayList<TextView>) {
-
-        if(currentIndex >= mUrls.size) {
-            return
-        }
-
-        for (i in options.indices) {
-            var line= ""
-            if(currentIndex < mUrls.size) {
-                line = mUrls[currentIndex]
-            }
-            val pattern = "([^/]+\$)"
-            val r = Pattern.compile(pattern)
-            val m = r.matcher(line)
-            if (m.find()) {
-                options[i].text = ModifyingStrings.encodedURLToText(m.group(0)!!)
-            }
-            currentIndex++
-        }
-    }
-
-    fun setPreviousLinks(options: ArrayList<TextView>) {
-
-        if(currentIndex - 2*options.size < 0)
-            return
-
-        currentIndex -= 2*options.size
-
-        for (i in options.indices) {
-            val line = mUrls[currentIndex]
-            val pattern = "([^/]+\$)"
-            val r = Pattern.compile(pattern)
-            val m = r.matcher(line)
-            if (m.find()) {
-                options[i].text = ModifyingStrings.encodedURLToText(m.group(0)!!)
-            }
-            currentIndex++
-        }
-    }
-
-    fun parseLinksFromHtmlCode(baseUrl: String, code: String?): MutableList<String> {
-        var baseUrl = baseUrl
+    fun parseLinksFromHtmlCode(baseUrl: String, code: String?): ArrayList<String> {
         val urls: MutableList<String> = ArrayList()
-        var lang:String = ""
-        if (baseUrl.contains("https://pl.wikipedia.org")) {
-            baseUrl =
-                "https://pl.wikipedia.org"
-            lang = "pl"
-        }
-        else if (baseUrl.contains("https://en.wikipedia.org")) {
-            baseUrl =
-                "https://en.wikipedia.org"
-            lang = "en"
-        }
         val patternLinkTag: Pattern =
             Pattern.compile("(?i)(<a.*?href=[\"'])(.*?)([\"'].*?>)(.*?)(</a>)")
         val matcherWebpageHtmlCode: Matcher = patternLinkTag.matcher(code)
-        val webpageUrlProtocol = baseUrl.substring(0, baseUrl.indexOf("//"))
-        val matcherWebpageUrlBase: Matcher = Pattern.compile("^.+/").matcher(baseUrl)
-        var webpageUrlBase = ""
-        if (matcherWebpageUrlBase.find()) {
-            webpageUrlBase = matcherWebpageUrlBase.group()
-        }
         var parsedUrl: StringBuilder
-        while (matcherWebpageHtmlCode.find()) {
+        while (matcherWebpageHtmlCode.find() && urls.size < 50) {
             parsedUrl = StringBuilder().append(
                     matcherWebpageHtmlCode.group(2)
             )
-            //|| !parsedUrl.toString().startsWith("https://" + lang)
             if (parsedUrl.toString().startsWith("#") || parsedUrl.toString().contains(":") || parsedUrl.toString().contains(";") || parsedUrl.toString().contains("#") || parsedUrl.toString().contains("&") ) {
                 continue
-            } else if (!parsedUrl.toString().startsWith("http")) {
-                if (parsedUrl.toString().startsWith("//")) {
-                    parsedUrl.insert(0, webpageUrlProtocol)
-                } else if (parsedUrl.toString().startsWith("/")) {
-                    parsedUrl.insert(0, baseUrl)
-                } else {
-                    parsedUrl.insert(0, webpageUrlBase)
-                }
             }
-
-            if(parsedUrl.toString().startsWith("https://" + lang))
-            {
-                urls.add(parsedUrl.toString())
+            if (parsedUrl.toString().startsWith("/")) {
+                parsedUrl.insert(0, baseUrl)
+                val encodedUrl = encodedURLToText(parsedUrl.toString())
+                val lastPart = encodedUrl.substringAfterLast("/")
+                urls.add(lastPart)
             }
         }
 
-        return urls.subList(3, urls.size)
+        return ArrayList(urls.subList(3, urls.size))
     }
+
+
 
 }
