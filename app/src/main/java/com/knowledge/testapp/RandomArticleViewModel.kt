@@ -1,4 +1,5 @@
 import androidx.lifecycle.ViewModel
+import com.knowledge.testapp.QuizValues
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONException
@@ -12,10 +13,12 @@ import kotlin.random.Random
 
 class RandomArticleViewModel : ViewModel() {
 
+    private val lang = QuizValues.USER!!.languageCode
+
     suspend fun getRandomArticle(): String? = withContext(Dispatchers.IO) {
         var urlConnection: HttpURLConnection? = null
         try {
-            val url = URL("https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&format=json")
+            val url = URL("https://$lang.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&format=json")
             urlConnection = url.openConnection() as HttpURLConnection
             val responseCode = urlConnection.responseCode
 
@@ -43,7 +46,7 @@ class RandomArticleViewModel : ViewModel() {
     suspend fun getRandomArticleFromCategory(category: String): String? = withContext(Dispatchers.IO) {
         var urlConnection: HttpURLConnection? = null
         try {
-            var urlStr = "https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&cmlimit=max&cmnamespace=0&format=json"
+            var urlStr = "https://$lang.wikipedia.org/w/api.php?action=query&list=categorymembers&cmlimit=max&cmnamespace=0&format=json"
             val encodedCategory = URLEncoder.encode(category, "UTF-8")
             urlStr += "&cmtitle=$encodedCategory"
 
@@ -76,7 +79,7 @@ class RandomArticleViewModel : ViewModel() {
         var urlConnection: HttpURLConnection? = null
         try {
             val encodedKeyword = URLEncoder.encode(keyword, "UTF-8")
-            val urlStr = "https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=$encodedKeyword&format=json"
+            val urlStr = "https://$lang.wikipedia.org/w/api.php?action=query&list=search&srsearch=$encodedKeyword&format=json"
             val url = URL(urlStr)
             urlConnection = url.openConnection() as HttpURLConnection
             val responseCode = urlConnection.responseCode
@@ -165,7 +168,7 @@ class RandomArticleViewModel : ViewModel() {
     suspend fun getRandomCategory(): String? = withContext(Dispatchers.IO) {
         var urlConnection: HttpURLConnection? = null
         try {
-            val url = URL("https://en.wikipedia.org/w/api.php?action=query&generator=random&grnnamespace=14&prop=categories&format=json")
+            val url = URL("https://$lang.wikipedia.org/w/api.php?action=query&generator=random&grnnamespace=14&prop=categories&format=json")
             urlConnection = url.openConnection() as HttpURLConnection
             val responseCode = urlConnection.responseCode
 
