@@ -126,7 +126,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                     } else if (category.isNotEmpty()) {
                         randomArticleViewModel.getRandomArticleFromCategory("Category:$category")
                     } else {
-                        randomArticleViewModel.getRandomArticle()
+                        randomArticleViewModel.getRandomWikiEntry()
                     }
 
                     result
@@ -238,7 +238,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         } else if(goalConceptPresent) {
             lifecycleScope.launch {
                 runCatching {
-                    randomArticleViewModel.getRandomArticle()
+                    randomArticleViewModel.getRandomWikiEntry()
                 }.onSuccess { result ->
                     intent.putExtra(QuizValues.STARTING_CONCEPT, result.toString().replace(" ", "_"))
                     intent.putExtra(QuizValues.GOAL_CONCEPT, binding.etGoalTitle.text.toString().replace(" ", "_"))
@@ -259,7 +259,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                     } else if (category.isNotEmpty()) {
                         randomArticleViewModel.getRandomArticleFromCategory("Category:$category")
                     } else {
-                        randomArticleViewModel.getRandomArticle()
+                        randomArticleViewModel.getRandomWikiEntry()
                     }
 
                     result

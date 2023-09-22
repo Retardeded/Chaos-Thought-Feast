@@ -1,4 +1,5 @@
 import androidx.lifecycle.ViewModel
+import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -9,11 +10,64 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import kotlin.coroutines.resume
 import kotlin.random.Random
+import kotlin.coroutines.suspendCoroutine
 
 class RandomArticleViewModel : ViewModel() {
 
     private val lang = QuizValues.USER!!.languageCode
+    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("LINKS7")
+
+
+    suspend fun getRandomWikiEntry(): String? = suspendCoroutine { continuation ->
+        try {
+            // Get the total number of entries in the table
+            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val entryCount = dataSnapshot.childrenCount.toInt()
+
+                    // Generate a random index
+                    val randomIndex = (0 until entryCount).random()
+
+                    // Query for the entry at the random index
+                    databaseReference.orderByKey().equalTo(randomIndex.toString())
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    // Get the random entry
+                                    val entrySnapshot = dataSnapshot.children.first()
+                                    val title = entrySnapshot.child("title").value.toString()
+
+                                    // Return the title through continuation
+                                    continuation.resume(title)
+                                } else {
+                                    // Handle the case where the random index doesn't exist
+                                    continuation.resume(null)
+                                }
+                            }
+
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                // Handle any errors during the query
+                                continuation.resume(null)
+                            }
+                        })
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle any errors while getting the entry count
+                    continuation.resume(null)
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            continuation.resume(null)
+        }
+    }
+
+
+
+
 
     suspend fun getRandomArticle(): String? = withContext(Dispatchers.IO) {
         var urlConnection: HttpURLConnection? = null
