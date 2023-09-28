@@ -17,45 +17,32 @@ import kotlin.coroutines.suspendCoroutine
 class RandomArticleViewModel : ViewModel() {
 
     private val lang = QuizValues.USER!!.languageCode
-    private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("LINKS7")
+    private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPages")
 
 
     suspend fun getRandomWikiEntry(): String? = suspendCoroutine { continuation ->
         try {
-            // Get the total number of entries in the table
-            databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            val randomIndex = (0 until 97713).random()
+
+            // Form the reference to the random entry
+            val randomEntryRef = mostPopularPagesRef.child(randomIndex.toString())
+
+            // Fetch the random entry's title
+            randomEntryRef.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val entryCount = dataSnapshot.childrenCount.toInt()
-
-                    // Generate a random index
-                    val randomIndex = (0 until entryCount).random()
-
-                    // Query for the entry at the random index
-                    databaseReference.orderByKey().equalTo(randomIndex.toString())
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    // Get the random entry
-                                    val entrySnapshot = dataSnapshot.children.first()
-                                    val title = entrySnapshot.child("title").value.toString()
-
-                                    // Return the title through continuation
-                                    continuation.resume(title)
-                                } else {
-                                    // Handle the case where the random index doesn't exist
-                                    continuation.resume(null)
-                                }
-                            }
-
-                            override fun onCancelled(databaseError: DatabaseError) {
-                                // Handle any errors during the query
-                                continuation.resume(null)
-                            }
-                        })
+                    if (dataSnapshot.exists()) {
+                        // Get the random entry
+                        val title = dataSnapshot.child("title").value.toString()
+                        //Toast.makeText()
+                        continuation.resume(title)
+                    } else {
+                        // Handle the case where the random index doesn't exist
+                        continuation.resume(null)
+                    }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle any errors while getting the entry count
+                    // Handle any errors during the query
                     continuation.resume(null)
                 }
             })
@@ -64,9 +51,6 @@ class RandomArticleViewModel : ViewModel() {
             continuation.resume(null)
         }
     }
-
-
-
 
 
     suspend fun getRandomArticle(): String? = withContext(Dispatchers.IO) {
