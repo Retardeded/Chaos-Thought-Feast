@@ -22,7 +22,7 @@ class RandomArticleViewModel : ViewModel() {
 
     suspend fun getRandomWikiEntry(): String? = suspendCoroutine { continuation ->
         try {
-            val randomIndex = (0 until 97713).random()
+            val randomIndex = (0 until 33727).random()
 
             // Form the reference to the random entry
             val randomEntryRef = mostPopularPagesRef.child(randomIndex.toString())
