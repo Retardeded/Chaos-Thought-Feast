@@ -24,7 +24,8 @@ class OptionsAdapter(
     private val goalConcept: String,
     private val progressBar: ProgressBar,
     private val tvProgressBar: TextView,
-    private val tvToFound: TextView
+    private val tvToFound: TextView,
+    private val recyclerView: RecyclerView
 ) : RecyclerView.Adapter<OptionsAdapter.OptionViewHolder>() {
     private val visibleOptions: MutableList<String> = mutableListOf()
     private val visibleThreshold = 50
@@ -68,9 +69,7 @@ class OptionsAdapter(
         val startIndex = currentSize
         val endIndex = minOf(startIndex + visibleThreshold, options.size)
         val newData = options.subList(startIndex, endIndex)
-        println("sssbef: $visibleOptions")
         visibleOptions.addAll(newData)
-        println("sssaft: $visibleOptions")
         if(visibleOptions.size >= options.size) {
             maxLoad = true
         }
@@ -106,6 +105,7 @@ class OptionsAdapter(
 
     private fun onOptionClicked(selectedOption: String, tv: TextView) {
         // Implement the logic for handling the clicked option here
+
         pathList.add(selectedOption)
         println("click path:" + pathList)
         tvToFound.text = selectedOption
@@ -129,6 +129,7 @@ class OptionsAdapter(
             visibleOptions.clear()
             visibleOptions.addAll(initialDataSubset)
             notifyDataSetChanged()
+            recyclerView.scrollToPosition(0)
         }
 
         if(tv.text == goalConcept)
