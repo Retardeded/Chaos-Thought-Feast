@@ -55,10 +55,6 @@ class OptionsAdapter(
                 super.onScrolled(recyclerView, dx, dy)
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-                Log.d("OptionsAdapter", "scroll size total: ${totalItemCount}")
-                Log.d("OptionsAdapter", "scroll size vis: ${lastVisibleItem}")
-                Log.d("OptionsAdapter", "isLoadingMore: ${isLoadingMore}")
-                Log.d("OptionsAdapter", "maxLoad: ${maxLoad}")
                 if (!isLoadingMore && !maxLoad && totalItemCount <= lastVisibleItem + visibleThreshold/2) {
                     isLoadingMore = true
                     appendMoreData()
@@ -75,11 +71,6 @@ class OptionsAdapter(
     }
 
     fun appendMoreData() {
-        Log.d("OptionsAdapter", "appendMoreData() called")
-
-        Log.d("OptionsAdapter", "options size: ${options.size}")
-        Log.d("OptionsAdapter", "load: ${maxLoad}")
-        Log.d("OptionsAdapter", "visibleOptions size: ${visibleOptions.size}")
         if (maxLoad)
             return
 
