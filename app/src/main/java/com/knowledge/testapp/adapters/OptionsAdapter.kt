@@ -5,12 +5,14 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
@@ -25,10 +27,12 @@ class OptionsAdapter(
     private val progressBar: ProgressBar,
     private val tvProgressBar: TextView,
     private val tvToFound: TextView,
-    private val recyclerView: RecyclerView
+    private val recyclerView: RecyclerView,
+    private val layoutManager: LinearLayoutManager
 ) : RecyclerView.Adapter<OptionsAdapter.OptionViewHolder>() {
     private val visibleOptions: MutableList<String> = mutableListOf()
     private val visibleThreshold = 50
+    val threshold = 10 // Adjust this to your desired threshold value
     var isLoadingMore = false
     var maxLoad = false
     private val webParsing: WebParsing = WebParsing()
@@ -45,24 +49,38 @@ class OptionsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_option, parent, false)
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                Log.d("OptionsAdapter", "scroll size total: ${totalItemCount}")
+                Log.d("OptionsAdapter", "scroll size vis: ${lastVisibleItem}")
+                Log.d("OptionsAdapter", "isLoadingMore: ${isLoadingMore}")
+                Log.d("OptionsAdapter", "maxLoad: ${maxLoad}")
+                if (!isLoadingMore && !maxLoad && totalItemCount <= lastVisibleItem + visibleThreshold/2) {
+                    isLoadingMore = true
+                    appendMoreData()
+                }
+            }
+        })
+
         return OptionViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: OptionViewHolder, position: Int) {
         val option = visibleOptions[position]
         holder.bind(option)
-
-        // Load more data if nearing the end of the visible list
-
-        if (position == visibleOptions.size - 1 && !isLoadingMore) {
-            isLoadingMore = true
-            //appendMoreData()
-        }
-
     }
 
     fun appendMoreData() {
-        if(maxLoad)
+        Log.d("OptionsAdapter", "appendMoreData() called")
+
+        Log.d("OptionsAdapter", "options size: ${options.size}")
+        Log.d("OptionsAdapter", "load: ${maxLoad}")
+        Log.d("OptionsAdapter", "visibleOptions size: ${visibleOptions.size}")
+        if (maxLoad)
             return
 
         val currentSize = visibleOptions.size
@@ -70,15 +88,15 @@ class OptionsAdapter(
         val endIndex = minOf(startIndex + visibleThreshold, options.size)
         val newData = options.subList(startIndex, endIndex)
         visibleOptions.addAll(newData)
-        if(visibleOptions.size >= options.size) {
+        if (visibleOptions.size >= options.size) {
+            Log.d("OptionsAdapter", "visibleOptions.size: ${visibleOptions.size}")
+            Log.d("OptionsAdapter", "options.size: ${options.size}")
             maxLoad = true
         }
 
-        isLoadingMore = false
-
         handler.post {
             notifyDataSetChanged()
-            //notifyItemRangeInserted(currentSize, visibleOptions.size - 1)
+            isLoadingMore = false
         }
     }
 

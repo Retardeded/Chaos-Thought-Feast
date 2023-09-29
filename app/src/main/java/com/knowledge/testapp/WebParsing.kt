@@ -84,7 +84,7 @@ class WebParsing() {
             Pattern.compile("(?i)(<a.*?href=[\"'])(.*?)([\"'].*?>)(.*?)(</a>)")
         val matcherWebpageHtmlCode: Matcher = patternLinkTag.matcher(code)
         var parsedUrl: StringBuilder
-        while (matcherWebpageHtmlCode.find() && urls.size < 50) {
+        while (matcherWebpageHtmlCode.find() && urls.size < 200) {
             parsedUrl = StringBuilder().append(
                     matcherWebpageHtmlCode.group(2)
             )

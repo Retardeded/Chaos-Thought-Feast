@@ -48,17 +48,15 @@ class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
         val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, startingConcept)
         System.out.println("URL::" + articleUrl)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
 
         webParsing.getHtmlFromUrl(articleUrl, binding.tvCurrentLink) { urls ->
             adapter = OptionsAdapter(this,this, urls, goalConcept,
-                binding.progessBar, binding.tvProgress, binding.tvCurrentLink, recyclerView)
+                binding.progessBar, binding.tvProgress, binding.tvCurrentLink, recyclerView, layoutManager)
             adapter.notifyDataSetChanged()
             recyclerView.adapter = adapter
         }
-
-        //recyclerView.addOnScrollListener(scrollListener)
-
         val btnEnd = findViewById<Button>(R.id.btn_end)
 
         btnEnd.setOnClickListener {
@@ -67,27 +65,6 @@ class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
 
 
     }
-
-    /*
-    private val scrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-            val totalItemCount = layoutManager.itemCount
-
-            println("posss  $lastVisibleItemPosition")
-            println("totalcount  $totalItemCount")
-
-            if (lastVisibleItemPosition == totalItemCount - 1) {
-                adapter.isLoadingMore = true
-                adapter.appendMoreData()
-            }
-        }
-    }
-
-     */
 
     override fun endQuiz(win: Boolean, totalSteps:Int, pathList:ArrayList<String> ) {
         val intent = Intent(this, ResultActivity::class.java)
