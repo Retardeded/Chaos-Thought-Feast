@@ -1,7 +1,10 @@
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONException
 import org.json.JSONObject
@@ -17,12 +20,73 @@ import kotlin.coroutines.suspendCoroutine
 class RandomArticleViewModel : ViewModel() {
 
     private val lang = QuizValues.USER!!.languageCode
-    private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPages")
+    private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
 
+    fun countTitlesPerCategory() {
+        val categoryCountMap = HashMap<String, Int>()
+
+        mostPopularPagesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.N)
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (childSnapshot in dataSnapshot.children) {
+                    val category = childSnapshot.child("category").getValue(String::class.java)
+                    category?.let {
+                        categoryCountMap[it] = categoryCountMap.getOrDefault(it, 0) + 1
+                    }
+                }
+
+                // Sort the categories in ascending order based on count
+                val sortedCategories = categoryCountMap.entries.sortedBy { it.value }
+
+                // Print the sorted categories and counts to the console
+                for ((category, count) in sortedCategories) {
+                    println("$category: $count")
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("Error: ${databaseError.message}")
+            }
+        })
+    }
 
     suspend fun getRandomWikiEntry(): String? = suspendCoroutine { continuation ->
         try {
-            val randomIndex = (0 until 33727).random()
+
+            //countTitlesPerCategory()
+            //val mostPopularPagesWithCategoriesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
+
+// Create a set to store unique categories
+            /*
+            val uniqueCategories = mutableSetOf<String>()
+
+// Add a ValueEventListener to fetch and process the data
+            mostPopularPagesWithCategoriesRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    // Iterate through the children of "mostPopularPagesWithCategories"
+                    for (childSnapshot in dataSnapshot.children) {
+                        // Get the "category" value from each child
+                        val category = childSnapshot.child("category").getValue(String::class.java)
+                        if (category != null) {
+                            uniqueCategories.add(category)
+                        }
+                    }
+
+                    // Print the unique categories to the console
+                    for (category in uniqueCategories) {
+                        println(category)
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle any errors here
+                }
+            })
+
+             */
+
+
+            val randomIndex = (0 until 8000).random()
 
             // Form the reference to the random entry
             val randomEntryRef = mostPopularPagesRef.child(randomIndex.toString())
@@ -82,32 +146,28 @@ class RandomArticleViewModel : ViewModel() {
         return@withContext null
     }
     suspend fun getRandomArticleFromCategory(category: String): String? = withContext(Dispatchers.IO) {
-        var urlConnection: HttpURLConnection? = null
+
         try {
-            var urlStr = "https://$lang.wikipedia.org/w/api.php?action=query&list=categorymembers&cmlimit=max&cmnamespace=0&format=json"
-            val encodedCategory = URLEncoder.encode(category, "UTF-8")
-            urlStr += "&cmtitle=$encodedCategory"
+            // Query Firebase to get all entries with the specified category
+            val query = mostPopularPagesRef.orderByChild("category").equalTo(category)
+            val dataSnapshot = query.get().await()
 
-            val url = URL(urlStr)
-            urlConnection = url.openConnection() as HttpURLConnection
-            val responseCode = urlConnection.responseCode
-
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
-                val response = StringBuilder()
-
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    response.append(line)
+            if (dataSnapshot.exists()) {
+                // Convert the dataSnapshot to a list of entries
+                val entries = mutableListOf<Map<String, Any>>()
+                for (childSnapshot in dataSnapshot.children) {
+                    val entry = childSnapshot.value as? Map<String, Any>
+                    entry?.let { entries.add(it) }
                 }
-                reader.close()
 
-                return@withContext parseRandomArticleFromCategory(response.toString())
+                // Select a random entry from the list
+                val randomEntry = entries.random()
+
+                // Return the title of the random entry
+                return@withContext randomEntry["title"]?.toString()
             }
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            urlConnection?.disconnect()
         }
 
         return@withContext null
@@ -204,31 +264,24 @@ class RandomArticleViewModel : ViewModel() {
     }
 
     suspend fun getRandomCategory(): String? = withContext(Dispatchers.IO) {
-        var urlConnection: HttpURLConnection? = null
-        try {
-            val url = URL("https://$lang.wikipedia.org/w/api.php?action=query&generator=random&grnnamespace=14&prop=categories&format=json")
-            urlConnection = url.openConnection() as HttpURLConnection
-            val responseCode = urlConnection.responseCode
+        // Define your list of popular categories
+        val popularCategories = listOf(
+            "Medical", "Engineering", "Royalty", "Culture", "Finance", "Space", "Business",
+            "Weapons", "International_Organizations", "Comics", "Television", "Language",
+            "People", "Law", "Materials", "Politician", "Environment", "Events", "Anatomy",
+            "Calendar", "Architecture", "Aviation", "Legal", "Government", "Psychology",
+            "Actor", "Health", "Mythology", "Time", "Film", "Mathematics", "Media",
+            "Economics", "Geology", "Astronomy", "Physics", "Transportation", "Animals",
+            "Military", "Art", "Medicine", "Education", "Philosophy", "Food", "Linguistics",
+            "Literature", "Chemistry", "Biology", "Science", "Entertainment", "Technology",
+            "Politics", "Music", "Sports", "Religion", "History", "Geography"
+        )
 
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
-                val response = StringBuilder()
+        // Get a random index from the popular categories list
+        val randomIndex = (popularCategories.indices).random()
 
-                var line: String?
-                while (reader.readLine().also { line = it } != null) {
-                    response.append(line)
-                }
-                reader.close()
-
-                return@withContext parseRandomCategory(response.toString())
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            urlConnection?.disconnect()
-        }
-
-        return@withContext null
+        // Return the category at the random index
+        return@withContext popularCategories[randomIndex]
     }
 
     private fun parseRandomCategory(response: String): String? {

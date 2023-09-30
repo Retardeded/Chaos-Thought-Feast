@@ -124,7 +124,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                     val result = if (keyword.isNotEmpty()) {
                         randomArticleViewModel.getArticleByKeyword(keyword)
                     } else if (category.isNotEmpty()) {
-                        randomArticleViewModel.getRandomArticleFromCategory("Category:$category")
+                        randomArticleViewModel.getRandomArticleFromCategory(category)
                     } else {
                         randomArticleViewModel.getRandomWikiEntry()
                     }
