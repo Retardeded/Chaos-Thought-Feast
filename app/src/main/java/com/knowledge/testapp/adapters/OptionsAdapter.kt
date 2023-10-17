@@ -97,6 +97,7 @@ class OptionsAdapter(
 
     inner class OptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvOption: TextView = itemView.findViewById(R.id.tvOptionItem)
+        private val tvOptionDescription: TextView = itemView.findViewById(R.id.tvOptionItemDescription)
 
         init {
             itemView.setOnClickListener {
@@ -104,12 +105,24 @@ class OptionsAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     onOptionClicked(options[position], tvOption)
                 }
+
+            }
+
+            tvOptionDescription.setOnClickListener {
+                // Trigger the second click event for tvOptionDescription
+                onOptionDescriptionClicked(tvOptionDescription, tvOption)
             }
         }
 
         fun bind(option: String) {
             tvOption.text = option
+            tvOptionDescription.text = "Extra"
         }
+    }
+
+    private fun onOptionDescriptionClicked(tvDescription: TextView, tvOption: TextView) {
+        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, tvOption.text.toString())
+        webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl, tvDescription)
     }
 
     private fun onOptionClicked(selectedOption: String, tv: TextView) {
@@ -130,7 +143,7 @@ class OptionsAdapter(
         }, 300) // Delay of 0.3 seconds (300 milliseconds)
 
         val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, tv.text.toString())
-        webParsing.getHtmlFromUrl(articleUrl, tv) { urls ->
+        webParsing.fetchAndProcessHtmlToGetTitles(articleUrl, tv) { urls ->
             options = urls
             maxLoad = false
             println(options)

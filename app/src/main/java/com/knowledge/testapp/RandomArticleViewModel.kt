@@ -53,11 +53,10 @@ class RandomArticleViewModel : ViewModel() {
     suspend fun getRandomWikiEntry(): String? = suspendCoroutine { continuation ->
         try {
 
-            //countTitlesPerCategory()
-            //val mostPopularPagesWithCategoriesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
-
-// Create a set to store unique categories
+            countTitlesPerCategory()
             /*
+            val mostPopularPagesWithCategoriesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
+
             val uniqueCategories = mutableSetOf<String>()
 
 // Add a ValueEventListener to fetch and process the data

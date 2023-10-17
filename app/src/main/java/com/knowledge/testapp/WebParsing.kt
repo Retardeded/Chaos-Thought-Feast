@@ -1,13 +1,13 @@
 package com.knowledge.testapp
 
-import android.content.Context
 import android.widget.TextView
-import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.encodedURLToText
 import okhttp3.*
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 
 class WebParsing() {
 
@@ -46,9 +46,8 @@ class WebParsing() {
             }
         })
     }
-    fun getHtmlFromUrl(url: String, tv: TextView, callback: (ArrayList<String>) -> Unit) {
-        println("inner webparse url:: $url")
 
+    fun fetchHtmlFromUrl(url: String, callback: (String) -> Unit) {
         val request = Request.Builder()
             .url(url)
             .build()
@@ -64,18 +63,82 @@ class WebParsing() {
                     if (response.isSuccessful) {
                         val result = responseBody.body?.string()
                         if (result != null) {
-                            mCurrentHtml = result
-                            mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
-                            tv.post {
-                                val lastPart = url.substringAfterLast("/")
-                                tv.text = lastPart
-                                callback(mUrls) // Call the callback with mUrls
-                            }
+                            callback(result) // Return the HTML content
                         }
                     }
                 }
             }
         })
+    }
+
+    fun getTitlesFromHtml(url: String, htmlContent: String, tv: TextView, callback: (ArrayList<String>) -> Unit) {
+        // Process the HTML content
+        mCurrentHtml = htmlContent
+        System.out.println("link:" + url)
+        mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
+
+        tv.post {
+            val lastPart = url.substringAfterLast("/")
+            tv.text = lastPart
+            callback(mUrls) // Call the callback with mUrls
+        }
+    }
+
+    fun getFirstParagraphWithArticleNameOrBoldTextFromHtml(url: String, htmlContent: String, tv: TextView) {
+        val document: Document = Jsoup.parse(htmlContent)
+        val articleName = url.substringAfterLast("/").replace("_", " ")
+        val paragraphs = document.select("p")
+        var firstParagraphWithArticleName: String? = null
+        var finalParagraph: String? = null
+        val pattern = Regex("\\[.*?\\]")
+
+        for (paragraph in paragraphs) {
+            val text = paragraph.text()
+            val boldText = paragraph.select("b").text()
+
+            val plainTextPattern = Regex("^[A-Za-z ]+\$")
+            if (text.contains(articleName, ignoreCase = true) && plainTextPattern.matches(boldText)) {
+                firstParagraphWithArticleName = text
+                break
+            }
+        }
+
+        // If the paragraph with exact article name is not found, search for bold text
+        if (firstParagraphWithArticleName == null) {
+            var firstParagraphWithBoldText: String? = null
+
+            // Second loop: Search for the first paragraph with bold text
+            for (paragraph in paragraphs) {
+                val boldText = paragraph.select("b").text()
+                if (boldText.isNotEmpty()) {
+                    firstParagraphWithBoldText = paragraph.text()
+                    break
+                }
+            }
+
+            // Select the final paragraph based on whether a paragraph with bold text was found
+            finalParagraph = firstParagraphWithBoldText ?: "No relevant content found"
+        } else {
+            finalParagraph = firstParagraphWithArticleName
+        }
+
+        finalParagraph = finalParagraph.replace(pattern,"")
+
+        tv.post {
+            tv.text = finalParagraph
+        }
+    }
+
+    fun fetchAndProcessHtmlToGetTitles(url: String, tv: TextView, callback: (ArrayList<String>) -> Unit) {
+        fetchHtmlFromUrl(url) { htmlContent ->
+            getTitlesFromHtml(url, htmlContent, tv, callback)
+        }
+    }
+
+    fun fetchAndProcessHtmlToGetParagraph(url: String, tv: TextView) {
+        fetchHtmlFromUrl(url) { htmlContent ->
+            getFirstParagraphWithArticleNameOrBoldTextFromHtml(url, htmlContent, tv)
+        }
     }
 
     fun parseLinksFromHtmlCode(baseUrl: String, code: String?): ArrayList<String> {
@@ -101,7 +164,4 @@ class WebParsing() {
 
         return ArrayList(urls.subList(3, urls.size))
     }
-
-
-
 }

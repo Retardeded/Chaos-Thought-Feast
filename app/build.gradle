@@ -16,8 +16,8 @@ android {
         applicationId "com.knowledge.testapp"
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 12
-        versionName "1.39"
+        versionCode 13
+        versionName "1.40"
 
         multiDexEnabled true
 
@@ -62,4 +62,6 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.google.code.gson:gson:2.8.9' // Use the latest version
+
+    implementation 'org.jsoup:jsoup:1.14.3'
 }

@@ -1,21 +1,15 @@
 package com.knowledge.testapp.activity
 
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
 import com.knowledge.testapp.adapters.OptionsAdapter
-import com.knowledge.testapp.adapters.PathDataAdapter
 import com.knowledge.testapp.databinding.ActivityGameBinding
 import com.knowledge.testapp.utils.ModifyingStrings
 
@@ -51,7 +45,7 @@ class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
 
-        webParsing.getHtmlFromUrl(articleUrl, binding.tvCurrentLink) { urls ->
+        webParsing.fetchAndProcessHtmlToGetTitles(articleUrl, binding.tvCurrentLink) { urls ->
             adapter = OptionsAdapter(this,this, urls, goalConcept,
                 binding.progessBar, binding.tvProgress, binding.tvCurrentLink, recyclerView, layoutManager)
             adapter.notifyDataSetChanged()

@@ -17,4 +17,18 @@
         android:textSize="15sp"
         android:text=""
         android:gravity="center" />
+    <TextView
+        android:id="@+id/tvOptionItemDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Extra"
+        android:clickable="true"
+        android:focusable="true"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="#007bff"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_gravity="center_vertical"
+        android:background="?android:attr/selectableItemBackground"
+    />
 </LinearLayout>
