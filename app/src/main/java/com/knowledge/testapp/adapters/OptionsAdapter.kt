@@ -9,7 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -96,6 +98,8 @@ class OptionsAdapter(
     }
 
     inner class OptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val relativeLayout: RelativeLayout = itemView.findViewById(R.id.relativeLayout)
+        private val arrowIcon: ImageView = itemView.findViewById(R.id.arrowIcon)
         private val tvOption: TextView = itemView.findViewById(R.id.tvOptionItem)
         private val tvOptionDescription: TextView = itemView.findViewById(R.id.tvOptionItemDescription)
 
@@ -108,7 +112,14 @@ class OptionsAdapter(
 
             }
 
-            tvOptionDescription.setOnClickListener {
+            relativeLayout.setOnClickListener {
+                if (tvOptionDescription.visibility == View.VISIBLE) {
+                    arrowIcon.visibility = View.VISIBLE
+                    tvOptionDescription.visibility = View.GONE // Make it invisible
+                } else {
+                    arrowIcon.visibility = View.GONE
+                    tvOptionDescription.visibility = View.VISIBLE // Make it visible
+                }
                 // Trigger the second click event for tvOptionDescription
                 onOptionDescriptionClicked(tvOptionDescription, tvOption)
             }
@@ -116,7 +127,7 @@ class OptionsAdapter(
 
         fun bind(option: String) {
             tvOption.text = option
-            tvOptionDescription.text = "Extra"
+            tvOptionDescription.text = ""
         }
     }
 
