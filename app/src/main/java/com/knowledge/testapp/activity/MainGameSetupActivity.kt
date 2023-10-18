@@ -151,6 +151,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         }
 
+        /*
         binding.btnRandomCategory.setOnClickListener {
             lifecycleScope.launch {
                 runCatching {
@@ -160,6 +161,38 @@ class MainGameSetupActivity : AppCompatActivity() {
                 }.onFailure { throwable ->
                     // Handle the error, e.g., show an error message
                 }
+            }
+        }
+
+         */
+
+        val spinnerCategory = findViewById<Spinner>(R.id.spinnerCategory)
+        val etCategory = findViewById<EditText>(R.id.et_Category)
+
+        val popularCategories = listOf(
+            "Medical", "Engineering", "Royalty", "Culture", "Finance", "Space", "Business",
+            "Weapons", "International_Organizations", "Comics", "Television", "Language",
+            "People", "Law", "Materials", "Politician", "Environment", "Events", "Anatomy",
+            "Calendar", "Architecture", "Aviation", "Legal", "Government", "Psychology",
+            "Actor", "Health", "Mythology", "Time", "Film", "Mathematics", "Media",
+            "Economics", "Geology", "Astronomy", "Physics", "Transportation", "Animals",
+            "Military", "Art", "Medicine", "Education", "Philosophy", "Food", "Linguistics",
+            "Literature", "Chemistry", "Biology", "Science", "Entertainment", "Technology",
+            "Politics", "Music", "Sports", "Religion", "History", "Geography"
+        )
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, popularCategories)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCategory.adapter = adapter
+
+// Set an item selected listener for the Spinner to update the EditText
+        spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                etCategory.setText(popularCategories[position])
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Handle nothing selected if needed
             }
         }
 

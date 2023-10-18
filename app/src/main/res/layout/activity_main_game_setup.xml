@@ -135,6 +135,72 @@
     </androidx.cardview.widget.CardView>
 
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@android:color/white"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="5dp"
+            android:layout_marginTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="@string/specify_the_category"
+                    android:textColor="#363A43"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.6"
+                        >
+
+                        <EditText
+                            android:id="@+id/et_Category"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/enter_specified_category"
+                            android:textColor="#363A43"
+                            android:textColorHint="#7A8089"
+                            />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <Spinner
+                        android:id="@+id/spinnerCategory"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/ic_plus"
+                        android:scaleType="fitCenter"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="16dp"/>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -182,74 +248,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
             </RelativeLayout>
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <!-- Additional EditText and Random Button -->
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@android:color/white"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="5dp"
-        android:layout_marginTop="20dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:hint="@string/specify_the_category"
-                android:textColor="#363A43"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
-                    >
-
-                    <EditText
-                        android:id="@+id/et_Category"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/enter_specified_category"
-                        android:textColor="#363A43"
-                        android:textColorHint="#7A8089"
-                        />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <ImageButton
-                    android:id="@+id/btn_randomCategory"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_randomicon"
-                    android:background="@null"
-                    android:scaleType="fitCenter"
-                    android:layout_marginStart="16dp"
-                    />
-
-            </LinearLayout>
 
         </LinearLayout>
 
