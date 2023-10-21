@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
+import com.knowledge.testapp.adapters.CategoriesArrayAdapter
+import com.knowledge.testapp.data.CategoryItem
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.databinding.ActivityMainGameSetupBinding
 import com.knowledge.testapp.utils.ModifyingStrings
@@ -151,48 +153,40 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         }
 
-        /*
-        binding.btnRandomCategory.setOnClickListener {
-            lifecycleScope.launch {
-                runCatching {
-                    randomArticleViewModel.getRandomCategory()
-                }.onSuccess { result ->
-                    binding.etCategory.setText(result)
-                }.onFailure { throwable ->
-                    // Handle the error, e.g., show an error message
-                }
-            }
-        }
-
-         */
-
         val spinnerCategory = findViewById<Spinner>(R.id.spinnerCategory)
         val etCategory = findViewById<EditText>(R.id.et_Category)
 
-        val popularCategories = listOf(
-            "Medical", "Engineering", "Royalty", "Culture", "Finance", "Space", "Business",
-            "Weapons", "International_Organizations", "Comics", "Television", "Language",
-            "People", "Law", "Materials", "Politician", "Environment", "Events", "Anatomy",
-            "Calendar", "Architecture", "Aviation", "Legal", "Government", "Psychology",
-            "Actor", "Health", "Mythology", "Time", "Film", "Mathematics", "Media",
-            "Economics", "Geology", "Astronomy", "Physics", "Transportation", "Animals",
-            "Military", "Art", "Medicine", "Education", "Philosophy", "Food", "Linguistics",
-            "Literature", "Chemistry", "Biology", "Science", "Entertainment", "Technology",
-            "Politics", "Music", "Sports", "Religion", "History", "Geography"
-        )
+        val categoryItems = mutableListOf<CategoryItem>()
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, popularCategories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerCategory.adapter = adapter
+        randomArticleViewModel.getCategoriesWithSubcategories {
+            val categoriesData = it
 
-// Set an item selected listener for the Spinner to update the EditText
-        spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                etCategory.setText(popularCategories[position])
+            for (categoryData in categoriesData.entries) {
+                categoryItems.add(CategoryItem(categoryData.key, CategoryItem.ItemType.CATEGORY))
+                val subcategories = categoryData.value
+                for (subcategory in subcategories) {
+                    categoryItems.add(CategoryItem(subcategory, CategoryItem.ItemType.SUBCATEGORY))
+                }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                // Handle nothing selected if needed
+            val adapter = CategoriesArrayAdapter(this, android.R.layout.simple_spinner_item, categoryItems)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerCategory.adapter = adapter
+
+            spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    val selectedCategory = categoryItems[position]
+                    if (selectedCategory.type == CategoryItem.ItemType.SUBCATEGORY) {
+                        // Handle category selection
+                        etCategory.setText(selectedCategory.name)
+                    } else {
+                        // Handle subcategory selection
+                        // You can do something specific for subcategories here
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
             }
         }
 

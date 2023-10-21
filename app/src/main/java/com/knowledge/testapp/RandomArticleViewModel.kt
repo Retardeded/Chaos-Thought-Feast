@@ -14,13 +14,42 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
 import kotlin.coroutines.resume
-import kotlin.random.Random
 import kotlin.coroutines.suspendCoroutine
 
 class RandomArticleViewModel : ViewModel() {
 
     private val lang = QuizValues.USER!!.languageCode
     private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
+    private val categoriesRef = FirebaseDatabase.getInstance().getReference("categories")
+    var categories = mutableMapOf<String, List<String>>()
+
+    init {
+        getCategoriesWithSubcategories {
+            categories.putAll(it)
+        }
+    }
+    fun getCategoriesWithSubcategories(callback: (Map<String, List<String>>) -> Unit) {
+        categoriesRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val categoryMap = mutableMapOf<String, List<String>>()
+                for (categorySnapshot in dataSnapshot.children) {
+                    val categories = mutableListOf<String>()
+                    for (subcategorySnapshot in categorySnapshot.children) {
+                        val subcategoryName = subcategorySnapshot.getValue(String::class.java)
+                        subcategoryName?.let {
+                            categories.add(it)
+                        }
+                    }
+                    categoryMap[categorySnapshot.key.toString()] = categories
+                }
+                callback(categoryMap) // Return the list of subcategories
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle any errors that occur.
+            }
+        })
+    }
 
     fun countTitlesPerCategory() {
         val categoryCountMap = HashMap<String, Int>()
@@ -53,7 +82,7 @@ class RandomArticleViewModel : ViewModel() {
     suspend fun getRandomWikiEntry(): String? = suspendCoroutine { continuation ->
         try {
 
-            countTitlesPerCategory()
+            //countTitlesPerCategory()
             /*
             val mostPopularPagesWithCategoriesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
 
@@ -239,71 +268,6 @@ class RandomArticleViewModel : ViewModel() {
             if (randomArray.length() > 0) {
                 val randomObject = randomArray.getJSONObject(0)
                 return randomObject.getString("title")
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    private fun parseRandomArticleFromCategory(response: String): String? {
-        try {
-            val jsonObject = JSONObject(response)
-            val queryObject = jsonObject.getJSONObject("query")
-            val categoryMembersArray = queryObject.getJSONArray("categorymembers")
-            if (categoryMembersArray.length() > 0) {
-                val randomIndex = (0 until categoryMembersArray.length()).random()
-                val randomObject = categoryMembersArray.getJSONObject(randomIndex)
-                return randomObject.getString("title")
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    suspend fun getRandomCategory(): String? = withContext(Dispatchers.IO) {
-        // Define your list of popular categories
-        val popularCategories = listOf(
-            "Medical", "Engineering", "Royalty", "Culture", "Finance", "Space", "Business",
-            "Weapons", "International_Organizations", "Comics", "Television", "Language",
-            "People", "Law", "Materials", "Politician", "Environment", "Events", "Anatomy",
-            "Calendar", "Architecture", "Aviation", "Legal", "Government", "Psychology",
-            "Actor", "Health", "Mythology", "Time", "Film", "Mathematics", "Media",
-            "Economics", "Geology", "Astronomy", "Physics", "Transportation", "Animals",
-            "Military", "Art", "Medicine", "Education", "Philosophy", "Food", "Linguistics",
-            "Literature", "Chemistry", "Biology", "Science", "Entertainment", "Technology",
-            "Politics", "Music", "Sports", "Religion", "History", "Geography"
-        )
-
-        // Get a random index from the popular categories list
-        val randomIndex = (popularCategories.indices).random()
-
-        // Return the category at the random index
-        return@withContext popularCategories[randomIndex]
-    }
-
-    private fun parseRandomCategory(response: String): String? {
-        try {
-            val jsonObject = JSONObject(response)
-            val queryObject = jsonObject.getJSONObject("query")
-            val pagesObject = queryObject.getJSONObject("pages")
-
-            // Get a random page ID from the available pages
-            val pageIds = pagesObject.keys().asSequence().toList()
-            val randomPageId = pageIds[Random.nextInt(pageIds.size)]
-
-            val randomPageObject = pagesObject.getJSONObject(randomPageId)
-            val categoriesArray = randomPageObject.getJSONArray("categories")
-
-            // Get a random category from the available categories
-            if (categoriesArray.length() > 0) {
-                val randomIndex = (0 until categoriesArray.length()).random()
-                val randomCategoryObject = categoriesArray.getJSONObject(randomIndex)
-                val categoryName = randomCategoryObject.getString("title")
-
-                // Extract the category name without the "Category:" prefix
-                return categoryName.removePrefix("Category:")
             }
         } catch (e: JSONException) {
             e.printStackTrace()
