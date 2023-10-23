@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -98,10 +99,9 @@ class OptionsAdapter(
     }
 
     inner class OptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val relativeLayout: RelativeLayout = itemView.findViewById(R.id.relativeLayout)
-        private val arrowIcon: ImageView = itemView.findViewById(R.id.arrowIcon)
         private val tvOption: TextView = itemView.findViewById(R.id.tvOptionItem)
         private val tvOptionDescription: TextView = itemView.findViewById(R.id.tvOptionItemDescription)
+        private val descriptionLayout: RelativeLayout = itemView.findViewById(R.id.descriptionLayout)
 
         init {
             itemView.setOnClickListener {
@@ -112,16 +112,22 @@ class OptionsAdapter(
 
             }
 
-            relativeLayout.setOnClickListener {
-                if (tvOptionDescription.visibility == View.VISIBLE) {
-                    arrowIcon.visibility = View.VISIBLE
-                    tvOptionDescription.visibility = View.GONE // Make it invisible
-                } else {
-                    arrowIcon.visibility = View.GONE
-                    tvOptionDescription.visibility = View.VISIBLE // Make it visible
+            itemView.setOnLongClickListener(object : View.OnLongClickListener {
+                override fun onLongClick(v: View?): Boolean {
+                    // Handle the long-press on tvOption here
+                    if (tvOptionDescription.visibility == View.VISIBLE) {
+                        tvOptionDescription.visibility = View.GONE // Make it invisible
+                    } else {
+                        onOptionDescriptionClicked(tvOptionDescription, tvOption)
+                        tvOptionDescription.visibility = View.VISIBLE // Make it visible
+                    }
+                    // Return true to indicate that the long-press event has been consumed
+                    return true
                 }
-                // Trigger the second click event for tvOptionDescription
-                onOptionDescriptionClicked(tvOptionDescription, tvOption)
+            })
+
+            descriptionLayout.setOnClickListener {
+                tvOptionDescription.visibility = View.GONE
             }
         }
 
