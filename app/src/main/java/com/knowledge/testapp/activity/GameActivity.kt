@@ -3,6 +3,7 @@ package com.knowledge.testapp.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,6 +36,18 @@ class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
         goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
         val text = binding.tvToFound.text.toString() + goalConcept
         binding.tvToFound.text = text
+        binding.tvToFound.setOnClickListener {
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, goalConcept)
+            val popupText = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(goalConcept)
+            builder.setMessage(popupText)
+            builder.setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
 
         recyclerView = binding.rvGameOptions
 

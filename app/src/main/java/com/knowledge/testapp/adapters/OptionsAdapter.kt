@@ -139,7 +139,7 @@ class OptionsAdapter(
 
     private fun onOptionDescriptionClicked(tvDescription: TextView, tvOption: TextView) {
         val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, tvOption.text.toString())
-        webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl, tvDescription)
+        tvDescription.text = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
     }
 
     private fun onOptionClicked(selectedOption: String, tv: TextView) {

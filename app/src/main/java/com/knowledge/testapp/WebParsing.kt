@@ -8,6 +8,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.util.concurrent.CountDownLatch
 
 class WebParsing() {
 
@@ -84,7 +85,7 @@ class WebParsing() {
         }
     }
 
-    fun getFirstParagraphWithArticleNameOrBoldTextFromHtml(url: String, htmlContent: String, tv: TextView) {
+    fun getFirstParagraphWithArticleNameOrBoldTextFromHtml(url: String, htmlContent: String): String {
         val document: Document = Jsoup.parse(htmlContent)
         val articleName = url.substringAfterLast("/").replace("_", " ")
         val paragraphs = document.select("p")
@@ -124,9 +125,7 @@ class WebParsing() {
 
         finalParagraph = finalParagraph.replace(pattern,"")
 
-        tv.post {
-            tv.text = finalParagraph
-        }
+        return finalParagraph
     }
 
     fun fetchAndProcessHtmlToGetTitles(url: String, tv: TextView, callback: (ArrayList<String>) -> Unit) {
@@ -135,10 +134,23 @@ class WebParsing() {
         }
     }
 
-    fun fetchAndProcessHtmlToGetParagraph(url: String, tv: TextView) {
+    fun fetchAndProcessHtmlToGetParagraph(url: String): String {
+        val latch = CountDownLatch(1)
+        var finalParagraph = ""
+
         fetchHtmlFromUrl(url) { htmlContent ->
-            getFirstParagraphWithArticleNameOrBoldTextFromHtml(url, htmlContent, tv)
+            finalParagraph = getFirstParagraphWithArticleNameOrBoldTextFromHtml(url, htmlContent)
+            latch.countDown()
         }
+
+        // Wait for the callback to complete before returning finalParagraph
+        try {
+            latch.await()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+
+        return finalParagraph
     }
 
     fun parseLinksFromHtmlCode(baseUrl: String, code: String?): ArrayList<String> {
