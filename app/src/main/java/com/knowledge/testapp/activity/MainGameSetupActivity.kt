@@ -6,8 +6,12 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
+import android.widget.ExpandableListView.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -15,8 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.WebParsing
-import com.knowledge.testapp.adapters.CategoriesArrayAdapter
-import com.knowledge.testapp.data.CategoryItem
+import com.knowledge.testapp.adapters.CustomExpandableListAdapter
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.databinding.ActivityMainGameSetupBinding
 import com.knowledge.testapp.utils.ModifyingStrings
@@ -29,6 +32,9 @@ class MainGameSetupActivity : AppCompatActivity() {
     private val webParsing = WebParsing()
     private lateinit var randomArticleViewModel: RandomArticleViewModel
 
+    var expandableListAdapter: ExpandableListAdapter? = null
+    var expandableListTitle: ArrayList<String>? = null
+
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,14 +44,14 @@ class MainGameSetupActivity : AppCompatActivity() {
 
         when (QuizValues.gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> {
-                binding.svGameSetup.setBackgroundResource(R.drawable.findyourlikings)
+                binding.mainLayoutGameSetup.setBackgroundResource(R.drawable.findyourlikings)
                 binding.tvGameModeTitle.text = getString(R.string.find_your_likings);
                 binding.btnStart.setOnClickListener {
                     validateStartAndGoalAndProceed()
                 }
             }
             GameMode.LIKING_SPECTRUM_JOURNEY -> {
-                binding.svGameSetup.setBackgroundResource(R.drawable.likingspecturmjourney2)
+                binding.mainLayoutGameSetup.setBackgroundResource(R.drawable.likingspecturmjourney2)
                 binding.tvGameModeTitle.text = getString(R.string.liking_spectrum_journey);
                 val layoutStartConceptToHide: LinearLayout = findViewById(R.id.layout_randomStartTitle)
                 layoutStartConceptToHide.visibility = View.GONE
@@ -56,7 +62,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                 }
             }
             GameMode.ANYFIN_CAN_HAPPEN -> {
-                binding.svGameSetup.setBackgroundResource(R.drawable.anyfin_can_happen)
+                binding.mainLayoutGameSetup.setBackgroundResource(R.drawable.anyfin_can_happen)
                 binding.tvGameModeTitle.text = getString(R.string.anyfin_can_happen);
                 val layoutStartConceptToHide: LinearLayout = findViewById(R.id.layout_randomStartTitle)
                 layoutStartConceptToHide.visibility = View.GONE
@@ -120,7 +126,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         ) {
             lifecycleScope.launch {
                 runCatching {
-                    val category = binding.etCategory.text.toString()
+                    val category = binding.tvCategory.text.toString()
                     val keyword = binding.etKeyword.text.toString()
 
                     val result = if (keyword.isNotEmpty()) {
@@ -153,44 +159,78 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         }
 
-        val spinnerCategory = findViewById<Spinner>(R.id.spinnerCategory)
-        val etCategory = findViewById<EditText>(R.id.et_Category)
-
-        val categoryItems = mutableListOf<CategoryItem>()
-
         randomArticleViewModel.getCategoriesWithSubcategories {
             val categoriesData = it
 
-            for (categoryData in categoriesData.entries) {
-                categoryItems.add(CategoryItem(categoryData.key, CategoryItem.ItemType.CATEGORY))
-                val subcategories = categoryData.value
-                for (subcategory in subcategories) {
-                    categoryItems.add(CategoryItem(subcategory, CategoryItem.ItemType.SUBCATEGORY))
-                }
-            }
-
-            val adapter = CategoriesArrayAdapter(this, android.R.layout.simple_spinner_item, categoryItems)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinnerCategory.adapter = adapter
-
-            spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val selectedCategory = categoryItems[position]
-                    if (selectedCategory.type == CategoryItem.ItemType.SUBCATEGORY) {
-                        // Handle category selection
-                        etCategory.setText(selectedCategory.name)
-                    } else {
-                        // Handle subcategory selection
-                        // You can do something specific for subcategories here
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
+            binding.expandImageView.setOnClickListener {
+                showExpandableListViewPopup(binding.expandImageView,
+                    categoriesData as HashMap<String, List<String>>)
             }
         }
 
         auth = FirebaseAuth.getInstance()
+    }
+
+    fun showExpandableListViewPopup(anchorView: View, expandableListDetail: HashMap<String, List<String>>) {
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val popupView: View = inflater.inflate(R.layout.expandable_list_layout, null)
+        val expandableListView = popupView.findViewById<ExpandableListView>(R.id.expandableListView)
+
+        expandableListTitle = ArrayList(expandableListDetail.keys)
+        expandableListAdapter =
+            expandableListTitle?.let { it1 ->
+                CustomExpandableListAdapter(this,
+                    it1, expandableListDetail
+                )
+            }
+        expandableListView!!.setAdapter(expandableListAdapter)
+        expandableListView.setOnGroupExpandListener(OnGroupExpandListener { groupPosition ->
+            Toast.makeText(
+                applicationContext,
+                (expandableListTitle as ArrayList<String>)[groupPosition] + " List Expanded.",
+                Toast.LENGTH_SHORT
+            ).show()
+        })
+
+        expandableListView.setAdapter(expandableListAdapter)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+
+        val x = calculateXCoordinate(anchorView, popupView)
+        val y = calculateYCoordinate(anchorView, popupView)
+
+        popupWindow.showAtLocation(binding.mainLayoutGameSetup, Gravity.TOP or Gravity.START, x, y)
+
+        expandableListView.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
+            val selectedChildItem = expandableListDetail[expandableListTitle!![groupPosition]]?.get(childPosition)
+
+            binding.tvCategory.setText(selectedChildItem)
+
+            popupWindow.dismiss()
+
+            // Return true to indicate that the click has been handled
+            true
+        }
+    }
+
+    private fun calculateXCoordinate(anchorView: View, popupView: View): Int {
+        val anchorLocation = IntArray(2)
+        anchorView.getLocationOnScreen(anchorLocation)
+        val anchorX = anchorLocation[0]
+        val popupWidth = popupView.width
+        return anchorX - popupWidth / 2 + anchorView.width / 2
+    }
+
+    private fun calculateYCoordinate(anchorView: View, popupView: View): Int {
+        val anchorLocation = IntArray(2)
+        anchorView.getLocationOnScreen(anchorLocation)
+        val anchorY = anchorLocation[1]
+        return anchorY - popupView.height
     }
 
     fun validateStartAndGoalAndProceed() {
@@ -278,7 +318,7 @@ class MainGameSetupActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 val firstResult = runCatching {
-                    val category = binding.etCategory.text.toString()
+                    val category = binding.tvCategory.text.toString()
                     val keyword = binding.etKeyword.text.toString()
 
                     val result = if (keyword.isNotEmpty()) {
@@ -297,7 +337,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                 }.getOrNull()
 
                 val secondResult = runCatching {
-                    val category = binding.etCategory.text.toString()
+                    val category = binding.tvCategory.text.toString()
                     val keyword = binding.etKeyword.text.toString()
 
                     val result = if (keyword.isNotEmpty()) {

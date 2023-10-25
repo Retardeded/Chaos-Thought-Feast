@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/sv_game_setup"
+    android:id="@+id/main_layout_game_setup"
     android:background="@drawable/findyourlikings">
 
     <LinearLayout
@@ -172,27 +172,27 @@
                         >
 
                         <EditText
-                            android:id="@+id/et_Category"
+                            android:id="@+id/tv_Category"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/enter_specified_category"
+                            android:hint="@string/select_specified_category"
                             android:textColor="#363A43"
                             android:textColorHint="#7A8089"
+                            android:focusable="false"
                             />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
 
-                    <Spinner
-                        android:id="@+id/spinnerCategory"
+                    <ImageView
+                        android:id="@+id/expandImageView"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:background="@drawable/ic_plus"
                         android:scaleType="fitCenter"
                         android:layout_gravity="center"
                         android:layout_marginStart="16dp"/>
-
 
                 </LinearLayout>
 

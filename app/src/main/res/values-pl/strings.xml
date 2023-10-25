@@ -15,7 +15,7 @@
     <string name="enter_a_filter_keyword">Wprowadź słowo kluczowe filtru (wpływa na przyciski powyżej)</string>
     <string name="enter_a_keyword">Wprowadź słowo kluczowe</string>
     <string name="specify_the_category">Określ kategorię, z której chcesz uzyskać pojęcie</string>
-    <string name="enter_specified_category">Wprowadź określoną kategorię</string>
+    <string name="select_specified_category">Wybierz określoną kategorię</string>
     <string name="main_menu">Menu główne</string>
 
     <string name="concept_to_found">Pojęcie do znalezienia:</string>
