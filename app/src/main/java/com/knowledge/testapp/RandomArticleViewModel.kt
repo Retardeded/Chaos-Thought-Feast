@@ -13,12 +13,14 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.util.*
+import kotlin.collections.HashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class RandomArticleViewModel : ViewModel() {
 
-    private val lang = QuizValues.USER!!.languageCode
+    private val lang = QuizValues.USER!!.languageCode.lowercase(Locale.ROOT)
     private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
     private val categoriesRef = FirebaseDatabase.getInstance().getReference("categories")
     var categories = mutableMapOf<String, List<String>>()
@@ -77,6 +79,57 @@ class RandomArticleViewModel : ViewModel() {
                 println("Error: ${databaseError.message}")
             }
         })
+    }
+
+    suspend fun getRandomWikiEntryInCorrectLanguage(): String? {
+        // Get a random English article title
+        val title = getRandomWikiEntry()
+
+        if (lang == "EN") {
+            return title
+        }
+
+        val translatedTitle = title?.let { translateTitleToLanguage(it, lang) }
+        return translatedTitle
+    }
+
+    suspend fun translateTitleToLanguage(title: String, languageCode: String): String? {
+        return withContext(Dispatchers.IO) {
+            val apiUrl = "https://en.wikipedia.org/w/api.php?action=query&prop=langlinks&titles=${title}&lllang=${languageCode}&format=json"
+            var translation = ""
+
+            try {
+                val url = URL(apiUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+
+                val reader = BufferedReader(InputStreamReader(connection.inputStream))
+                val response = reader.readText()
+
+                val json = JSONObject(response)
+                val query = json.optJSONObject("query")
+                val pages = query?.optJSONObject("pages")
+
+                val firstPageId = pages?.keys()?.next()
+                val page = pages?.optJSONObject(firstPageId)
+
+                val langLinks = page?.optJSONArray("langlinks")
+                langLinks?.let { links ->
+                    for (i in 0 until links.length()) {
+                        val langLink = links.optJSONObject(i)
+                        if (langLink.getString("lang") == languageCode) {
+                            translation = langLink.optString("*")
+                            return@let langLink.optString("*")
+                        }
+                    }
+                    null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            return@withContext translation  // Return null if the translation is not found
+        }
     }
 
     suspend fun getRandomWikiEntry(): String? = suspendCoroutine { continuation ->
