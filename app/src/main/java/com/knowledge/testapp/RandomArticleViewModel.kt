@@ -22,14 +22,39 @@ class RandomArticleViewModel : ViewModel() {
 
     private val lang = QuizValues.USER!!.languageCode.lowercase(Locale.ROOT)
     private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
-    private val categoriesRef = FirebaseDatabase.getInstance().getReference("categories")
-    var categories = mutableMapOf<String, List<String>>()
+    private val categoriesRef = FirebaseDatabase.getInstance().getReference("categories$lang")
+    private val categoriesTranslationRef = FirebaseDatabase.getInstance().getReference("categories${lang}translation")
+
+    var categoriesTranslation = mutableMapOf<String, String>()
 
     init {
-        getCategoriesWithSubcategories {
-            categories.putAll(it)
+        categoriesTranslations {
+            categoriesTranslation.putAll(it)
+            System.out.println("TRANSLATON:" + categoriesTranslation)
         }
     }
+
+    fun categoriesTranslations(callback: (Map<String, String>) -> Unit) {
+        categoriesTranslationRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val categoryMap = mutableMapOf<String, String>()
+                for (categorySnapshot in dataSnapshot.children) {
+                    val subcategory = categorySnapshot.key
+                    val subcategoryTranslation = categorySnapshot.getValue(String::class.java)
+                    if (subcategory != null && subcategoryTranslation != null) {
+                        categoryMap.put(subcategory, subcategoryTranslation)
+                    }
+                }
+                System.out.println(categoryMap)
+                callback(categoryMap) // Return the list of subcategories
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle any errors that occur.
+            }
+        })
+    }
+
     fun getCategoriesWithSubcategories(callback: (Map<String, List<String>>) -> Unit) {
         categoriesRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -44,6 +69,7 @@ class RandomArticleViewModel : ViewModel() {
                     }
                     categoryMap[categorySnapshot.key.toString()] = categories
                 }
+                System.out.println(categoryMap)
                 callback(categoryMap) // Return the list of subcategories
             }
 
@@ -229,8 +255,12 @@ class RandomArticleViewModel : ViewModel() {
     suspend fun getRandomArticleFromCategory(category: String): String? = withContext(Dispatchers.IO) {
 
         try {
+            var translatedCategory = category
             // Query Firebase to get all entries with the specified category
-            val query = mostPopularPagesRef.orderByChild("category").equalTo(category)
+            if(lang != "eng") {
+                translatedCategory = categoriesTranslation.get(category).toString()
+            }
+            val query = mostPopularPagesRef.orderByChild("category").equalTo(translatedCategory)
             val dataSnapshot = query.get().await()
 
             if (dataSnapshot.exists()) {
@@ -244,8 +274,11 @@ class RandomArticleViewModel : ViewModel() {
                 // Select a random entry from the list
                 val randomEntry = entries.random()
 
-                // Return the title of the random entry
+                randomEntry["title"]?.toString()
+
+                    // Return the title of the random entry
                 return@withContext randomEntry["title"]?.toString()
+                    ?.let { translateTitleToLanguage(it,lang) }
             }
         } catch (e: Exception) {
             e.printStackTrace()

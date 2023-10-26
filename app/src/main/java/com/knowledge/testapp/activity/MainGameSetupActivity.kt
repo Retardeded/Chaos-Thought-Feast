@@ -184,13 +184,6 @@ class MainGameSetupActivity : AppCompatActivity() {
                 )
             }
         expandableListView!!.setAdapter(expandableListAdapter)
-        expandableListView.setOnGroupExpandListener(OnGroupExpandListener { groupPosition ->
-            Toast.makeText(
-                applicationContext,
-                (expandableListTitle as ArrayList<String>)[groupPosition] + " List Expanded.",
-                Toast.LENGTH_SHORT
-            ).show()
-        })
 
         expandableListView.setAdapter(expandableListAdapter)
 
