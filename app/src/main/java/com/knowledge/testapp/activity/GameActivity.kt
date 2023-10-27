@@ -60,7 +60,7 @@ class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
 
         webParsing.fetchAndProcessHtmlToGetTitles(articleUrl, binding.tvCurrentLink) { urls ->
             adapter = OptionsAdapter(this,this, urls, goalConcept,
-                binding.progessBar, binding.tvProgress, binding.tvCurrentLink, recyclerView, layoutManager)
+                binding.progessBar, binding.tvProgress, binding.tvCurrentLink, binding.btnBack, recyclerView, layoutManager)
             adapter.notifyDataSetChanged()
             recyclerView.adapter = adapter
         }

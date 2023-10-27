@@ -5,15 +5,10 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +24,8 @@ class OptionsAdapter(
     private val goalConcept: String,
     private val progressBar: ProgressBar,
     private val tvProgressBar: TextView,
-    private val tvToFound: TextView,
+    private val tvCurrentLink: TextView,
+    private val btnBack: Button,
     private val recyclerView: RecyclerView,
     private val layoutManager: LinearLayoutManager
 ) : RecyclerView.Adapter<OptionsAdapter.OptionViewHolder>() {
@@ -47,7 +43,11 @@ class OptionsAdapter(
     init {
         val initialDataSubset = options.subList(0, minOf(visibleThreshold, options.size))
         visibleOptions.addAll(initialDataSubset)
-        pathList.add(options[0])
+        pathList.add(tvCurrentLink.text.toString())
+        btnBack.setOnClickListener {
+            if(pathList.size > 1)
+                onOptionClicked(pathList[pathList.size - 2], tvCurrentLink)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder {
@@ -83,8 +83,6 @@ class OptionsAdapter(
         val newData = options.subList(startIndex, endIndex)
         visibleOptions.addAll(newData)
         if (visibleOptions.size >= options.size) {
-            Log.d("OptionsAdapter", "visibleOptions.size: ${visibleOptions.size}")
-            Log.d("OptionsAdapter", "options.size: ${options.size}")
             maxLoad = true
         }
 
@@ -146,8 +144,8 @@ class OptionsAdapter(
         // Implement the logic for handling the clicked option here
 
         pathList.add(selectedOption)
-        println("click path:" + pathList)
-        tvToFound.text = selectedOption
+        System.out.println("PATH:" + pathList.toString())
+        tvCurrentLink.text = selectedOption
 
         tv.setTextColor(Color.parseColor("#363A43"))
         tv.setTypeface(tv.typeface, Typeface.BOLD)
