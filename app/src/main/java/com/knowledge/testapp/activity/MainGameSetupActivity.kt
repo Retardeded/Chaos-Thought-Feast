@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import android.widget.ExpandableListView.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -109,6 +109,20 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
         }
 
+        binding.etStartTitle.setOnLongClickListener {
+            val typedStartTitle = binding.etStartTitle.text.toString()
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, typedStartTitle)
+            webParsing.isTitleCorrect(articleUrl) { isCorrect ->
+                if (isCorrect) {
+                    val articleDescription = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
+                    showArticleDescription(typedStartTitle, articleDescription)
+                } else {
+                    showArticleTitleErrorDialog(typedStartTitle)
+                }
+            }
+            return@setOnLongClickListener true
+        }
+
         binding.etGoalTitle.afterTextChanged { text ->
             val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, text)
 
@@ -118,6 +132,21 @@ class MainGameSetupActivity : AppCompatActivity() {
                 // Perform other tasks if needed
             }
         }
+
+        binding.etGoalTitle.setOnLongClickListener {
+            val typedGoalTitle = binding.etGoalTitle.text.toString()
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, typedGoalTitle)
+            webParsing.isTitleCorrect(articleUrl) { isCorrect ->
+                if (isCorrect) {
+                    val articleDescription = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
+                    showArticleDescription(typedGoalTitle, articleDescription)
+                } else {
+                    showArticleTitleErrorDialog(typedGoalTitle)
+                }
+            }
+            return@setOnLongClickListener true
+        }
+
         randomArticleViewModel = ViewModelProvider(this)[RandomArticleViewModel::class.java]
 
         fun setRandomArticle(
@@ -169,6 +198,32 @@ class MainGameSetupActivity : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
+    }
+
+    fun showArticleDescription(title: String, message: String) {
+        runOnUiThread {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(title)
+            builder.setMessage(message)
+            builder.setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
+    }
+
+    fun showArticleTitleErrorDialog(title:String) {
+        runOnUiThread {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Error")
+            builder.setMessage("The article $title is not correct.")
+            builder.setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
     }
 
     fun showExpandableListViewPopup(anchorView: View, expandableListDetail: HashMap<String, List<String>>) {
