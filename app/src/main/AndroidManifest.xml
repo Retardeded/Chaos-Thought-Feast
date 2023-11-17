@@ -26,9 +26,11 @@
             android:exported="false" />
         <activity
             android:name=".activity.RegistrationActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".activity.LoginActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".activity.RankingsActivity"

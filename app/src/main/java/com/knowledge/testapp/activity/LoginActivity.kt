@@ -3,41 +3,29 @@ package com.knowledge.testapp.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
+import androidx.activity.compose.setContent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.R
-import com.knowledge.testapp.databinding.ActivityLoginBinding
+import com.knowledge.testapp.ui.LoginScreen
 import com.knowledge.testapp.utils.LocaleHelper
 
 class LoginActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString().trim()
-            val password = binding.etPassword.text.toString()
-
-            // Call the login function with email and password
-            loginUser(email, password)
-        }
-
-        binding.btnRegister.setOnClickListener {
-            // Redirect to RegistrationActivity when "Register here" button is clicked
-            val intent = Intent(this, RegistrationActivity::class.java)
-            startActivity(intent)
+        setContent {
+            LoginScreen(
+                onLoginClick = { email, password ->
+                    loginUser(email, password)
+                },
+                onRegisterClick = {
+                    startActivity(Intent(this, RegistrationActivity::class.java))
+                }
+            )
         }
     }
 
@@ -45,14 +33,11 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Login successful, user is authenticated
-                    // Proceed to the next activity (e.g., MainActivity)
                     LocaleHelper.seUserAndLanguage(this)
                     val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    // Login failed, handle the error
                     try {
                         throw task.exception!!
                     } catch (e: FirebaseAuthInvalidUserException) {
