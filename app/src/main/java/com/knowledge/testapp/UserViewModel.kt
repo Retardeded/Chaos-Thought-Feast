@@ -3,6 +3,9 @@ package com.knowledge.testapp
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.knowledge.testapp.data.User
@@ -11,6 +14,21 @@ import com.knowledge.testapp.utils.ModifyingStrings
 import java.sql.DriverManager
 
 class UserViewModel : ViewModel() {
+
+    private var googleSignInClient: GoogleSignInClient? = null
+
+    fun getGoogleSignInClient(context: Context): GoogleSignInClient {
+        if (googleSignInClient == null) {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            googleSignInClient = GoogleSignIn.getClient(context, gso)
+        }
+        return googleSignInClient!!
+    }
+
     fun saveUserDataToDatabase(user: User) {
         val database: FirebaseDatabase = FirebaseDatabase.getInstance()
         val usersRef: DatabaseReference = database.getReference("users")

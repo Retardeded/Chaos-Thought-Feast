@@ -60,7 +60,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/logout"
-        android:onClick="logoutUser"
         android:layout_gravity="center"
         android:textColor="@color/white" />
 

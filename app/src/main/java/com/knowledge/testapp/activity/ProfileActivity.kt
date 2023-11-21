@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.knowledge.testapp.UserViewModel
 import com.knowledge.testapp.WikiHelper
 import com.knowledge.testapp.databinding.ActivityProfileActivtyBinding
 import com.knowledge.testapp.fragment.PathsDialogFragment
@@ -20,13 +22,16 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var wikiHelper: WikiHelper
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private lateinit var binding: ActivityProfileActivtyBinding
+    val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileActivtyBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        binding.btnLogout.setOnClickListener {
+            logoutUser()
+        }
         setupRecyclerViews()
     }
 
@@ -60,39 +65,52 @@ class ProfileActivity : AppCompatActivity() {
         NavigationUtils.goToMainMenu(this)
     }
 
-    fun logoutUser(view: View) {
+    fun logoutUser() {
+        val googleSignInClient = userViewModel.getGoogleSignInClient(this)
+
+        // Sign out from Firebase
         FirebaseAuth.getInstance().signOut()
-        // Redirect to the LoginActivity after logout
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+
+        // Sign out from Google Sign-In
+        googleSignInClient.signOut().addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                // Redirect to the LoginActivity after successful logout
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                // Handle sign out failure, possibly due to network issues
+                Toast.makeText(this, "Failed to sign out from Google", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     fun deleteAccount(view: View) {
+        val currentUser = FirebaseAuth.getInstance().currentUser
 
         if (currentUser != null) {
-
+            // Delete user data from the database
             val database: FirebaseDatabase = FirebaseDatabase.getInstance()
             val usersRef: DatabaseReference = database.getReference("users")
             val sanitizedEmail = currentUser.email?.let { ModifyingStrings.sanitizeEmail(it) }
             val userRecordsRef = sanitizedEmail?.let { usersRef.child(it) }
-            if (userRecordsRef != null) {
-                userRecordsRef.removeValue()
-            }
-            currentUser.delete()
-                .addOnCompleteListener { task ->
+
+            userRecordsRef?.removeValue()?.addOnCompleteListener {
+                // Delete the user from Firebase Authentication
+                currentUser.delete().addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Account deleted!", Toast.LENGTH_SHORT).show()
-                        // Account deleted successfully
-                        // You can add any additional actions here, if needed
+
+                        logoutUser()
                     } else {
-                        // Failed to delete account
-                        // You can handle the error here and show an error message to the user
+                        // Handle the case where account deletion failed
+                        Toast.makeText(this, "Failed to delete account", Toast.LENGTH_SHORT).show()
                     }
                 }
+            }
         } else {
-            // User is not signed in or already signed out
             // Handle the case when the user is not available to delete
+            Toast.makeText(this, "No user is signed in", Toast.LENGTH_SHORT).show()
         }
     }
 }
