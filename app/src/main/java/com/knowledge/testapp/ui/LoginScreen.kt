@@ -12,7 +12,9 @@ import androidx.compose.material.TextField
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 @Composable
-fun LoginScreen(onLoginClick: (String, String) -> Unit, onRegisterClick: () -> Unit) {
+fun LoginScreen(onLoginClick: (String, String) -> Unit,
+                onRegisterClick: () -> Unit,
+                onGoogleSignInClick: () -> Unit,) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -23,6 +25,13 @@ fun LoginScreen(onLoginClick: (String, String) -> Unit, onRegisterClick: () -> U
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Button(onClick = onGoogleSignInClick) {
+            Text("Sign in with Google")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextField(
             value = email,
             onValueChange = { email = it },

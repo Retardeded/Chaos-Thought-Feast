@@ -9,17 +9,6 @@ import java.util.Locale
 
 object LocaleHelper {
 
-    fun seUserAndLanguage(context: Context) {
-        FirebaseAuth.getInstance().currentUser?.email?.let {
-            getUserDataByEmail(it) { user ->
-                // This code block will be executed when the data is loaded
-                // Update QuizValues.USER with the loaded user data
-                QuizValues.USER = user
-                LocaleHelper.setAppLocale(context, user!!.languageCode)
-            }
-        }
-    }
-
     fun setAppLocale(context: Context, language: String) {
         val locale = Locale(language) // Convert Language enum to locale
         Locale.setDefault(locale)

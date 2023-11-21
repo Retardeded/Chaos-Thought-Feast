@@ -1,24 +1,116 @@
 package com.knowledge.testapp.activity
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.GoogleAuthProvider
+import com.knowledge.testapp.R
+import com.knowledge.testapp.UserViewModel
+import com.knowledge.testapp.data.Language
+import com.knowledge.testapp.data.User
 import com.knowledge.testapp.ui.LoginScreen
 import com.knowledge.testapp.utils.LocaleHelper
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var googleSignInClient: GoogleSignInClient
+    val userViewModel: UserViewModel by viewModels()
+
+    private val googleSignInLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            firebaseAuthWithGoogle(account.idToken!!)
+        } catch (e: ApiException) {
+            Log.e("LoginActivity", "Google Sign-In failed. Status Code: ${e.statusCode}", e)
+            Toast.makeText(this, "Google Sign-In failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun firebaseAuthWithGoogle(idToken: String) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                val firebaseUser = auth.currentUser
+                if (firebaseUser != null) {
+                    val email = firebaseUser.email ?: ""
+
+                    userViewModel.checkUserData(email) { userExists ->
+                        if (!userExists) {
+
+                            val locale = Locale.getDefault()
+                            val language = when (locale.language) {
+                                "en" -> Language.ENGLISH
+                                "pl" -> Language.POLISH
+                                else -> Language.ENGLISH // Default language
+                            }
+
+                            val newUser = User(
+                                username = firebaseUser.displayName ?: "",
+                                email = email,
+                                language = language
+                            )
+                            userViewModel.saveUserDataToDatabase(newUser)
+                        }
+
+                        userViewModel.seUserAndLanguage(this@LoginActivity)
+
+                        val intent = Intent(this@LoginActivity, MainMenuActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                } else {
+                    Toast.makeText(this, "Authentication failed. Please try again.", Toast.LENGTH_LONG).show()
+                }
+            } else {
+                // Display a generic error message or log the error
+                Toast.makeText(this, "Google Sign-In failed. Please try again.", Toast.LENGTH_LONG).show()
+                Log.e("LoginActivity", "Google Sign-In failed: ${task.exception}")
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
 
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
         setContent {
             LoginScreen(
+                onGoogleSignInClick = {
+                    val signInIntent = googleSignInClient.signInIntent
+                    googleSignInLauncher.launch(signInIntent)
+                },
                 onLoginClick = { email, password ->
                     loginUser(email, password)
                 },
@@ -33,21 +125,25 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    LocaleHelper.seUserAndLanguage(this)
+                    userViewModel.seUserAndLanguage(this)
                     val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    try {
-                        throw task.exception!!
-                    } catch (e: FirebaseAuthInvalidUserException) {
-                        // If the user does not exist
-                        // Handle accordingly, e.g., show an error message or prompt for registration
-                    } catch (e: FirebaseAuthInvalidCredentialsException) {
-                        // If the user enters incorrect email or password
-                        // Handle accordingly, e.g., show an error message
-                    } catch (e: Exception) {
-                        // Handle other exceptions
+                    val exception = task.exception
+                    when (exception) {
+                        is FirebaseAuthInvalidUserException -> {
+                            // User not found
+                            Toast.makeText(this, "User not found. Please register.", Toast.LENGTH_LONG).show()
+                        }
+                        is FirebaseAuthInvalidCredentialsException -> {
+                            // Invalid email or password
+                            Toast.makeText(this, "Invalid email or password.", Toast.LENGTH_LONG).show()
+                        }
+                        else -> {
+                            // Other errors
+                            Toast.makeText(this, "Login failed: ${exception?.message}", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             }

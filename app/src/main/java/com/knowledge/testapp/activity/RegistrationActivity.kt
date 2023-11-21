@@ -3,21 +3,22 @@ package com.knowledge.testapp.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.knowledge.testapp.UserViewModel
 import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.ui.RegistrationScreen
-import com.knowledge.testapp.utils.LocaleHelper
-import com.knowledge.testapp.utils.ModifyingStrings.Companion.sanitizeEmail
-import java.sql.DriverManager.println
 
 class RegistrationActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,43 +38,38 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun registerUser(username: String, email: String, password: String, selectedLanguage : Language) {
+
+        if (username.isBlank() || email.isBlank() || password.isBlank()) {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = User(username, email, selectedLanguage, recordsHeld = 0, currentScore = 0)
 
-                    saveUserDataToDatabase(user)
-
-                    LocaleHelper.seUserAndLanguage(this)
+                    userViewModel.saveUserDataToDatabase(user)
+                    userViewModel.seUserAndLanguage(this)
                     val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()
-                } else {
-                    try {
-                        throw task.exception!!
-                    } catch (e: FirebaseAuthInvalidCredentialsException) {
-                        // If the email is not valid
-                        // Handle accordingly, e.g., show an error message
-                    } catch (e: Exception) {
-                        // Handle other exceptions
+                }  else {
+                    when (val exception = task.exception) {
+                        is FirebaseAuthWeakPasswordException -> {
+                            Toast.makeText(this, "Password is too weak", Toast.LENGTH_SHORT).show()
+                        }
+                        is FirebaseAuthInvalidCredentialsException -> {
+                            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show()
+                        }
+                        is FirebaseAuthUserCollisionException -> {
+                            Toast.makeText(this, "Email is already in use", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            Toast.makeText(this, "Registration failed: ${exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            }
-    }
-
-    private fun saveUserDataToDatabase(user: User) {
-        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-        val usersRef: DatabaseReference = database.getReference("users")
-
-        val sanitizedEmail = sanitizeEmail(user.email)
-        val userRecordsRef = usersRef.child(sanitizedEmail)
-
-        userRecordsRef.setValue(user)
-            .addOnSuccessListener {
-                println("User data saved successfully.")
-            }
-            .addOnFailureListener { error ->
-                println("Error saving user data: $error")
             }
     }
 }
