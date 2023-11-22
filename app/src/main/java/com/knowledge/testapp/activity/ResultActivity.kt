@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.WikiHelper
+import com.knowledge.testapp.localdb.UserPathDbManager
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.data.PathRecord
@@ -27,7 +27,7 @@ class ResultActivity : AppCompatActivity() {
     private lateinit var scoreView: TextView
     private lateinit var pathView: TextView
 
-    private var dbWikiHelper: WikiHelper? = null
+    private var dbUserPathDbManager: UserPathDbManager? = null
     lateinit var startConcept:String
     lateinit var goalConcept:String
     var pathLength: Int = 0
@@ -333,18 +333,18 @@ class ResultActivity : AppCompatActivity() {
 
     fun saveToLocalDB()
     {
-        dbWikiHelper = WikiHelper(this)
-        dbWikiHelper!!.open()
-        dbWikiHelper!!.beginTransaction()
+        dbUserPathDbManager = UserPathDbManager(this)
+        dbUserPathDbManager!!.open()
+        dbUserPathDbManager!!.beginTransaction()
         val itemUser = PathRecord()
         itemUser.startingConcept = startConcept
         itemUser.goalConcept = goalConcept
         itemUser.path = pathList as ArrayList<String>
         itemUser.steps = pathLength
         itemUser.win = win
-        dbWikiHelper!!.insert(itemUser)
-        dbWikiHelper!!.setTransactionSuccess()
-        dbWikiHelper!!.endTransaction()
-        dbWikiHelper!!.close()
+        dbUserPathDbManager!!.insert(QuizValues.USER!!.email,itemUser)
+        dbUserPathDbManager!!.setTransactionSuccess()
+        dbUserPathDbManager!!.endTransaction()
+        dbUserPathDbManager!!.close()
     }
 }

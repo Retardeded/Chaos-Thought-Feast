@@ -14,7 +14,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.UserViewModel
-import com.knowledge.testapp.WikiHelper
+import com.knowledge.testapp.localdb.UserPathDbManager
 import com.knowledge.testapp.ui.ProfilePathsDialog
 import com.knowledge.testapp.ui.ProfileScreen
 import com.knowledge.testapp.utils.ModifyingStrings
@@ -23,7 +23,7 @@ import com.knowledge.testapp.utils.NavigationUtils
 class ProfileActivity : AppCompatActivity() {
 
 
-    private lateinit var wikiHelper: WikiHelper
+    private lateinit var userPathDbManager: UserPathDbManager
     private var showWinningPathsDialog by mutableStateOf(false)
     private var showLosingPathsDialog by mutableStateOf(false)
     val userViewModel: UserViewModel by viewModels()
@@ -31,14 +31,14 @@ class ProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        wikiHelper = WikiHelper(this)
+        userPathDbManager = UserPathDbManager(this)
 
         setContent {
             if (showWinningPathsDialog) {
                 ProfilePathsDialog(
                     true,
                     QuizValues.USER!!.username,
-                    pathsData = wikiHelper.getSuccessfulPaths(),
+                    pathsData = userPathDbManager.getPathsForUser(QuizValues.USER!!.email, true),
                     onDismissRequest = { showWinningPathsDialog = false }
                 )
             }
@@ -46,7 +46,7 @@ class ProfileActivity : AppCompatActivity() {
                 ProfilePathsDialog(
                     false,
                     QuizValues.USER!!.username,
-                    pathsData = wikiHelper.getUnsuccessfulPaths(),
+                    pathsData = userPathDbManager.getPathsForUser(QuizValues.USER!!.email, false),
                     onDismissRequest = { showLosingPathsDialog = false }
                 )
             }
@@ -63,7 +63,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     fun clearPaths() {
-        wikiHelper.clearTableUser()
+        userPathDbManager.clearUserData(QuizValues.USER!!.email)
     }
 
     fun showWinningPathsDialog() {
