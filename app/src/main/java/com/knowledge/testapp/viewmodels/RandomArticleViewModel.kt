@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.data.Language
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -22,9 +23,13 @@ import kotlin.coroutines.suspendCoroutine
 
 class RandomArticleViewModel : ViewModel() {
 
-    private val lang = QuizValues.USER!!.languageCode.lowercase(Locale.ROOT)
+    private val lang = QuizValues.USER!!.language.languageCode
     private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
-    private val categoriesRef = FirebaseDatabase.getInstance().getReference("categories$lang")
+    private val categoriesRef = if (lang == Language.ENGLISH.languageCode) {
+        FirebaseDatabase.getInstance().getReference("categories")
+    } else {
+        FirebaseDatabase.getInstance().getReference("categories$lang")
+    }
     private val categoriesTranslationRef = FirebaseDatabase.getInstance().getReference("categories${lang}translation")
 
     var categoriesTranslation = mutableMapOf<String, String>()
@@ -32,7 +37,6 @@ class RandomArticleViewModel : ViewModel() {
     init {
         categoriesTranslations {
             categoriesTranslation.putAll(it)
-            System.out.println("TRANSLATON:" + categoriesTranslation)
         }
     }
 
@@ -71,7 +75,6 @@ class RandomArticleViewModel : ViewModel() {
                     }
                     categoryMap[categorySnapshot.key.toString()] = categories
                 }
-                System.out.println(categoryMap)
                 callback(categoryMap) // Return the list of subcategories
             }
 
@@ -113,7 +116,7 @@ class RandomArticleViewModel : ViewModel() {
         // Get a random English article title
         val title = getRandomWikiEntry()
 
-        if (lang == "EN") {
+        if (lang == Language.ENGLISH.languageCode) {
             return title
         }
 
@@ -237,7 +240,6 @@ class RandomArticleViewModel : ViewModel() {
                 val reader = BufferedReader(InputStreamReader(urlConnection.inputStream))
                 val response = StringBuilder()
 
-                println(response.toString()) // Print the response
                 var line: String?
                 while (reader.readLine().also { line = it } != null) {
                     response.append(line)
@@ -255,37 +257,37 @@ class RandomArticleViewModel : ViewModel() {
         return@withContext null
     }
     suspend fun getRandomArticleFromCategory(category: String): String? = withContext(Dispatchers.IO) {
-
         try {
             var translatedCategory = category
-            // Query Firebase to get all entries with the specified category
-            if(lang != "eng") {
-                translatedCategory = categoriesTranslation.get(category).toString()
+            if (lang != Language.ENGLISH.languageCode) {
+                translatedCategory = categoriesTranslation[category].toString()
             }
             val query = mostPopularPagesRef.orderByChild("category").equalTo(translatedCategory)
             val dataSnapshot = query.get().await()
 
             if (dataSnapshot.exists()) {
-                // Convert the dataSnapshot to a list of entries
                 val entries = mutableListOf<Map<String, Any>>()
                 for (childSnapshot in dataSnapshot.children) {
                     val entry = childSnapshot.value as? Map<String, Any>
                     entry?.let { entries.add(it) }
                 }
 
-                // Select a random entry from the list
-                val randomEntry = entries.random()
+                if (entries.isNotEmpty()) {
+                    val randomEntry = entries.random()
+                    val title = randomEntry["title"]?.toString()
 
-                randomEntry["title"]?.toString()
-
-                    // Return the title of the random entry
-                return@withContext randomEntry["title"]?.toString()
-                    ?.let { translateTitleToLanguage(it,lang) }
+                    // If the language is English, return the title directly
+                    if (lang == Language.ENGLISH.languageCode) {
+                        return@withContext title
+                    } else {
+                        // If the language is not English, translate the title
+                        return@withContext title?.let { translateTitleToLanguage(it, lang) }
+                    }
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
         return@withContext null
     }
 
@@ -340,7 +342,6 @@ class RandomArticleViewModel : ViewModel() {
             e.printStackTrace()
         }
 
-        // Return a random title from the list, or null if the list is empty
         return if (articleTitles.isNotEmpty()) {
             articleTitles.random()
         } else {

@@ -37,7 +37,7 @@ class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
         val text = binding.tvToFound.text.toString() + goalConcept
         binding.tvToFound.text = text
         binding.tvToFound.setOnClickListener {
-            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, goalConcept)
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, goalConcept)
             val popupText = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
             val builder = AlertDialog.Builder(this)
             builder.setTitle(goalConcept)
@@ -52,7 +52,7 @@ class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
         recyclerView = binding.rvGameOptions
 
         webParsing = WebParsing()
-        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, startingConcept)
+        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, startingConcept)
         System.out.println("URL::" + articleUrl)
 
         val layoutManager = LinearLayoutManager(this)

@@ -26,7 +26,7 @@ class SplashActivity : AppCompatActivity() {
                     // This code block will be executed when the data is loaded
                     // Update QuizValues.USER with the loaded user data
                     QuizValues.USER = user
-                    LocaleHelper.setAppLocale(this, QuizValues.USER!!.languageCode)
+                    LocaleHelper.setAppLocale(this, QuizValues.USER!!.language.languageCode)
                     startActivity(Intent(this, MainMenuActivity::class.java))
                 }
             }

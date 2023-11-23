@@ -151,16 +151,16 @@ class ResultActivity : AppCompatActivity() {
 
         when (QuizValues.gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> {
-                refStringWorldsRecords = createTableName(QuizValues.worldRecords_FIND_YOUR_LIKINGS, user.languageCode)
-                refStringUsers = createTableName(QuizValues.topUsers_FIND_YOUR_LIKINGS, user.languageCode)
+                refStringWorldsRecords = createTableName(QuizValues.worldRecords_FIND_YOUR_LIKINGS, user.language.languageCode)
+                refStringUsers = createTableName(QuizValues.topUsers_FIND_YOUR_LIKINGS, user.language.languageCode)
             }
             GameMode.LIKING_SPECTRUM_JOURNEY -> {
-                refStringWorldsRecords = createTableName(QuizValues.worldRecords_LIKING_SPECTRUM_JOURNEY, user.languageCode)
-                refStringUsers = createTableName(QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY, user.languageCode)
+                refStringWorldsRecords = createTableName(QuizValues.worldRecords_LIKING_SPECTRUM_JOURNEY, user.language.languageCode)
+                refStringUsers = createTableName(QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY, user.language.languageCode)
             }
             GameMode.ANYFIN_CAN_HAPPEN -> {
-                refStringWorldsRecords = createTableName(QuizValues.worldRecords_ANYFIN_CAN_HAPPEN, user.languageCode)
-                refStringUsers = createTableName(QuizValues.topUsers_ANYFIN_CAN_HAPPEN, user.languageCode)
+                refStringWorldsRecords = createTableName(QuizValues.worldRecords_ANYFIN_CAN_HAPPEN, user.language.languageCode)
+                refStringUsers = createTableName(QuizValues.topUsers_ANYFIN_CAN_HAPPEN, user.language.languageCode)
             }
         }
 

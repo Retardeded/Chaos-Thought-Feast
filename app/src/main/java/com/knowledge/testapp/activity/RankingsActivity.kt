@@ -21,7 +21,7 @@ import com.knowledge.testapp.utils.NavigationUtils
 
 class RankingsActivity : AppCompatActivity() {
     private val currentUserSanitizedEmail = ModifyingStrings.sanitizeEmail(QuizValues.USER!!.email)
-    private val currentUserLanguage = QuizValues.USER!!.languageCode
+    private val currentUserLanguage = QuizValues.USER!!.language.languageCode
 
     private var topUsers by mutableStateOf(listOf<User>())
     private var showTopUsersFindYourLikings by mutableStateOf(false)

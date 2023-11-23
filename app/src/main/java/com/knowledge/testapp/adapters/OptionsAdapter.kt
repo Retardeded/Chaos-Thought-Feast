@@ -136,7 +136,7 @@ class OptionsAdapter(
     }
 
     private fun onOptionDescriptionClicked(tvDescription: TextView, tvOption: TextView) {
-        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, tvOption.text.toString())
+        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, tvOption.text.toString())
         tvDescription.text = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
     }
 
@@ -157,7 +157,7 @@ class OptionsAdapter(
             tv.background = ContextCompat.getDrawable(context, R.drawable.default_option_border_bg)
         }, 300) // Delay of 0.3 seconds (300 milliseconds)
 
-        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, tv.text.toString())
+        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, tv.text.toString())
         webParsing.fetchAndProcessHtmlToGetTitles(articleUrl, tv) { urls ->
             options = urls
             maxLoad = false

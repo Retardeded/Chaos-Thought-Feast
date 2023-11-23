@@ -53,7 +53,7 @@ class UserViewModel : ViewModel() {
                 // This code block will be executed when the data is loaded
                 // Update QuizValues.USER with the loaded user data
                 QuizValues.USER = user
-                LocaleHelper.setAppLocale(context, user!!.languageCode)
+                LocaleHelper.setAppLocale(context, user!!.language.languageCode)
             }
         }
     }

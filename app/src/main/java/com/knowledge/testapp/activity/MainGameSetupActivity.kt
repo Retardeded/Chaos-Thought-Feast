@@ -100,7 +100,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         })
 
         binding.etStartTitle.afterTextChanged { text ->
-            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, text)
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, text)
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
                 // Update QuizValues or perform other actions based on isCorrect
@@ -111,7 +111,7 @@ class MainGameSetupActivity : AppCompatActivity() {
 
         binding.etStartTitle.setOnLongClickListener {
             val typedStartTitle = binding.etStartTitle.text.toString()
-            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, typedStartTitle)
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, typedStartTitle)
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
                 if (isCorrect) {
                     val articleDescription = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
@@ -124,7 +124,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         }
 
         binding.etGoalTitle.afterTextChanged { text ->
-            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, text)
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, text)
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
                 // Update QuizValues or perform other actions based on isCorrect
@@ -135,7 +135,7 @@ class MainGameSetupActivity : AppCompatActivity() {
 
         binding.etGoalTitle.setOnLongClickListener {
             val typedGoalTitle = binding.etGoalTitle.text.toString()
-            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.languageCode, typedGoalTitle)
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, typedGoalTitle)
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
                 if (isCorrect) {
                     val articleDescription = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
