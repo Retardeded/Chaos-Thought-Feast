@@ -1,6 +1,6 @@
 package com.knowledge.testapp.activity
 
-import RandomArticleViewModel
+import com.knowledge.testapp.viewmodels.RandomArticleViewModel
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle

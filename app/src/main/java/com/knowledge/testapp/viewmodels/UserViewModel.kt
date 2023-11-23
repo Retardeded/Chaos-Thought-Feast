@@ -1,4 +1,4 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.viewmodels
 
 import android.content.Context
 import android.util.Log
@@ -8,6 +8,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.R
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.utils.LocaleHelper
 import com.knowledge.testapp.utils.ModifyingStrings

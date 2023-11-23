@@ -47,7 +47,7 @@ fun WinningPathsProfileScreen(
     onCloseClick: () -> Unit
 ) {
     val backgroundResource = if (isWinning) R.drawable.foundcorrectpathwin3 else R.drawable.deadendpathlose
-    val titleText = if (isWinning) "Winning Paths" else "Losing Paths"
+    val titleText = if (isWinning) R.string.winning_paths.toString() else R.string.losing_paths.toString()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(

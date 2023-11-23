@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.GoogleAuthProvider
-import com.knowledge.testapp.UserViewModel
+import com.knowledge.testapp.viewmodels.UserViewModel
 import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.ui.LoginScreen
