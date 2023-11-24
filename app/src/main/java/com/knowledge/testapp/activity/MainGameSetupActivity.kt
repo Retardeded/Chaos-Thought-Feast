@@ -37,6 +37,9 @@ class MainGameSetupActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
 
+    var lastStartTitleCheck: String? = null
+    var lastGoalTitleCheck: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainGameSetupBinding.inflate(layoutInflater)
@@ -100,12 +103,14 @@ class MainGameSetupActivity : AppCompatActivity() {
         })
 
         binding.etStartTitle.afterTextChanged { text ->
+            lastStartTitleCheck = text
             val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, text)
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
-                // Update QuizValues or perform other actions based on isCorrect
-                QuizValues.correctStart = isCorrect
-                // Perform other tasks if needed
+                if (text == lastStartTitleCheck) { // Check if the text hasn't changed
+                    QuizValues.correctStart = isCorrect
+                    updateStrikethrough(binding.etStartTitle, isCorrect)
+                }
             }
         }
 
@@ -124,12 +129,14 @@ class MainGameSetupActivity : AppCompatActivity() {
         }
 
         binding.etGoalTitle.afterTextChanged { text ->
+            lastGoalTitleCheck = text
             val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, text)
 
             webParsing.isTitleCorrect(articleUrl) { isCorrect ->
-                // Update QuizValues or perform other actions based on isCorrect
-                QuizValues.correctGoal = isCorrect
-                // Perform other tasks if needed
+                if (text == lastGoalTitleCheck) { // Check if the text hasn't changed
+                    QuizValues.correctGoal = isCorrect
+                    updateStrikethrough(binding.etGoalTitle, isCorrect)
+                }
             }
         }
 
@@ -198,6 +205,16 @@ class MainGameSetupActivity : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
+    }
+
+    fun updateStrikethrough(editText: EditText, isCorrect: Boolean) {
+        runOnUiThread {
+            editText.paintFlags = if (isCorrect) {
+                editText.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv() // Remove strike-through
+            } else {
+                editText.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG // Add strike-through
+            }
+        }
     }
 
     fun showArticleDescription(title: String, message: String) {
@@ -291,18 +308,6 @@ class MainGameSetupActivity : AppCompatActivity() {
             if (QuizValues.correctGoal && QuizValues.correctStart) {
                 startQuizActivity(true, true)
             }
-
-            if (!QuizValues.correctStart) {
-                binding.etStartTitle.paintFlags = binding.etStartTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            } else {
-                binding.etStartTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
-            }
-
-            if (!QuizValues.correctGoal) {
-                binding.etGoalTitle.paintFlags = binding.etGoalTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            } else {
-                binding.etGoalTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
-            }
         }
     }
 
@@ -315,12 +320,6 @@ class MainGameSetupActivity : AppCompatActivity() {
         } else {
             if (QuizValues.correctGoal) {
                 startQuizActivity(false, true)
-            }
-
-            if (!QuizValues.correctGoal) {
-                binding.etGoalTitle.paintFlags = binding.etGoalTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            } else {
-                binding.etGoalTitle.paintFlags = Paint.LINEAR_TEXT_FLAG
             }
         }
     }
