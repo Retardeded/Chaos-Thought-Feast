@@ -75,7 +75,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     fun goToRankings() {
-        startActivity(Intent(this, RankingsActivity::class.java))
+        NavigationUtils.goToRankings(this)
     }
 
     fun goToMainMenu() {
