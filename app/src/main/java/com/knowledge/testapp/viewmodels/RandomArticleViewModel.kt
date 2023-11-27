@@ -2,6 +2,8 @@ package com.knowledge.testapp.viewmodels
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
@@ -34,10 +36,37 @@ class RandomArticleViewModel : ViewModel() {
 
     var categoriesTranslation = mutableMapOf<String, String>()
 
+    private val _categories = MutableLiveData<Map<String, List<String>>>()
+    val categories: LiveData<Map<String, List<String>>> = _categories
+
     init {
         categoriesTranslations {
             categoriesTranslation.putAll(it)
         }
+        fetchCategories()
+    }
+
+    private fun fetchCategories() {
+        categoriesRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val categoryMap = mutableMapOf<String, List<String>>()
+                for (categorySnapshot in dataSnapshot.children) {
+                    val categories = mutableListOf<String>()
+                    for (subcategorySnapshot in categorySnapshot.children) {
+                        val subcategoryName = subcategorySnapshot.getValue(String::class.java)
+                        subcategoryName?.let {
+                            categories.add(it)
+                        }
+                    }
+                    categoryMap[categorySnapshot.key.toString()] = categories
+                }
+                _categories.value = categoryMap // Update LiveData
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle any errors that occur.
+            }
+        })
     }
 
     fun categoriesTranslations(callback: (Map<String, String>) -> Unit) {
@@ -61,6 +90,7 @@ class RandomArticleViewModel : ViewModel() {
         })
     }
 
+    /*
     fun getCategoriesWithSubcategories(callback: (Map<String, List<String>>) -> Unit) {
         categoriesRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -83,6 +113,8 @@ class RandomArticleViewModel : ViewModel() {
             }
         })
     }
+
+     */
 
     fun countTitlesPerCategory() {
         val categoryCountMap = HashMap<String, Int>()
