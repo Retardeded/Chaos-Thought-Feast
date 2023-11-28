@@ -61,7 +61,7 @@ fun GameSetupScreen(
 
     val categoriesData by randomArticleViewModel.categories.observeAsState(initial = emptyMap())
 
-    fun handleLongPress(title: String) {
+    fun onInfoIconClick(title: String) {
         fetchArticleDescription(title) { description ->
             descriptionDialogTitle.value = title
             descriptionDialogContent.value = description
@@ -134,7 +134,7 @@ fun GameSetupScreen(
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                             IconButton(
                                 onClick = {
-                                    handleLongPress(startTitle.value)
+                                    onInfoIconClick(startTitle.value)
                                 },
                                 modifier = Modifier
                                     .size(32.dp)
@@ -186,7 +186,7 @@ fun GameSetupScreen(
                         ) {
                             IconButton(
                                 onClick = {
-                                    handleLongPress(goalTitle.value)
+                                    onInfoIconClick(goalTitle.value)
                                 },
                                 modifier = Modifier
                                     .size(32.dp)
@@ -213,7 +213,7 @@ fun GameSetupScreen(
                                     .pointerInput(Unit) {
                                         detectTapGestures(
                                             onLongPress = {
-                                                handleLongPress(goalTitle.value)
+                                                onInfoIconClick(goalTitle.value)
                                             }
                                         )
                                     }

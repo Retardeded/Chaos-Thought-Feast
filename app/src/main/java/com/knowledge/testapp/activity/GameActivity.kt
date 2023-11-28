@@ -2,86 +2,60 @@ package com.knowledge.testapp.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import androidx.appcompat.app.AlertDialog
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.R
-import com.knowledge.testapp.WebParsing
-import com.knowledge.testapp.adapters.OptionsAdapter
-import com.knowledge.testapp.databinding.ActivityGameBinding
-import com.knowledge.testapp.utils.ModifyingStrings
+import com.knowledge.testapp.viewmodels.WikiParseViewModel
+import com.knowledge.testapp.ui.GameScreen
 
 
-class GameActivity : AppCompatActivity(), OptionsAdapter.OptionClickListener {
-
-
-    private lateinit var binding: ActivityGameBinding
-    private lateinit var goalConcept:String
-    private lateinit var startingConcept:String
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: OptionsAdapter
-
-    private lateinit var webParsing: WebParsing
+class GameActivity : AppCompatActivity() {
+    private lateinit var wikiParseViewModel: WikiParseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        binding = ActivityGameBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
-        startingConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
-        goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
-        val text = binding.tvToFound.text.toString() + goalConcept
-        binding.tvToFound.text = text
-        binding.tvToFound.setOnClickListener {
-            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, goalConcept)
-            val popupText = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(goalConcept)
-            builder.setMessage(popupText)
-            builder.setPositiveButton("OK") { dialog, which ->
-                dialog.dismiss()
+        wikiParseViewModel = WikiParseViewModel()
+
+        setContent {
+
+            val startTitleText = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
+            val goalTitleText = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
+
+            val currentTitle = remember { mutableStateOf(startTitleText) }
+            val goalTitle = remember { mutableStateOf(goalTitleText) }
+
+            val pathList = remember { mutableStateOf(listOf(startTitleText)) }
+            val totalSteps = remember { mutableStateOf(0) }
+            val win = remember { mutableStateOf(false) }
+
+            fun endQuest(win: Boolean, totalSteps: Int, pathList: List<String>) {
+                val intent = Intent(this, ResultActivity::class.java).apply {
+                    putExtra(QuizValues.WIN, win)
+                    putExtra(QuizValues.STARTING_CONCEPT, startTitleText)
+                    putExtra(QuizValues.GOAL_CONCEPT, goalTitle.value)
+                    putExtra(QuizValues.TOTAL_STEPS, totalSteps)
+                    putExtra(QuizValues.MAX_PROGRESS, 100) // Define progressBarMaxValue as needed
+                    putStringArrayListExtra(QuizValues.PATH, ArrayList(pathList))
+                }
+                startActivity(intent)
+                finish()
             }
-            val dialog = builder.create()
-            dialog.show()
+
+            GameScreen(
+                currentTitle = currentTitle,
+                goalTitle = goalTitle,
+                wikiParseViewModel = wikiParseViewModel,
+                pathList = pathList,
+                totalSteps = totalSteps,
+                win = win,
+                onEndQuest = { win, totalSteps, pathList ->
+                    endQuest(win, totalSteps, pathList)
+                }
+            )
         }
-
-        recyclerView = binding.rvGameOptions
-
-        webParsing = WebParsing()
-        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, startingConcept)
-        System.out.println("URL::" + articleUrl)
-
-        val layoutManager = LinearLayoutManager(this)
-        recyclerView.layoutManager = layoutManager
-
-        webParsing.fetchAndProcessHtmlToGetTitles(articleUrl, binding.tvCurrentLink) { urls ->
-            adapter = OptionsAdapter(this,this, urls, goalConcept,
-                binding.progessBar, binding.tvProgress, binding.tvCurrentLink, binding.btnBack, recyclerView, layoutManager)
-            adapter.notifyDataSetChanged()
-            recyclerView.adapter = adapter
-        }
-        val btnEnd = findViewById<Button>(R.id.btn_end)
-
-        btnEnd.setOnClickListener {
-            endQuiz(false, adapter.totalSteps, adapter.pathList)
-        }
-
-
-    }
-
-    override fun endQuiz(win: Boolean, totalSteps:Int, pathList:ArrayList<String> ) {
-        val intent = Intent(this, ResultActivity::class.java)
-        intent.putExtra(QuizValues.WIN, win)
-        intent.putExtra(QuizValues.STARTING_CONCEPT, startingConcept)
-        intent.putExtra(QuizValues.GOAL_CONCEPT, goalConcept)
-        intent.putExtra(QuizValues.TOTAL_STEPS, totalSteps)
-        intent.putExtra(QuizValues.MAX_PROGRESS, binding.progessBar.max)
-        intent.putStringArrayListExtra(QuizValues.PATH, pathList)
-        startActivity(intent)
-        finish()
     }
 }

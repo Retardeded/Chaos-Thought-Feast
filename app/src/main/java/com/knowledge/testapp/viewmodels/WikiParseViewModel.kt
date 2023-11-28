@@ -1,16 +1,23 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.viewmodels
 
-import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.encodedURLToText
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.*
 import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import java.util.concurrent.CountDownLatch
 
-class WebParsing() {
+class WikiParseViewModel: ViewModel() {
+    private val _options = MutableLiveData<List<String>>()
+    val options: LiveData<List<String>> = _options
 
     private lateinit var mCurrentHtml:String
     private lateinit var mUrls:ArrayList<String>
@@ -18,71 +25,61 @@ class WebParsing() {
     private var currentOverloadedIndex = 0
     private val okHttpClient = OkHttpClient()
 
-    fun isTitleCorrect(url: String, callback: (Boolean) -> Unit) {
+    fun fetchTitles(articleUrl: String) {
+        viewModelScope.launch {
+            val titles = fetchAndProcessHtmlToGetTitles(articleUrl)
+            _options.value = titles
+        }
+    }
 
-        val request = Request.Builder()
-            .url(url)
-            .build()
-
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callback(false)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                try {
+    suspend fun isTitleCorrect(url: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val request = Request.Builder().url(url).build()
+                okHttpClient.newCall(request).execute().use { response ->
                     if (response.isSuccessful) {
                         val result = response.body?.string()
-                        if (result != null && !result.contains("Wikipedia does not have an article with this exact name")) {
-                            callback(true)
-                        } else {
-                            callback(false)
-                        }
-                    } else {
-                        callback(false)
-                    }
-                } finally {
-                    response.body?.close()
+                        result != null && !result.contains("Wikipedia does not have an article with this exact name")
+                    } else false
                 }
+            } catch (e: IOException) {
+                false
             }
-        })
+        }
     }
 
-    fun fetchHtmlFromUrl(url: String, callback: (String) -> Unit) {
-        val request = Request.Builder()
-            .url(url)
-            .build()
-
-        okHttpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // Handle the failure
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.use { responseBody ->
+    private suspend fun fetchHtmlFromUrl(url: String): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val request = Request.Builder().url(url).build()
+                okHttpClient.newCall(request).execute().use { response ->
                     if (response.isSuccessful) {
-                        val result = responseBody.body?.string()
-                        if (result != null) {
-                            callback(result) // Return the HTML content
-                        }
-                    }
+                        response.body?.string()
+                    } else null
                 }
+            } catch (e: IOException) {
+                e.printStackTrace()
+                null
             }
-        })
+        }
     }
 
-    fun getTitlesFromHtml(url: String, htmlContent: String, tv: TextView, callback: (ArrayList<String>) -> Unit) {
+    private fun getTitlesFromHtml(url: String, htmlContent: String): List<String> {
         // Process the HTML content
         mCurrentHtml = htmlContent
         System.out.println("link:" + url)
         mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
 
+        return (mUrls)
+
+        /*
         tv.post {
             val lastPart = url.substringAfterLast("/")
             tv.text = lastPart
             callback(mUrls) // Call the callback with mUrls
         }
+
+         */
     }
 
     fun getFirstParagraphWithArticleNameOrBoldTextFromHtml(url: String, htmlContent: String): String {
@@ -128,29 +125,14 @@ class WebParsing() {
         return finalParagraph
     }
 
-    fun fetchAndProcessHtmlToGetTitles(url: String, tv: TextView, callback: (ArrayList<String>) -> Unit) {
-        fetchHtmlFromUrl(url) { htmlContent ->
-            getTitlesFromHtml(url, htmlContent, tv, callback)
-        }
+    private suspend fun fetchAndProcessHtmlToGetTitles(url: String): List<String> {
+        val htmlContent = fetchHtmlFromUrl(url) ?: return emptyList()
+        return getTitlesFromHtml(url, htmlContent)
     }
 
-    fun fetchAndProcessHtmlToGetParagraph(url: String): String {
-        val latch = CountDownLatch(1)
-        var finalParagraph = ""
-
-        fetchHtmlFromUrl(url) { htmlContent ->
-            finalParagraph = getFirstParagraphWithArticleNameOrBoldTextFromHtml(url, htmlContent)
-            latch.countDown()
-        }
-
-        // Wait for the callback to complete before returning finalParagraph
-        try {
-            latch.await()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-
-        return finalParagraph
+    suspend fun fetchAndProcessHtmlToGetParagraph(url: String): String {
+        val htmlContent = fetchHtmlFromUrl(url) ?: return "No content found"
+        return getFirstParagraphWithArticleNameOrBoldTextFromHtml(url, htmlContent)
     }
 
     fun parseLinksFromHtmlCode(baseUrl: String, code: String?): ArrayList<String> {

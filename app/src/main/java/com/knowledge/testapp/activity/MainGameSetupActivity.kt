@@ -11,9 +11,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.R
-import com.knowledge.testapp.WebParsing
+import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.ui.GameSetupScreen
 import com.knowledge.testapp.utils.ModifyingStrings
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 
 class MainGameSetupActivity : AppCompatActivity() {
 
-    private val webParsing = WebParsing()
+    private val wikiParseViewModel = WikiParseViewModel()
     private lateinit var randomArticleViewModel: RandomArticleViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,7 +78,8 @@ class MainGameSetupActivity : AppCompatActivity() {
 
             fun checkTitleCorrectness(title: String, onResult: (Boolean) -> Unit) {
                 val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, title)
-                webParsing.isTitleCorrect(articleUrl) { isCorrect ->
+                lifecycleScope.launch { // Use lifecycleScope in Activity or Fragment
+                    val isCorrect = wikiParseViewModel.isTitleCorrect(articleUrl)
                     onResult(isCorrect)
                 }
             }
@@ -85,7 +87,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             GameSetupScreen(
                 gameMode = QuizValues.gameMode,
                 fetchArticleDescription = { title, onDescriptionFetched ->
-                    fetchArticleDescription(title, onDescriptionFetched)
+                    fetchArticleDescription(wikiParseViewModel, title, onDescriptionFetched)
                 },
                 onStartButtonClick = { gameMode, startTitle, goalTitle, typedKeyword, category, isStartTitleCorrect, isGoalTitleCorrect ->
                     handleStartButtonClick(gameMode, startTitle, goalTitle, typedKeyword, category, isStartTitleCorrect, isGoalTitleCorrect)
@@ -107,16 +109,15 @@ class MainGameSetupActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchArticleDescription(title: String, onDescriptionFetched: (String) -> Unit) {
-        val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, title)
-        webParsing.isTitleCorrect(articleUrl) { isCorrect ->
-            if (isCorrect) {
-                val articleDescription = webParsing.fetchAndProcessHtmlToGetParagraph(articleUrl)
+    fun fetchArticleDescription(viewModel: WikiParseViewModel, title: String, onDescriptionFetched: (String) -> Unit) {
+        viewModel.viewModelScope.launch {
+            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, title)
+            if (viewModel.isTitleCorrect(articleUrl)) { // Assuming isTitleCorrect is a suspend function
+                val articleDescription = viewModel.fetchAndProcessHtmlToGetParagraph(articleUrl)
                 onDescriptionFetched(articleDescription)
             } else {
                 onDescriptionFetched("The article title is not correct.")
             }
-
         }
     }
 

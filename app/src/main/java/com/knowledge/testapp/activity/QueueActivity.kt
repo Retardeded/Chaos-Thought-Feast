@@ -105,7 +105,7 @@ class QueueActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val game = dataSnapshot.getValue(Game::class.java)
                 if (game != null && game.game_status == GameStatus.Game_On) {
-                    val intent = Intent(this@QueueActivity, MultiplayerGameActivity::class.java)
+                    //val intent = Intent(this@QueueActivity, MultiplayerGameActivity::class.java)
                     intent.putExtra("gameId", gameId)
                     startActivity(intent)
                 }
