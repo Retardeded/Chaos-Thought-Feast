@@ -3,13 +3,13 @@ package com.knowledge.testapp.activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
-import com.knowledge.testapp.localdb.UserPathDbManager
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.createTableName
@@ -18,16 +18,17 @@ import com.knowledge.testapp.utils.NavigationUtils
 import com.knowledge.testapp.R
 import com.knowledge.testapp.ui.LoseScreen
 import com.knowledge.testapp.ui.WinScreen
+import com.knowledge.testapp.viewmodels.DatabaseViewModel
 import com.knowledge.testapp.viewmodels.UserViewModel
 
 class ResultActivity : AppCompatActivity() {
-    private var dbUserPathDbManager: UserPathDbManager? = null
     var pathLength: Int = 0
     private var totalSteps = 0
     var pathList: MutableList<String> = ArrayList()
     private var additionalTextState = mutableStateOf("")
     var diff = 0
     private lateinit var userViewModel: UserViewModel
+    private val databaseViewModel: DatabaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -296,7 +297,6 @@ class ResultActivity : AppCompatActivity() {
 
     fun savePathToDatabase(win: Boolean, startConcept: String, goalConcept: String) {
         val userId = QuizValues.USER?.email ?: ""
-        val pathManager = UserPathDbManager(this)
-        pathManager.savePathToDatabase(userId, win, startConcept, goalConcept, pathList as ArrayList<String>, pathLength)
+        databaseViewModel.savePathToDatabase(userId, win, startConcept, goalConcept, pathList as ArrayList<String>, pathLength)
     }
 }

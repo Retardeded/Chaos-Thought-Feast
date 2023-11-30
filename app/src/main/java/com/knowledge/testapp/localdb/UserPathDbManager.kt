@@ -17,8 +17,18 @@ import com.knowledge.testapp.localdb.UserPathDbHelper.Companion.USER_ID
 import java.util.ArrayList
 
 class UserPathDbManager(private val context: Context) {
-    private var userPathDbHelper: UserPathDbHelper = UserPathDbHelper(context)
+    private var userPathDbHelper: UserPathDbHelper = UserPathDbHelper(context.applicationContext)
     private var database: SQLiteDatabase = userPathDbHelper.writableDatabase
+
+    companion object {
+        @Volatile private var INSTANCE: UserPathDbManager? = null
+
+        fun getInstance(context: Context): UserPathDbManager {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: UserPathDbManager(context.applicationContext).also { INSTANCE = it }
+            }
+        }
+    }
 
     fun getPathsForUser(userId: String, success: Boolean): ArrayList<PathRecord> {
         val successValue = if (success) 1 else 0
@@ -45,12 +55,10 @@ class UserPathDbManager(private val context: Context) {
         }
 
         cursor.close()
-
         return arrayList
     }
 
     fun savePathToDatabase(userId: String, win: Boolean, startConcept: String, goalConcept: String, pathList: ArrayList<String>, pathLength: Int) {
-        open()
         beginTransaction()
         try {
             val itemUser = PathRecord(startConcept, goalConcept, pathList, pathLength, win)
@@ -58,18 +66,19 @@ class UserPathDbManager(private val context: Context) {
             setTransactionSuccess()
         } finally {
             endTransaction()
-            close()
         }
+    }
+
+    fun clearUserData(userId: String) {
+        val whereClause = "$USER_ID = ?"
+        val whereArgs = arrayOf(userId)
+        database.delete(TABLE_USER, whereClause, whereArgs)
     }
 
     @Throws(SQLException::class)
     fun open(): UserPathDbManager {
         database = userPathDbHelper.writableDatabase
         return this
-    }
-
-    fun close() {
-        userPathDbHelper.close()
     }
 
     fun insert(userId: String, wikiPath: PathRecord): Long {
@@ -83,12 +92,6 @@ class UserPathDbManager(private val context: Context) {
             put(SUCCESS, wikiPath.win)
         }
         return database.insert(TABLE_USER, null, values)
-    }
-
-    fun clearUserData(userId: String) {
-        val whereClause = "$USER_ID = ?"
-        val whereArgs = arrayOf(userId)
-        database.delete(TABLE_USER, whereClause, whereArgs)
     }
 
     fun beginTransaction() {

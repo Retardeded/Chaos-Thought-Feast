@@ -19,26 +19,26 @@ import com.knowledge.testapp.ui.ProfilePathsDialog
 import com.knowledge.testapp.ui.ProfileScreen
 import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
+import com.knowledge.testapp.viewmodels.DatabaseViewModel
 
 class ProfileActivity : AppCompatActivity() {
 
-
-    private lateinit var userPathDbManager: UserPathDbManager
     private var showWinningPathsDialog by mutableStateOf(false)
     private var showLosingPathsDialog by mutableStateOf(false)
-    val userViewModel: UserViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
+    private val databaseViewModel: DatabaseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        userPathDbManager = UserPathDbManager(this)
+        databaseViewModel.fetchPathsForUser(QuizValues.USER!!.email, true) // For winning paths
+        databaseViewModel.fetchPathsForUser(QuizValues.USER!!.email, false) // For losing paths
 
         setContent {
             if (showWinningPathsDialog) {
                 ProfilePathsDialog(
                     true,
                     QuizValues.USER!!.username,
-                    pathsData = userPathDbManager.getPathsForUser(QuizValues.USER!!.email, true),
+                    pathsData = databaseViewModel.winningPathsData.value,
                     onDismissRequest = { showWinningPathsDialog = false }
                 )
             }
@@ -46,7 +46,7 @@ class ProfileActivity : AppCompatActivity() {
                 ProfilePathsDialog(
                     false,
                     QuizValues.USER!!.username,
-                    pathsData = userPathDbManager.getPathsForUser(QuizValues.USER!!.email, false),
+                    pathsData = databaseViewModel.losingPathsData.value,
                     onDismissRequest = { showLosingPathsDialog = false }
                 )
             }
@@ -63,7 +63,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     fun clearPaths() {
-        userPathDbManager.clearUserData(QuizValues.USER!!.email)
+        databaseViewModel.clearUserData(QuizValues.USER!!.email)
     }
 
     fun showWinningPathsDialog() {
