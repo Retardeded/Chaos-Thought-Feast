@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns._ID
 
-class UserPathDbHelper(c: Context) : SQLiteOpenHelper(c, DB_NAME, null, DB_VER) {
+class UserPathDbHelper(contex: Context) : SQLiteOpenHelper(contex, DB_NAME, null, DB_VER) {
 
     override fun onCreate(sqLiteDatabase: SQLiteDatabase) {
         createTable(sqLiteDatabase)

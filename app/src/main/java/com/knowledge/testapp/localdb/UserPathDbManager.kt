@@ -49,6 +49,19 @@ class UserPathDbManager(private val context: Context) {
         return arrayList
     }
 
+    fun savePathToDatabase(userId: String, win: Boolean, startConcept: String, goalConcept: String, pathList: ArrayList<String>, pathLength: Int) {
+        open()
+        beginTransaction()
+        try {
+            val itemUser = PathRecord(startConcept, goalConcept, pathList, pathLength, win)
+            insert(userId, itemUser)
+            setTransactionSuccess()
+        } finally {
+            endTransaction()
+            close()
+        }
+    }
+
     @Throws(SQLException::class)
     fun open(): UserPathDbManager {
         database = userPathDbHelper.writableDatabase

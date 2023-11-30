@@ -1,318 +1,281 @@
 package com.knowledge.testapp.activity
 
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.knowledge.testapp.QuizValues
 import com.knowledge.testapp.localdb.UserPathDbManager
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
-import com.knowledge.testapp.data.PathRecord
-import com.knowledge.testapp.databinding.ActivityLoseBinding
-import com.knowledge.testapp.databinding.ActivityResultBinding
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.createTableName
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.sanitizeEmail
 import com.knowledge.testapp.utils.NavigationUtils
 import com.knowledge.testapp.R
+import com.knowledge.testapp.ui.LoseScreen
+import com.knowledge.testapp.ui.WinScreen
+import com.knowledge.testapp.viewmodels.UserViewModel
 
 class ResultActivity : AppCompatActivity() {
-
-    private lateinit var bindingResult: ActivityResultBinding
-    private lateinit var bindingLose: ActivityLoseBinding
-
-    private lateinit var scoreView: TextView
-    private lateinit var pathView: TextView
-
     private var dbUserPathDbManager: UserPathDbManager? = null
-    lateinit var startConcept:String
-    lateinit var goalConcept:String
     var pathLength: Int = 0
     private var totalSteps = 0
     var pathList: MutableList<String> = ArrayList()
-    var win:Boolean = false
-    var worldRecord = true
-    var brandNewPath = true
+    private var additionalTextState = mutableStateOf("")
     var diff = 0
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         pathList = intent.getStringArrayListExtra(QuizValues.PATH)!!
         pathLength = pathList.size ?: 0
         val pathText = pathList.joinToString("->")
 
-        win = intent.getBooleanExtra(QuizValues.WIN, false)
+        val win = intent.getBooleanExtra(QuizValues.WIN, false)
         totalSteps = intent.getIntExtra(QuizValues.TOTAL_STEPS, 0)
 
-        if (win) {
-            bindingResult = ActivityResultBinding.inflate(layoutInflater)
-            setContentView(bindingResult.root)
-            scoreView = bindingResult.tvScore
-            pathView = bindingResult.tvPath
-        } else {
-            bindingLose = ActivityLoseBinding.inflate(layoutInflater)
-            setContentView(bindingLose.root)
-            scoreView = bindingLose.tvScore
-            pathView = bindingLose.tvPath
+        val startConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
+        val goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
+
+
+        setContent {
+            if (win) {
+                WinScreen(
+                    resultText = additionalTextState,
+                    pathText = pathText,
+                    onGoToMainMenu = { goToMainMenu() },
+                    onTryAgain = { tryAgain() }
+                )
+                processTheResult(startConcept, goalConcept)
+            } else {
+                LoseScreen(
+                    goalConcept = goalConcept,
+                    pathText = pathText,
+                    onGoToMainMenu = { goToMainMenu() },
+                    onTryAgain = { tryAgain() }
+                )
+            }
         }
-
-        startConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
-        goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
-
-        pathView.text = pathText
-        processTheResult()
-        saveToLocalDB()
+        savePathToDatabase(win, startConcept, goalConcept)
     }
 
-    fun tryAgain(view: View) {
+    fun tryAgain() {
         NavigationUtils.tryAgain(this)
     }
 
-    fun goToMainMenu(view: View) {
+    fun goToMainMenu() {
         NavigationUtils.goToMainMenu(this)
     }
 
-    fun processTheResult() {
-
-        val userEmail = FirebaseAuth.getInstance().currentUser?.email
-        if (userEmail != null) {
-            // Call the function to fetch the user's data and handle the result in the callback
-            getUserDataByEmail(userEmail) { user ->
-                if (user != null) {
-                    // Example: Display the user's recordsHeld and currentScore
-                    println("Records Held: ${user.recordsHeld}")
-                    println("Current Score: ${user.currentScore}")
-
-                    if(win) {
-                        saveWorldRecordToRemoteDB(
-                            user,
-                            startConcept, goalConcept, pathList, totalSteps
-                        )
-                    } else {
-                        scoreView.text = "You haven't found $goalConcept"
-                    }
-
-                } else {
-                    // User's data doesn't exist in the database (not registered?)
-                    println("User data not found.")
+    fun processTheResult(startConcept: String, goalConcept: String) {
+        FirebaseAuth.getInstance().currentUser?.email?.let { userEmail ->
+            userViewModel.getUserDataByEmail(userEmail) { user ->
+                user?.let {
+                    logUserDetails(user)
+                    saveWorldRecordToRemoteDB(user, startConcept, goalConcept, pathList, totalSteps)
+                } ?: run {
+                    logUserDataNotFound()
                 }
             }
         }
     }
 
-    fun getUserDataByEmail(userEmail: String, onDataLoaded: (User?) -> Unit) {
-        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
-        val usersRef: DatabaseReference = database.getReference("users")
+    private fun logUserDetails(user: User) {
+        println("Records Held: ${user.recordsHeld}")
+        println("Current Score: ${user.currentScore}")
+    }
 
-        // Construct the DatabaseReference using the user's email
-        val userRecordsRef = usersRef.child(sanitizeEmail(userEmail))
-
-        // Use a ValueEventListener to fetch the user's data from the "users" table
-        userRecordsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Check if the user's data exists in the database
-                if (dataSnapshot.exists()) {
-                    // Convert the dataSnapshot to a User object
-                    val user = dataSnapshot.getValue(User::class.java)
-
-                    // Now you have the User object containing the user's data
-                    // Call the callback function and pass the User object
-                    onDataLoaded(user)
-                } else {
-                    // User's data doesn't exist in the database (not registered?)
-                    // Call the callback function with null
-                    onDataLoaded(null)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle any errors that occurred while reading data
-                // Call the callback function with null
-                onDataLoaded(null)
-            }
-        })
+    private fun logUserDataNotFound() {
+        println("User data not found.")
     }
 
     fun saveWorldRecordToRemoteDB(
-        user: User, // User object containing user email (or ID)
+        user: User,
         startingConcept: String,
         goalConcept: String,
         path: List<String>,
         totalSteps: Int
     ) {
+        val (refStringWorldsRecords, refStringUsers) = getDatabaseReferences(user)
 
-        val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+        val worldRecordsRef: DatabaseReference = FirebaseDatabase.getInstance().getReference(refStringWorldsRecords)
+        val topUsersRef: DatabaseReference = FirebaseDatabase.getInstance().getReference(refStringUsers)
+        val query = worldRecordsRef.orderByChild("startingGoalConcept").equalTo("${startingConcept}_$goalConcept")
 
-        val refStringWorldsRecords: String
-        val refStringUsers: String
+        query.addListenerForSingleValueEvent(createWorldRecordListener(topUsersRef, user, startingConcept, goalConcept, path, totalSteps, refStringWorldsRecords))
+    }
 
-        when (QuizValues.gameMode) {
-            GameMode.FIND_YOUR_LIKINGS -> {
-                refStringWorldsRecords = createTableName(QuizValues.worldRecords_FIND_YOUR_LIKINGS, user.language.languageCode)
-                refStringUsers = createTableName(QuizValues.topUsers_FIND_YOUR_LIKINGS, user.language.languageCode)
-            }
-            GameMode.LIKING_SPECTRUM_JOURNEY -> {
-                refStringWorldsRecords = createTableName(QuizValues.worldRecords_LIKING_SPECTRUM_JOURNEY, user.language.languageCode)
-                refStringUsers = createTableName(QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY, user.language.languageCode)
-            }
-            GameMode.ANYFIN_CAN_HAPPEN -> {
-                refStringWorldsRecords = createTableName(QuizValues.worldRecords_ANYFIN_CAN_HAPPEN, user.language.languageCode)
-                refStringUsers = createTableName(QuizValues.topUsers_ANYFIN_CAN_HAPPEN, user.language.languageCode)
-            }
+    private fun getDatabaseReferences(user: User): Pair<String, String> {
+        val gameModeTables = when (QuizValues.gameMode) {
+            GameMode.FIND_YOUR_LIKINGS -> Pair(QuizValues.worldRecords_FIND_YOUR_LIKINGS, QuizValues.topUsers_FIND_YOUR_LIKINGS)
+            GameMode.LIKING_SPECTRUM_JOURNEY -> Pair(QuizValues.worldRecords_LIKING_SPECTRUM_JOURNEY, QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY)
+            GameMode.ANYFIN_CAN_HAPPEN -> Pair(QuizValues.worldRecords_ANYFIN_CAN_HAPPEN, QuizValues.topUsers_ANYFIN_CAN_HAPPEN)
         }
 
-        val usersRef: DatabaseReference = database.getReference(refStringUsers)
+        return gameModeTables.let { (worldRecords, topUsers) ->
+            Pair(createTableName(worldRecords, user.language.languageCode), createTableName(topUsers, user.language.languageCode))
+        }
+    }
 
-        // Check if there is any existing record with the same startingConcept and goalConcept and win=true
-        //val query = ref.orderByChild("startingConcept").equalTo(startingConcept)
-        //val query = ref.orderByKey().startAt("\uf8ff" + "${startingConcept}_${goalConcept}").endAt("${startingConcept}_${goalConcept}")
-        val startingGoalConcept = "${startingConcept}_$goalConcept"
-        val query = usersRef.orderByChild("startingGoalConcept").equalTo(startingGoalConcept)
-
-        val context = this
-
-        // Use a single listener to combine the results of both queries
-        val listener = object : ValueEventListener {
+    private fun createWorldRecordListener(
+        topUsersRef: DatabaseReference,
+        user: User,
+        startingConcept: String,
+        goalConcept: String,
+        path: List<String>,
+        totalSteps: Int,
+        refStringWorldsRecords: String
+    ): ValueEventListener {
+        return object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val existingRecord = dataSnapshot.children.firstOrNull()
+                val existingRecord = dataSnapshot.children.firstOrNull()
 
-                    if (existingRecord != null) {
-                        brandNewPath = false
-                        // The record already exists
-                        val existingSteps = existingRecord.child("steps").getValue(Int::class.java)
-                        diff = totalSteps - existingSteps!!
-                        if (existingSteps <= totalSteps) {
-                            worldRecord = false
-                            val textNotEnoughForWR = getString(R.string.not_enough_for_wr)
-                            Toast.makeText(context, "$diff $textNotEnoughForWR", Toast.LENGTH_SHORT).show()
-                        } else {
-                            val recordRef = existingRecord.ref
-                            val recordId = existingRecord.key
-                            val userSanitizedEmail = recordId!!.substringBefore("_") // Extract user email from the world record ID
+                var brandNewPath = true
 
-                            // Update the user's records and score as a record is removed
-                            val userRecordsRef = usersRef.child(userSanitizedEmail)
-                            userRecordsRef.runTransaction(object : Transaction.Handler {
-                                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                                    val currentUser = currentData.getValue(User::class.java)
+                val worldRecord = if (existingRecord != null) {
+                    brandNewPath = false
+                    handleExistingRecord(topUsersRef, existingRecord, totalSteps)
+                } else true // If there is no existing record, assume it's a world record
 
-                                    if (currentUser != null) {
-                                        // Update the user's records and current score
-                                        val newRecordsHeld = currentUser.recordsHeld - 1
-                                        val newCurrentScore = currentUser.currentScore - 100
-
-                                        currentData.child("recordsHeld").value = newRecordsHeld
-                                        currentData.child("currentScore").value = newCurrentScore
-                                    }
-
-                                    return Transaction.success(currentData)
-                                }
-
-                                override fun onComplete(
-                                    error: DatabaseError?,
-                                    committed: Boolean,
-                                    currentData: DataSnapshot?
-                                ) {
-                                    // Handle transaction completion
-                                    if (error != null) {
-                                        println("Transaction failed: ${error.message}")
-                                    } else {
-                                        println("Transaction completed successfully.")
-                                    }
-                                }
-                            })
-
-                            // Remove the world record
-                            recordRef.removeValue()
-                        }
-                    }
-
-                // If there is no existing record or the new path length is greater, save the data
-                if (worldRecord) {
-                    // Generate a unique ID for the record with the user's sanitized email
-                    val recordId = "${sanitizeEmail(user.email)}_${startingConcept}_${goalConcept}"
-
-                    val recordPath = "$refStringWorldsRecords/$recordId"
-
-                    val recordData = mapOf(
-                        "startingConcept" to startingConcept,
-                        "goalConcept" to goalConcept,
-                        "path" to path,
-                        "steps" to totalSteps,
-                        "win" to true,
-                        "startingGoalConcept" to startingGoalConcept
-                    )
-
-                    FirebaseDatabase.getInstance().getReference(recordPath)
-                        .setValue(recordData)
-                        .addOnSuccessListener {
-                            // Data successfully written to the "worldRecords" node
-                            val textEnoughForWR = getString(R.string.enough_for_wr)
-                            Toast.makeText(context, textEnoughForWR, Toast.LENGTH_SHORT).show()
-
-                            // Update user's records and current score
-                            val userRecordsRef = usersRef.child(sanitizeEmail(user.email))
-                            userRecordsRef.runTransaction(object : Transaction.Handler {
-                                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                                    val currentUser = currentData.getValue(User::class.java)
-
-                                    if (currentUser == null) {
-                                        // User doesn't exist in the database, create a new entry
-                                        val newUser = user.copy(recordsHeld = 1, currentScore = 100)
-                                        currentData.setValue(newUser)
-                                    } else {
-                                        // Update the user's records and current score
-                                        val newRecordsHeld = currentUser.recordsHeld + 1
-                                        val newCurrentScore = currentUser.currentScore + 100
-
-                                        currentData.child("recordsHeld").setValue(newRecordsHeld)
-                                        currentData.child("currentScore").setValue(newCurrentScore)
-                                    }
-
-                                    return Transaction.success(currentData)
-                                }
-
-                                override fun onComplete(
-                                    error: DatabaseError?,
-                                    committed: Boolean,
-                                    currentData: DataSnapshot?
-                                ) {
-                                    // Handle transaction completion
-                                    if (error != null) {
-                                        println("Transaction failed: ${error.message}")
-                                    } else {
-                                        println("Transaction completed successfully.")
-                                        updateUI(worldRecord, diff, totalSteps)
-                                    }
-                                }
-                            })
-                        }
-                        .addOnFailureListener { error ->
-                            println("Error saving data: $error")
-                        }
-                } else {
-                    updateUI(worldRecord, diff, totalSteps)
-                }
+                handleNewRecord(topUsersRef, brandNewPath, worldRecord, user, startingConcept, goalConcept, path, totalSteps, refStringWorldsRecords)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 println("Error reading data: $error")
             }
         }
-
-        // Add the listener to the query
-        query.addListenerForSingleValueEvent(listener)
-
-
     }
 
-    private fun updateUI(worldRecord: Boolean, diff: Int, totalSteps: Int) {
+    private fun handleExistingRecord(
+        usersRef: DatabaseReference,
+        existingRecord: DataSnapshot,
+        totalSteps: Int
+    ): Boolean {
+        val existingSteps = existingRecord.child("steps").getValue(Int::class.java) ?: return true
+        if (existingSteps <= totalSteps) {
+            return false // Not a world record
+        } else {
+            val recordRef = existingRecord.ref
+            val recordId = existingRecord.key
+            val userSanitizedEmail = recordId!!.substringBefore("_") // Extract user email from the world record ID
+
+            // Update the user's records and score as a record is removed
+            val userRecordsRef = usersRef.child(userSanitizedEmail)
+            userRecordsRef.runTransaction(object : Transaction.Handler {
+                override fun doTransaction(currentData: MutableData): Transaction.Result {
+                    val currentUser = currentData.getValue(User::class.java)
+
+                    if (currentUser != null) {
+                        // Update the user's records and current score
+                        val newRecordsHeld = currentUser.recordsHeld - 1
+                        val newCurrentScore = currentUser.currentScore - 100
+
+                        currentData.child("recordsHeld").value = newRecordsHeld
+                        currentData.child("currentScore").value = newCurrentScore
+                    }
+
+                    return Transaction.success(currentData)
+                }
+
+                override fun onComplete(
+                    error: DatabaseError?,
+                    committed: Boolean,
+                    currentData: DataSnapshot?
+                ) {
+                    // Handle transaction completion
+                    if (error != null) {
+                        println("Transaction failed: ${error.message}")
+                    } else {
+                        println("Transaction completed successfully.")
+                    }
+                }
+            })
+
+            // Remove the world record
+            recordRef.removeValue()
+            return true
+        }
+    }
+
+    private fun handleNewRecord(
+        usersRef: DatabaseReference,
+        brandNewPath: Boolean,
+        worldRecord: Boolean,
+        user: User,
+        startConcept: String,
+        goalConcept: String,
+        path: List<String>,
+        totalSteps: Int,
+        refStringWorldsRecords: String
+    ) {
+        if (worldRecord) {
+            val recordId = "${sanitizeEmail(user.email)}_${startConcept}_$goalConcept"
+            val recordPath = "$refStringWorldsRecords/$recordId"
+            val recordData = mapOf(
+                "startConcept" to startConcept,
+                "goalConcept" to goalConcept,
+                "path" to path,
+                "steps" to totalSteps,
+                "win" to true,
+                "startingGoalConcept" to "${startConcept}_$goalConcept"
+            )
+
+            FirebaseDatabase.getInstance().getReference(recordPath)
+                .setValue(recordData)
+                .addOnSuccessListener {
+                    updateWorldRecordUserScore(user, usersRef)
+                    updateUI(goalConcept, brandNewPath, worldRecord, diff, totalSteps) // Update UI accordingly
+                }
+                .addOnFailureListener {
+                    // Handle failure
+                }
+        } else {
+            updateUI(goalConcept, brandNewPath, worldRecord, diff, totalSteps)
+        }
+    }
+
+    private fun updateWorldRecordUserScore(user: User, usersRef: DatabaseReference) {
+
+        val userRecordsRef = usersRef.child(sanitizeEmail(user.email))
+        userRecordsRef.runTransaction(object : Transaction.Handler {
+            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                val currentUser = currentData.getValue(User::class.java)
+                if (currentUser == null) {
+                    // User doesn't exist in the database, create a new entry
+                    val newUser = user.copy(recordsHeld = 1, currentScore = 100)
+                    currentData.setValue(newUser)
+                } else {
+                    // Update the user's records and current score
+                    val newRecordsHeld = currentUser.recordsHeld + 1
+                    val newCurrentScore = currentUser.currentScore + 100
+                    currentData.child("recordsHeld").setValue(newRecordsHeld)
+                    currentData.child("currentScore").setValue(newCurrentScore)
+                }
+                return Transaction.success(currentData)
+            }
+
+            override fun onComplete(
+                error: DatabaseError?,
+                committed: Boolean,
+                currentData: DataSnapshot?
+            ) {
+                if (error != null) {
+                    println("Transaction failed: ${error.message}")
+                } else {
+                    println("Transaction completed successfully.")
+                }
+            }
+        })
+    }
+
+    private fun updateUI(goalConcept: String, brandNewPath: Boolean, worldRecord: Boolean, diff: Int, totalSteps: Int) {
         val formattedString = getString(R.string.found_concept_steps)
         val resultInformationText = formattedString.format(goalConcept, totalSteps)
-        scoreView.text = resultInformationText
         val addText = if (worldRecord) {
             if(brandNewPath) {
                 val textWRomantic = getString(R.string.new_world_record_romantic)
@@ -326,25 +289,14 @@ class ResultActivity : AppCompatActivity() {
             val textNotEnoughForWR = getString(R.string.not_enough_for_wr)
             "$diff $textNotEnoughForWR"
         }
-
-        scoreView.text = "${scoreView.text}\n$addText"
+        additionalTextState.value = "$resultInformationText\n$addText"
+        Toast.makeText(this, additionalTextState.value, Toast.LENGTH_SHORT).show()
     }
 
 
-    fun saveToLocalDB()
-    {
-        dbUserPathDbManager = UserPathDbManager(this)
-        dbUserPathDbManager!!.open()
-        dbUserPathDbManager!!.beginTransaction()
-        val itemUser = PathRecord()
-        itemUser.startingConcept = startConcept
-        itemUser.goalConcept = goalConcept
-        itemUser.path = pathList as ArrayList<String>
-        itemUser.steps = pathLength
-        itemUser.win = win
-        dbUserPathDbManager!!.insert(QuizValues.USER!!.email,itemUser)
-        dbUserPathDbManager!!.setTransactionSuccess()
-        dbUserPathDbManager!!.endTransaction()
-        dbUserPathDbManager!!.close()
+    fun savePathToDatabase(win: Boolean, startConcept: String, goalConcept: String) {
+        val userId = QuizValues.USER?.email ?: ""
+        val pathManager = UserPathDbManager(this)
+        pathManager.savePathToDatabase(userId, win, startConcept, goalConcept, pathList as ArrayList<String>, pathLength)
     }
 }

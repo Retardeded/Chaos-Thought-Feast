@@ -1,6 +1,5 @@
 package com.knowledge.testapp.ui
 
-import android.util.Log
 import androidx.compose.foundation.*
 import com.knowledge.testapp.R
 import androidx.compose.foundation.layout.*
@@ -115,6 +114,7 @@ fun GameScreen(
     wikiParseViewModel: WikiParseViewModel,
     pathList: MutableState<List<String>>,
     totalSteps: MutableState<Int>,
+    maxSteps: Int = 100,
     win: MutableState<Boolean>,
     onEndQuest: (Boolean, Int, List<String>) -> Unit
 ) {
@@ -125,6 +125,8 @@ fun GameScreen(
     var showDialog by remember { mutableStateOf(false) }
     var startFetchDescription by remember { mutableStateOf(false) }
     val description = remember { mutableStateOf("") }
+
+    val progress = totalSteps.value.toFloat() / maxSteps
 
     LaunchedEffect(startFetchDescription) {
         if (startFetchDescription) {
@@ -221,14 +223,14 @@ fun GameScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             LinearProgressIndicator(
-                progress = 0.0f, // Replace with dynamic progress
+                progress = progress,
                 modifier = Modifier
                     .weight(1f)
                     .height(5.dp)
             )
 
             Text(
-                text = "0/100", // Replace with dynamic progress text
+                text = "${totalSteps.value}/$maxSteps",
                 color = Color(0xFF7A8089),
                 modifier = Modifier.padding(5.dp),
                 fontSize = 14.sp

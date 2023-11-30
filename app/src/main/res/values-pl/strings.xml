@@ -42,6 +42,7 @@
     <string name="not_enough_for_wr">" kroków to zbyt wiele dla rekordu świata"</string>
     <string name="enough_for_wr">Nowy rekord świata!</string>
     <string name="found_concept_steps">Znalazłeś(aś) %1$s w %2$d krokach</string>
+    <string name="have_not_found_concept">Nie znalazłeś(aś) %1$s</string>
     <string name="new_world_record_romantic">To nowy rekord świata! Nikt wcześniej nie próbował tej drogi</string>
     <string name="new_world_record_with_diff">To nowy rekord świata! Pokonałeś(aś) stary o %1$d kroków.</string>
 </resources>

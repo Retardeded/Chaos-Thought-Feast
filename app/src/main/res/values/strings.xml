@@ -42,6 +42,7 @@
     <string name="not_enough_for_wr">" steps too much for World Record"</string>
     <string name="enough_for_wr">New World Record!</string>
     <string name="found_concept_steps">You found %1$s in %2$d steps</string>
+    <string name="have_not_found_concept">You haven\'t found %1$s</string>
     <string name="new_world_record_romantic">That\'s a new World Record!, no one ever before tried this path</string>
     <string name="new_world_record_with_diff">That\'s a new World Record!, beaten the old one by %1$d steps.</string>
 

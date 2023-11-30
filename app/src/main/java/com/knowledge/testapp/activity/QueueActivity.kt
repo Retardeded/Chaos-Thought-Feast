@@ -13,12 +13,10 @@ import com.google.firebase.database.ValueEventListener
 import com.knowledge.testapp.data.Game
 import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.data.GameStatus
-import com.knowledge.testapp.databinding.ActivityQueueBinding
 
 
 class QueueActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityQueueBinding
     private var gameId: String? = null // To store the game ID
 
     lateinit var tvGameStatus:TextView
@@ -26,6 +24,8 @@ class QueueActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*
         binding = ActivityQueueBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -117,5 +117,7 @@ class QueueActivity : AppCompatActivity() {
         }
 
         gameRef.addValueEventListener(gameStatusListener)
+
+         */
     }
 }
