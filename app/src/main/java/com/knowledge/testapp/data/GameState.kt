@@ -1,6 +1,14 @@
 package com.knowledge.testapp.data
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class GameState(
-    val currentUrlTitle: String = "",
-    // Add other fields relevant to your game state
-)
+    var gameMode: GameMode = GameMode.FIND_YOUR_LIKINGS,
+    var startConcept: String = "",
+    var goalConcept: String = "",
+    var win: Boolean = false,
+    var totalSteps: Int = 0,
+    var pathList: List<String> = mutableListOf()
+) : Parcelable

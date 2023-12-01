@@ -3,44 +3,37 @@ package com.knowledge.testapp.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.ui.GameScreen
 
 
 class GameActivity : AppCompatActivity() {
-    private lateinit var wikiParseViewModel: WikiParseViewModel
+    private val wikiParseViewModel: WikiParseViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
 
-        wikiParseViewModel = WikiParseViewModel()
-
         setContent {
+            val gameState: GameState = intent.getParcelableExtra(ConstantValues.GAME_STATE)!!
 
-            val startTitleText = intent.getStringExtra(ConstantValues.STARTING_CONCEPT).toString()
-            val goalTitleText = intent.getStringExtra(ConstantValues.GOAL_CONCEPT).toString()
-
-            val currentTitle = remember { mutableStateOf(startTitleText) }
-            val goalTitle = remember { mutableStateOf(goalTitleText) }
-
-            val pathList = remember { mutableStateOf(listOf(startTitleText)) }
-            val totalSteps = remember { mutableStateOf(0) }
-            val win = remember { mutableStateOf(false) }
+            val currentTitle = remember { mutableStateOf(gameState.startConcept) }
+            val goalTitle = remember { mutableStateOf(gameState.goalConcept) }
+            val pathList =  remember { mutableStateOf(listOf(gameState.startConcept)) }
+            val totalSteps = remember { mutableStateOf(gameState.totalSteps) }
+            val win = remember { mutableStateOf(gameState.win) }
 
             fun endQuest(win: Boolean, totalSteps: Int, pathList: List<String>) {
-                val intent = Intent(this, ResultActivity::class.java).apply {
-                    putExtra(ConstantValues.WIN, win)
-                    putExtra(ConstantValues.STARTING_CONCEPT, startTitleText)
-                    putExtra(ConstantValues.GOAL_CONCEPT, goalTitle.value)
-                    putExtra(ConstantValues.TOTAL_STEPS, totalSteps)
-                    putExtra(ConstantValues.MAX_PROGRESS, 100) // Define progressBarMaxValue as needed
-                    putStringArrayListExtra(ConstantValues.PATH, ArrayList(pathList))
-                }
+                gameState.win = win
+                gameState.totalSteps = totalSteps
+                gameState.pathList = pathList
+                val intent = Intent(this@GameActivity, ResultActivity::class.java)
+                intent.putExtra(ConstantValues.GAME_STATE, gameState)
                 startActivity(intent)
                 finish()
             }

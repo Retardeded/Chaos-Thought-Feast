@@ -4,9 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import com.knowledge.testapp.utils.ConstantValues
+import androidx.activity.viewModels
 import com.knowledge.testapp.data.GameMode
+import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.ui.MainMenuScreen
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.utils.NavigationUtils
 
 class MainMenuActivity : AppCompatActivity() {
@@ -14,9 +16,9 @@ class MainMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainMenuScreen(
-                onFindLikingsClicked = { goToFindYourLikings() },
-                onLikingSpectrumJourneyClicked = { goToLikingSpectrumJourney() },
-                onAnyfinCanHappenClicked = { goToAnyfinCanHappen() },
+                onFindLikingsClicked = { updateGameModeAndNavigate(GameMode.FIND_YOUR_LIKINGS) },
+                onLikingSpectrumJourneyClicked = { updateGameModeAndNavigate(GameMode.LIKING_SPECTRUM_JOURNEY) },
+                onAnyfinCanHappenClicked = { updateGameModeAndNavigate(GameMode.ANYFIN_CAN_HAPPEN) },
                 onProfileClicked = { goToProfileActivity() },
                 onRankingsClicked = { goToRankingsActivity() }
             )
@@ -31,21 +33,11 @@ class MainMenuActivity : AppCompatActivity() {
         NavigationUtils.goToProfile(this)
     }
 
-    private fun goToFindYourLikings() {
-        val intent = Intent(this, MainGameSetupActivity::class.java)
-        ConstantValues.gameMode = GameMode.FIND_YOUR_LIKINGS
-        startActivity(intent)
-    }
-
-    private fun goToLikingSpectrumJourney() {
-        val intent = Intent(this, MainGameSetupActivity::class.java)
-        ConstantValues.gameMode = GameMode.LIKING_SPECTRUM_JOURNEY
-        startActivity(intent)
-    }
-
-    private fun goToAnyfinCanHappen() {
-        val intent = Intent(this, MainGameSetupActivity::class.java)
-        ConstantValues.gameMode = GameMode.ANYFIN_CAN_HAPPEN
+    private fun updateGameModeAndNavigate(gameMode: GameMode) {
+        val gameState = GameState(gameMode = gameMode)
+        val intent = Intent(this, MainGameSetupActivity::class.java).apply {
+            putExtra(ConstantValues.GAME_STATE, gameState)
+        }
         startActivity(intent)
     }
 }

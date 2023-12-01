@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.knowledge.testapp.utils.ConstantValues
@@ -16,6 +15,7 @@ import com.knowledge.testapp.utils.ModifyingStrings.Companion.createTableName
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.sanitizeEmail
 import com.knowledge.testapp.utils.NavigationUtils
 import com.knowledge.testapp.R
+import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.ui.LoseScreen
 import com.knowledge.testapp.ui.WinScreen
 import com.knowledge.testapp.viewmodels.LocalDataViewModel
@@ -23,26 +23,25 @@ import com.knowledge.testapp.viewmodels.UserViewModel
 
 class ResultActivity : AppCompatActivity() {
     var pathLength: Int = 0
+    var diffrenceBetweenPreviousBest = 0
     private var totalSteps = 0
-    var pathList: MutableList<String> = ArrayList()
+    var pathList:List<String> = ArrayList()
     private var additionalTextState = mutableStateOf("")
-    var diff = 0
-    private lateinit var userViewModel: UserViewModel
+    private val userViewModel: UserViewModel by viewModels()
     private val localDataViewModel: LocalDataViewModel by viewModels()
+    private lateinit var gameState: GameState
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        pathList = intent.getStringArrayListExtra(ConstantValues.PATH)!!
+        gameState= intent.getParcelableExtra(ConstantValues.GAME_STATE)!!
+
+        val win = gameState.win
+        val startConcept = gameState.startConcept
+        val goalConcept = gameState.goalConcept
+        pathList = gameState.pathList
+        totalSteps = gameState.totalSteps
         pathLength = pathList.size ?: 0
         val pathText = pathList.joinToString("->")
-
-        val win = intent.getBooleanExtra(ConstantValues.WIN, false)
-        totalSteps = intent.getIntExtra(ConstantValues.TOTAL_STEPS, 0)
-
-        val startConcept = intent.getStringExtra(ConstantValues.STARTING_CONCEPT).toString()
-        val goalConcept = intent.getStringExtra(ConstantValues.GOAL_CONCEPT).toString()
-
 
         setContent {
             if (win) {
@@ -112,7 +111,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun getDatabaseReferences(user: User): Pair<String, String> {
-        val gameModeTables = when (ConstantValues.gameMode) {
+        val gameModeTables = when (gameState.gameMode) {
             GameMode.FIND_YOUR_LIKINGS -> Pair(ConstantValues.worldRecords_FIND_YOUR_LIKINGS, ConstantValues.topUsers_FIND_YOUR_LIKINGS)
             GameMode.LIKING_SPECTRUM_JOURNEY -> Pair(ConstantValues.worldRecords_LIKING_SPECTRUM_JOURNEY, ConstantValues.topUsers_LIKING_SPECTRUM_JOURNEY)
             GameMode.ANYFIN_CAN_HAPPEN -> Pair(ConstantValues.worldRecords_ANYFIN_CAN_HAPPEN, ConstantValues.topUsers_ANYFIN_CAN_HAPPEN)
@@ -161,6 +160,7 @@ class ResultActivity : AppCompatActivity() {
         if (existingSteps <= totalSteps) {
             return false // Not a world record
         } else {
+            diffrenceBetweenPreviousBest = totalSteps-existingSteps
             val recordRef = existingRecord.ref
             val recordId = existingRecord.key
             val userSanitizedEmail = recordId!!.substringBefore("_") // Extract user email from the world record ID
@@ -230,13 +230,13 @@ class ResultActivity : AppCompatActivity() {
                 .setValue(recordData)
                 .addOnSuccessListener {
                     updateWorldRecordUserScore(user, usersRef)
-                    updateUI(goalConcept, brandNewPath, worldRecord, diff, totalSteps) // Update UI accordingly
+                    updateUI(goalConcept, brandNewPath, worldRecord, diffrenceBetweenPreviousBest, totalSteps) // Update UI accordingly
                 }
                 .addOnFailureListener {
                     // Handle failure
                 }
         } else {
-            updateUI(goalConcept, brandNewPath, worldRecord, diff, totalSteps)
+            updateUI(goalConcept, brandNewPath, worldRecord, diffrenceBetweenPreviousBest, totalSteps)
         }
     }
 
@@ -292,6 +292,7 @@ class ResultActivity : AppCompatActivity() {
         }
         additionalTextState.value = "$resultInformationText\n$addText"
         Toast.makeText(this, additionalTextState.value, Toast.LENGTH_SHORT).show()
+        print(additionalTextState.value)
     }
 
 

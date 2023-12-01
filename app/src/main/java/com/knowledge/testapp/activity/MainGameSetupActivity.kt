@@ -5,17 +5,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.data.GameMode
+import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.ui.GameSetupScreen
 import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
@@ -25,14 +26,12 @@ import kotlinx.coroutines.launch
 class MainGameSetupActivity : AppCompatActivity() {
 
     private val wikiParseViewModel = WikiParseViewModel()
-    private lateinit var randomArticleViewModel: RandomArticleViewModel
+    private val randomArticleViewModel: RandomArticleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        randomArticleViewModel = ViewModelProvider(this)[RandomArticleViewModel::class.java]
-
         setContent {
-
+            val gameState: GameState = intent.getParcelableExtra(ConstantValues.GAME_STATE)!!
             val startTitleText = stringResource(R.string.example_starting_concept)
             val goalTitleText = stringResource(R.string.example_goal_concept)
 
@@ -85,7 +84,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
 
             GameSetupScreen(
-                gameMode = ConstantValues.gameMode,
+                gameMode = gameState.gameMode,
                 fetchArticleDescription = { title, onDescriptionFetched ->
                     fetchArticleDescription(wikiParseViewModel, title, onDescriptionFetched)
                 },
@@ -148,23 +147,17 @@ class MainGameSetupActivity : AppCompatActivity() {
     }
 
     private fun startQuizActivity(startTitle: String, goalTitle: String, keyword: String, category: String, startingConceptPresent: Boolean, goalConceptPresent: Boolean) {
-        val intent = Intent(this, GameActivity::class.java)
-
         lifecycleScope.launch {
-            val startingConcept = if (startingConceptPresent) {
-                startTitle.replace(" ", "_")
-            } else {
-                getRandomConcept(keyword, category).replace(" ", "_")
-            }
+            val gameState: GameState = intent.getParcelableExtra(ConstantValues.GAME_STATE)!!
 
-            val goalConcept = if (goalConceptPresent) {
-                goalTitle.replace(" ", "_")
-            } else {
-                getRandomConcept(keyword, category).replace(" ", "_")
-            }
+            gameState.startConcept = if (startingConceptPresent) startTitle.replace(" ", "_")
+            else getRandomConcept(keyword, category).replace(" ", "_")
+            gameState.goalConcept = if (goalConceptPresent) goalTitle.replace(" ", "_")
+            else getRandomConcept(keyword, category).replace(" ", "_")
 
-            intent.putExtra(ConstantValues.STARTING_CONCEPT, startingConcept)
-            intent.putExtra(ConstantValues.GOAL_CONCEPT, goalConcept)
+            val intent = Intent(this@MainGameSetupActivity, GameActivity::class.java)
+
+            intent.putExtra(ConstantValues.GAME_STATE, gameState)
             startActivity(intent)
         }
     }
