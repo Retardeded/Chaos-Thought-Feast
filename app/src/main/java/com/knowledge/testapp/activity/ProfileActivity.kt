@@ -37,7 +37,7 @@ class ProfileActivity : AppCompatActivity() {
                 ProfilePathsDialog(
                     true,
                     ConstantValues.USER!!.username,
-                    pathsData = localDataViewModel.winningPathsData.value,
+                    pathsData = localDataViewModel.winningPathsData.value.reversed(),
                     onDismissRequest = { showWinningPathsDialog = false }
                 )
             }
@@ -45,7 +45,7 @@ class ProfileActivity : AppCompatActivity() {
                 ProfilePathsDialog(
                     false,
                     ConstantValues.USER!!.username,
-                    pathsData = localDataViewModel.losingPathsData.value,
+                    pathsData = localDataViewModel.losingPathsData.value.reversed(),
                     onDismissRequest = { showLosingPathsDialog = false }
                 )
             }

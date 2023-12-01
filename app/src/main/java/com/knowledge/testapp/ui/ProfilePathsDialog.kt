@@ -15,6 +15,7 @@ import androidx.compose.material.Text
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -30,7 +31,7 @@ fun ProfilePathsDialog(
     onDismissRequest: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
-        WinningPathsProfileScreen(
+        PathsProfileScreen(
             username = username,
             paths = pathsData,
             isWinning = winningPaths,
@@ -40,14 +41,14 @@ fun ProfilePathsDialog(
 }
 
 @Composable
-fun WinningPathsProfileScreen(
+fun PathsProfileScreen(
     username: String,
     paths: List<PathRecord>,
     isWinning: Boolean,
     onCloseClick: () -> Unit
 ) {
     val backgroundResource = if (isWinning) R.drawable.foundcorrectpathwin3 else R.drawable.deadendpathlose
-    val titleText = if (isWinning) R.string.winning_paths.toString() else R.string.losing_paths.toString()
+    val titleText = if (isWinning) R.string.winning_paths else R.string.losing_paths
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
@@ -72,7 +73,7 @@ fun WinningPathsProfileScreen(
             )
 
             Text(
-                text = titleText,
+                text = stringResource(titleText),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp, bottom = 16.dp),
