@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.ui.GameScreen
 
@@ -22,8 +22,8 @@ class GameActivity : AppCompatActivity() {
 
         setContent {
 
-            val startTitleText = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
-            val goalTitleText = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
+            val startTitleText = intent.getStringExtra(ConstantValues.STARTING_CONCEPT).toString()
+            val goalTitleText = intent.getStringExtra(ConstantValues.GOAL_CONCEPT).toString()
 
             val currentTitle = remember { mutableStateOf(startTitleText) }
             val goalTitle = remember { mutableStateOf(goalTitleText) }
@@ -34,12 +34,12 @@ class GameActivity : AppCompatActivity() {
 
             fun endQuest(win: Boolean, totalSteps: Int, pathList: List<String>) {
                 val intent = Intent(this, ResultActivity::class.java).apply {
-                    putExtra(QuizValues.WIN, win)
-                    putExtra(QuizValues.STARTING_CONCEPT, startTitleText)
-                    putExtra(QuizValues.GOAL_CONCEPT, goalTitle.value)
-                    putExtra(QuizValues.TOTAL_STEPS, totalSteps)
-                    putExtra(QuizValues.MAX_PROGRESS, 100) // Define progressBarMaxValue as needed
-                    putStringArrayListExtra(QuizValues.PATH, ArrayList(pathList))
+                    putExtra(ConstantValues.WIN, win)
+                    putExtra(ConstantValues.STARTING_CONCEPT, startTitleText)
+                    putExtra(ConstantValues.GOAL_CONCEPT, goalTitle.value)
+                    putExtra(ConstantValues.TOTAL_STEPS, totalSteps)
+                    putExtra(ConstantValues.MAX_PROGRESS, 100) // Define progressBarMaxValue as needed
+                    putStringArrayListExtra(ConstantValues.PATH, ArrayList(pathList))
                 }
                 startActivity(intent)
                 finish()

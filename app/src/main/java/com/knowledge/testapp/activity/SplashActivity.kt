@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.UserViewModel
 
 class SplashActivity : AppCompatActivity() {
@@ -30,8 +30,8 @@ class SplashActivity : AppCompatActivity() {
                 userViewModel.getUserDataByEmail(it) { user ->
                     // This code block will be executed when the data is loaded
                     // Update QuizValues.USER with the loaded user data
-                    QuizValues.USER = user
-                    userViewModel.setAppLocale(this, QuizValues.USER!!.language.languageCode)
+                    ConstantValues.USER = user
+                    userViewModel.setAppLocale(this, ConstantValues.USER!!.language.languageCode)
                     startActivity(Intent(this, MainMenuActivity::class.java))
                 }
             }

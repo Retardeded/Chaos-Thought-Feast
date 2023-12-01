@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.utils.ModifyingStrings.Companion.createTableName
@@ -18,7 +18,7 @@ import com.knowledge.testapp.utils.NavigationUtils
 import com.knowledge.testapp.R
 import com.knowledge.testapp.ui.LoseScreen
 import com.knowledge.testapp.ui.WinScreen
-import com.knowledge.testapp.viewmodels.DatabaseViewModel
+import com.knowledge.testapp.viewmodels.LocalDataViewModel
 import com.knowledge.testapp.viewmodels.UserViewModel
 
 class ResultActivity : AppCompatActivity() {
@@ -28,20 +28,20 @@ class ResultActivity : AppCompatActivity() {
     private var additionalTextState = mutableStateOf("")
     var diff = 0
     private lateinit var userViewModel: UserViewModel
-    private val databaseViewModel: DatabaseViewModel by viewModels()
+    private val localDataViewModel: LocalDataViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
-        pathList = intent.getStringArrayListExtra(QuizValues.PATH)!!
+        pathList = intent.getStringArrayListExtra(ConstantValues.PATH)!!
         pathLength = pathList.size ?: 0
         val pathText = pathList.joinToString("->")
 
-        val win = intent.getBooleanExtra(QuizValues.WIN, false)
-        totalSteps = intent.getIntExtra(QuizValues.TOTAL_STEPS, 0)
+        val win = intent.getBooleanExtra(ConstantValues.WIN, false)
+        totalSteps = intent.getIntExtra(ConstantValues.TOTAL_STEPS, 0)
 
-        val startConcept = intent.getStringExtra(QuizValues.STARTING_CONCEPT).toString()
-        val goalConcept = intent.getStringExtra(QuizValues.GOAL_CONCEPT).toString()
+        val startConcept = intent.getStringExtra(ConstantValues.STARTING_CONCEPT).toString()
+        val goalConcept = intent.getStringExtra(ConstantValues.GOAL_CONCEPT).toString()
 
 
         setContent {
@@ -112,10 +112,10 @@ class ResultActivity : AppCompatActivity() {
     }
 
     private fun getDatabaseReferences(user: User): Pair<String, String> {
-        val gameModeTables = when (QuizValues.gameMode) {
-            GameMode.FIND_YOUR_LIKINGS -> Pair(QuizValues.worldRecords_FIND_YOUR_LIKINGS, QuizValues.topUsers_FIND_YOUR_LIKINGS)
-            GameMode.LIKING_SPECTRUM_JOURNEY -> Pair(QuizValues.worldRecords_LIKING_SPECTRUM_JOURNEY, QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY)
-            GameMode.ANYFIN_CAN_HAPPEN -> Pair(QuizValues.worldRecords_ANYFIN_CAN_HAPPEN, QuizValues.topUsers_ANYFIN_CAN_HAPPEN)
+        val gameModeTables = when (ConstantValues.gameMode) {
+            GameMode.FIND_YOUR_LIKINGS -> Pair(ConstantValues.worldRecords_FIND_YOUR_LIKINGS, ConstantValues.topUsers_FIND_YOUR_LIKINGS)
+            GameMode.LIKING_SPECTRUM_JOURNEY -> Pair(ConstantValues.worldRecords_LIKING_SPECTRUM_JOURNEY, ConstantValues.topUsers_LIKING_SPECTRUM_JOURNEY)
+            GameMode.ANYFIN_CAN_HAPPEN -> Pair(ConstantValues.worldRecords_ANYFIN_CAN_HAPPEN, ConstantValues.topUsers_ANYFIN_CAN_HAPPEN)
         }
 
         return gameModeTables.let { (worldRecords, topUsers) ->
@@ -296,7 +296,7 @@ class ResultActivity : AppCompatActivity() {
 
 
     fun savePathToDatabase(win: Boolean, startConcept: String, goalConcept: String) {
-        val userId = QuizValues.USER?.email ?: ""
-        databaseViewModel.savePathToDatabase(userId, win, startConcept, goalConcept, pathList as ArrayList<String>, pathLength)
+        val userId = ConstantValues.USER?.email ?: ""
+        localDataViewModel.savePathToDatabase(userId, win, startConcept, goalConcept, pathList as ArrayList<String>, pathLength)
     }
 }

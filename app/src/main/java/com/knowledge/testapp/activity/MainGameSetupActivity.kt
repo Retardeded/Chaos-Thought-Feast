@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.data.GameMode
@@ -77,7 +77,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
 
             fun checkTitleCorrectness(title: String, onResult: (Boolean) -> Unit) {
-                val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, title)
+                val articleUrl = ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, title)
                 lifecycleScope.launch { // Use lifecycleScope in Activity or Fragment
                     val isCorrect = wikiParseViewModel.isTitleCorrect(articleUrl)
                     onResult(isCorrect)
@@ -85,7 +85,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
 
             GameSetupScreen(
-                gameMode = QuizValues.gameMode,
+                gameMode = ConstantValues.gameMode,
                 fetchArticleDescription = { title, onDescriptionFetched ->
                     fetchArticleDescription(wikiParseViewModel, title, onDescriptionFetched)
                 },
@@ -111,7 +111,7 @@ class MainGameSetupActivity : AppCompatActivity() {
 
     fun fetchArticleDescription(viewModel: WikiParseViewModel, title: String, onDescriptionFetched: (String) -> Unit) {
         viewModel.viewModelScope.launch {
-            val articleUrl = ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, title)
+            val articleUrl = ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, title)
             if (viewModel.isTitleCorrect(articleUrl)) { // Assuming isTitleCorrect is a suspend function
                 val articleDescription = viewModel.fetchAndProcessHtmlToGetParagraph(articleUrl)
                 onDescriptionFetched(articleDescription)
@@ -163,8 +163,8 @@ class MainGameSetupActivity : AppCompatActivity() {
                 getRandomConcept(keyword, category).replace(" ", "_")
             }
 
-            intent.putExtra(QuizValues.STARTING_CONCEPT, startingConcept)
-            intent.putExtra(QuizValues.GOAL_CONCEPT, goalConcept)
+            intent.putExtra(ConstantValues.STARTING_CONCEPT, startingConcept)
+            intent.putExtra(ConstantValues.GOAL_CONCEPT, goalConcept)
             startActivity(intent)
         }
     }

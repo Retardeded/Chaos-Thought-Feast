@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.utils.ModifyingStrings
 
@@ -66,7 +66,7 @@ fun GameOptionItem(
     LaunchedEffect(showDescription.value) {
         if (showDescription.value) {
             description.value = wikiParseViewModel.fetchAndProcessHtmlToGetParagraph(
-                ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, option)
+                ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, option)
             )
         }
     }
@@ -131,7 +131,7 @@ fun GameScreen(
     LaunchedEffect(startFetchDescription) {
         if (startFetchDescription) {
             description.value = wikiParseViewModel.fetchAndProcessHtmlToGetParagraph(
-                ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, goalTitle.value)
+                ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, goalTitle.value)
             )
             showDialog = true
             startFetchDescription = false
@@ -139,7 +139,7 @@ fun GameScreen(
     }
 
     LaunchedEffect(currentTitle) {
-        wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, currentTitle.value))
+        wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, currentTitle.value))
     }
 
     LaunchedEffect(options) {
@@ -154,7 +154,7 @@ fun GameScreen(
             totalSteps.value = totalSteps.value - 1
 
             wikiParseViewModel.fetchTitles(
-                ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, newCurrentTitle)
+                ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, newCurrentTitle)
             )
         }
     }
@@ -256,7 +256,8 @@ fun GameScreen(
                         win.value = true
                         onEndQuest(win.value, totalSteps.value, pathList.value)
                     } else {
-                        wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(QuizValues.USER!!.language.languageCode, option))
+                        wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(
+                            ConstantValues.USER!!.language.languageCode, option))
 
                     }
                 },

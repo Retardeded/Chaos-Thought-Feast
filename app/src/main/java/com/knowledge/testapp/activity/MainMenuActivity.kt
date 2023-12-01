@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.ui.MainMenuScreen
 import com.knowledge.testapp.utils.NavigationUtils
@@ -33,19 +33,19 @@ class MainMenuActivity : AppCompatActivity() {
 
     private fun goToFindYourLikings() {
         val intent = Intent(this, MainGameSetupActivity::class.java)
-        QuizValues.gameMode = GameMode.FIND_YOUR_LIKINGS
+        ConstantValues.gameMode = GameMode.FIND_YOUR_LIKINGS
         startActivity(intent)
     }
 
     private fun goToLikingSpectrumJourney() {
         val intent = Intent(this, MainGameSetupActivity::class.java)
-        QuizValues.gameMode = GameMode.LIKING_SPECTRUM_JOURNEY
+        ConstantValues.gameMode = GameMode.LIKING_SPECTRUM_JOURNEY
         startActivity(intent)
     }
 
     private fun goToAnyfinCanHappen() {
         val intent = Intent(this, MainGameSetupActivity::class.java)
-        QuizValues.gameMode = GameMode.ANYFIN_CAN_HAPPEN
+        ConstantValues.gameMode = GameMode.ANYFIN_CAN_HAPPEN
         startActivity(intent)
     }
 }

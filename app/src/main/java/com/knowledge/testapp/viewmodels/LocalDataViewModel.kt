@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class DatabaseViewModel(application: Application) : AndroidViewModel(application) {
+class LocalDataViewModel(application: Application) : AndroidViewModel(application) {
     private val userPathDbManager: UserPathDbManager = UserPathDbManager.getInstance(application)
     val winningPathsData: MutableState<List<PathRecord>> = mutableStateOf(emptyList())
     val losingPathsData: MutableState<List<PathRecord>> = mutableStateOf(emptyList())

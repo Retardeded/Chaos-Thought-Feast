@@ -1,13 +1,15 @@
 package com.knowledge.testapp.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.google.firebase.database.*
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.PathRecord
@@ -17,11 +19,12 @@ import com.knowledge.testapp.ui.TopUsersDialog
 import com.knowledge.testapp.ui.UserRecordsDialog
 import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
+import com.knowledge.testapp.viewmodels.RankingsViewModel
 
 
 class RankingsActivity : AppCompatActivity() {
-    private val currentUserSanitizedEmail = ModifyingStrings.sanitizeEmail(QuizValues.USER!!.email)
-    private val currentUserLanguage = QuizValues.USER!!.language.languageCode
+    private val currentUserSanitizedEmail = ModifyingStrings.sanitizeEmail(ConstantValues.USER!!.email)
+    private val currentUserLanguage = ConstantValues.USER!!.language.languageCode
 
     private var topUsers by mutableStateOf(listOf<User>())
     private var showTopUsersFindYourLikings by mutableStateOf(false)
@@ -32,6 +35,7 @@ class RankingsActivity : AppCompatActivity() {
     private var userRecordsFindYourLikings by mutableStateOf(false)
     private var userRecordsLikingSpectrumJourney by mutableStateOf(false)
     private var userRecordsAnyfinCanHappen by mutableStateOf(false)
+    private val rankingsViewModel: RankingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +75,7 @@ class RankingsActivity : AppCompatActivity() {
             if (userRecordsFindYourLikings) {
                 UserRecordsDialog(
                     backgroundResource = R.drawable.findyourlikings,
-                    title = QuizValues.USER!!.username,
+                    title = ConstantValues.USER!!.username,
                     gameMode = (R.string.find_your_likings),
                     userRecords = userRecords,
                     onDismissRequest = { userRecordsFindYourLikings = false }
@@ -81,7 +85,7 @@ class RankingsActivity : AppCompatActivity() {
             if (userRecordsLikingSpectrumJourney) {
                 UserRecordsDialog(
                     backgroundResource = R.drawable.likingspecturmjourney,
-                    title = QuizValues.USER!!.username,
+                    title = ConstantValues.USER!!.username,
                     gameMode = (R.string.liking_spectrum_journey),
                     userRecords = userRecords,
                     onDismissRequest = { userRecordsLikingSpectrumJourney = false }
@@ -91,7 +95,7 @@ class RankingsActivity : AppCompatActivity() {
             if (userRecordsAnyfinCanHappen) {
                 UserRecordsDialog(
                     backgroundResource = R.drawable.anyfin_can_happen,
-                    title = QuizValues.USER!!.username,
+                    title = ConstantValues.USER!!.username,
                     gameMode = (R.string.anyfin_can_happen),
                     userRecords = userRecords,
                     onDismissRequest = { userRecordsAnyfinCanHappen = false }
@@ -111,58 +115,6 @@ class RankingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun <T> fetchFromDatabase(
-        tableName: String,
-        queryModifier: Query.() -> Query = { this }, // Optional lambda to modify the query
-        processSnapshot: (DataSnapshot) -> List<T>,
-        onUpdate: (List<T>) -> Unit
-    ) {
-        val databaseReference = FirebaseDatabase.getInstance().getReference(tableName)
-        val query = databaseReference.queryModifier()
-
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val dataList = processSnapshot(snapshot)
-                onUpdate(dataList)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle the error
-            }
-        })
-    }
-
-    fun fetchTopUsers(tableName: String) {
-        fetchFromDatabase<User>(
-            tableName = tableName,
-            queryModifier = { orderByChild("currentScore").limitToLast(10) },
-            processSnapshot = { snapshot ->
-                snapshot.children.mapNotNull { it.getValue(User::class.java) }
-                    .sortedByDescending { it.currentScore }
-            },
-            onUpdate = { topUsers = it }
-        )
-    }
-
-    fun fetchUserRecords(tableName: String, userSanitizedEmail: String) {
-        fetchFromDatabase<PathRecord>(
-            tableName = tableName,
-            queryModifier = { orderByKey().startAt(userSanitizedEmail).endAt(userSanitizedEmail + "\uf8ff") },
-            processSnapshot = { snapshot ->
-                snapshot.children.mapNotNull { dataSnapshot ->
-                    val startingConcept = dataSnapshot.child("startingConcept").getValue(String::class.java)
-                    val goalConcept = dataSnapshot.child("goalConcept").getValue(String::class.java)
-                    val steps = dataSnapshot.child("steps").getValue(Int::class.java)
-                    val win = dataSnapshot.child("win").getValue(Boolean::class.java)
-                    val pathList = dataSnapshot.child("path").getValue(object : GenericTypeIndicator<ArrayList<String>>() {})
-
-                    PathRecord(startingConcept ?: "", goalConcept ?: "", pathList ?: ArrayList(), steps ?: 0, win ?: false)
-                }
-            },
-            onUpdate = { userRecords = it }
-        )
-    }
-
     fun showDialog(
         userSanitizedEmail: String?,
         gameMode: GameMode,
@@ -171,14 +123,28 @@ class RankingsActivity : AppCompatActivity() {
     ) {
         val tableName = determineTableName(gameMode)
 
-        if (userSanitizedEmail == null) {
-            fetchTopUsers(tableName)
-        } else {
-            fetchUserRecords(tableName, userSanitizedEmail)
+        val onSuccessUsers: (List<User>) -> Unit = { users ->
+            topUsers = users
+            runOnUiThread {
+                updateUIState(gameMode)
+            }
         }
 
-        runOnUiThread {
-            updateUIState(gameMode)
+        val onSuccessRecords: (List<PathRecord>) -> Unit = { records ->
+            userRecords = records
+            runOnUiThread {
+                updateUIState(gameMode)
+            }
+        }
+
+        val onFailure: (DatabaseError) -> Unit = { error ->
+            Log.e("FirebaseError", error.message ?: "Unknown error")
+        }
+
+        if (userSanitizedEmail == null) {
+            rankingsViewModel.fetchTopUsers(tableName, 10, onSuccessUsers, onFailure)
+        } else {
+            rankingsViewModel.fetchUserRecords(tableName, userSanitizedEmail, onSuccessRecords, onFailure)
         }
     }
 
@@ -189,9 +155,9 @@ class RankingsActivity : AppCompatActivity() {
             determineTableName = {
                 ModifyingStrings.createTableName(
                     when (it) {
-                        GameMode.FIND_YOUR_LIKINGS -> QuizValues.topUsers_FIND_YOUR_LIKINGS
-                        GameMode.LIKING_SPECTRUM_JOURNEY -> QuizValues.topUsers_LIKING_SPECTRUM_JOURNEY
-                        GameMode.ANYFIN_CAN_HAPPEN -> QuizValues.topUsers_ANYFIN_CAN_HAPPEN
+                        GameMode.FIND_YOUR_LIKINGS -> ConstantValues.topUsers_FIND_YOUR_LIKINGS
+                        GameMode.LIKING_SPECTRUM_JOURNEY -> ConstantValues.topUsers_LIKING_SPECTRUM_JOURNEY
+                        GameMode.ANYFIN_CAN_HAPPEN -> ConstantValues.topUsers_ANYFIN_CAN_HAPPEN
                     },
                     currentUserLanguage
                 )
@@ -213,9 +179,9 @@ class RankingsActivity : AppCompatActivity() {
             determineTableName = {
                 ModifyingStrings.createTableName(
                     when (it) {
-                        GameMode.FIND_YOUR_LIKINGS -> QuizValues.worldRecords_FIND_YOUR_LIKINGS
-                        GameMode.LIKING_SPECTRUM_JOURNEY -> QuizValues.worldRecords_LIKING_SPECTRUM_JOURNEY
-                        GameMode.ANYFIN_CAN_HAPPEN -> QuizValues.worldRecords_ANYFIN_CAN_HAPPEN
+                        GameMode.FIND_YOUR_LIKINGS -> ConstantValues.worldRecords_FIND_YOUR_LIKINGS
+                        GameMode.LIKING_SPECTRUM_JOURNEY -> ConstantValues.worldRecords_LIKING_SPECTRUM_JOURNEY
+                        GameMode.ANYFIN_CAN_HAPPEN -> ConstantValues.worldRecords_ANYFIN_CAN_HAPPEN
                     },
                     currentUserLanguage
                 )

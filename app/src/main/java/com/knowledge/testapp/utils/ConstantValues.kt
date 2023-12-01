@@ -1,9 +1,9 @@
-package com.knowledge.testapp
+package com.knowledge.testapp.utils
 
 import com.knowledge.testapp.data.GameMode
 import com.knowledge.testapp.data.User
 
-object QuizValues {
+object ConstantValues {
 
     const val STARTING_CONCEPT:String = "start_concept"
     const val GOAL_CONCEPT:String = "goal_concept"
@@ -13,8 +13,6 @@ object QuizValues {
     const val BASIC_LINK_PREFIX:String = "https://"
     const val BASIC_LINK_SUFFIX:String = ".wikipedia.org/wiki/"
     const val WIN:String = "win"
-    var correctStart = true
-    var correctGoal = true
     var gameMode = GameMode.FIND_YOUR_LIKINGS
     const val worldRecords_FIND_YOUR_LIKINGS = "worldRecords_FIND_YOUR_LIKINGS"
     const val worldRecords_LIKING_SPECTRUM_JOURNEY = "worldRecords_LIKING_SPECTRUM_JOURNEY"

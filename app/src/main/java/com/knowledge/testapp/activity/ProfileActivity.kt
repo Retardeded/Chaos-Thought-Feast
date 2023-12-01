@@ -12,41 +12,40 @@ import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.UserViewModel
-import com.knowledge.testapp.localdb.UserPathDbManager
 import com.knowledge.testapp.ui.ProfilePathsDialog
 import com.knowledge.testapp.ui.ProfileScreen
 import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
-import com.knowledge.testapp.viewmodels.DatabaseViewModel
+import com.knowledge.testapp.viewmodels.LocalDataViewModel
 
 class ProfileActivity : AppCompatActivity() {
 
     private var showWinningPathsDialog by mutableStateOf(false)
     private var showLosingPathsDialog by mutableStateOf(false)
     private val userViewModel: UserViewModel by viewModels()
-    private val databaseViewModel: DatabaseViewModel by viewModels()
+    private val localDataViewModel: LocalDataViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        databaseViewModel.fetchPathsForUser(QuizValues.USER!!.email, true) // For winning paths
-        databaseViewModel.fetchPathsForUser(QuizValues.USER!!.email, false) // For losing paths
+        localDataViewModel.fetchPathsForUser(ConstantValues.USER!!.email, true) // For winning paths
+        localDataViewModel.fetchPathsForUser(ConstantValues.USER!!.email, false) // For losing paths
 
         setContent {
             if (showWinningPathsDialog) {
                 ProfilePathsDialog(
                     true,
-                    QuizValues.USER!!.username,
-                    pathsData = databaseViewModel.winningPathsData.value,
+                    ConstantValues.USER!!.username,
+                    pathsData = localDataViewModel.winningPathsData.value,
                     onDismissRequest = { showWinningPathsDialog = false }
                 )
             }
             if (showLosingPathsDialog) {
                 ProfilePathsDialog(
                     false,
-                    QuizValues.USER!!.username,
-                    pathsData = databaseViewModel.losingPathsData.value,
+                    ConstantValues.USER!!.username,
+                    pathsData = localDataViewModel.losingPathsData.value,
                     onDismissRequest = { showLosingPathsDialog = false }
                 )
             }
@@ -63,7 +62,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     fun clearPaths() {
-        databaseViewModel.clearUserData(QuizValues.USER!!.email)
+        localDataViewModel.clearUserData(ConstantValues.USER!!.email)
     }
 
     fun showWinningPathsDialog() {

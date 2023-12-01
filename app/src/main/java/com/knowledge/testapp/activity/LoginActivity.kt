@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
                 if (firebaseUser != null) {
                     val email = firebaseUser.email ?: ""
 
-                    userViewModel.checkUserData(email) { userExists ->
+                    userViewModel.checkIfUserExists(email) { userExists ->
                         if (!userExists) {
 
                             val locale = Locale.getDefault()

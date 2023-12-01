@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.*
-import com.knowledge.testapp.QuizValues
+import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.data.Language
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -25,7 +25,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class RandomArticleViewModel : ViewModel() {
 
-    private val lang = QuizValues.USER!!.language.languageCode
+    private val lang = ConstantValues.USER!!.language.languageCode
     private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
     private val categoriesRef = if (lang == Language.ENGLISH.languageCode) {
         FirebaseDatabase.getInstance().getReference("categories")

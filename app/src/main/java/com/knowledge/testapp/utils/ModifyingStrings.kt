@@ -1,6 +1,5 @@
 package com.knowledge.testapp.utils
 
-import com.knowledge.testapp.QuizValues
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.*
@@ -22,8 +21,8 @@ class ModifyingStrings {
 
         // Function to generate article URL
         fun generateArticleUrl(userLanguageCode: String, articleTitle: String): String {
-            val basicLinkPrefix = QuizValues.BASIC_LINK_PREFIX.lowercase(Locale.ROOT)
-            val basicLinkSuffix = QuizValues.BASIC_LINK_SUFFIX
+            val basicLinkPrefix = ConstantValues.BASIC_LINK_PREFIX.lowercase(Locale.ROOT)
+            val basicLinkSuffix = ConstantValues.BASIC_LINK_SUFFIX
             return "$basicLinkPrefix$userLanguageCode$basicLinkSuffix${articleTitle.replace(" ", "_")}"
         }
 
