@@ -56,15 +56,8 @@ class MainGameSetupActivity : AppCompatActivity() {
                 updateCorrectness: (Boolean) -> Unit
             ) {
                 lifecycleScope.launch {
-                    val article = if (typedKeyword.isNotEmpty()) {
-                        randomArticleViewModel.getArticleByKeyword(typedKeyword)
-                    } else if (selectedCategory.isNotEmpty()) {
-                        randomArticleViewModel.getRandomArticleFromCategory(selectedCategory)
-                    }
-                    else {
-                        randomArticleViewModel.getRandomWikiEntryInCorrectLanguage()
-                    } ?: ""
 
+                    val article = getRandomConcept(typedKeyword, selectedCategory)
                     if (isStartTitle) {
                         updateStartTitle(article ?: "")
                         updateCorrectness(true)
@@ -168,7 +161,7 @@ class MainGameSetupActivity : AppCompatActivity() {
                 randomArticleViewModel.getArticleByKeyword(keyword) ?: ""
             }
             category.isNotEmpty() -> {
-                randomArticleViewModel.getRandomArticleFromCategory("Category:$category") ?: ""
+                randomArticleViewModel.getRandomArticleFromCategory(category) ?: ""
             }
             else -> {
                 randomArticleViewModel.getRandomWikiEntryInCorrectLanguage() ?: ""

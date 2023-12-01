@@ -7,10 +7,16 @@ import com.knowledge.testapp.activity.MainGameSetupActivity
 import com.knowledge.testapp.activity.MainMenuActivity
 import com.knowledge.testapp.activity.ProfileActivity
 import com.knowledge.testapp.activity.RankingsActivity
+import com.knowledge.testapp.data.GameMode
+import com.knowledge.testapp.data.GameState
+
 object NavigationUtils {
 
-    fun tryAgain(context: Context) {
-        val intent = Intent(context, MainGameSetupActivity::class.java)
+    fun tryAgain(context: Context, gameMode: GameMode) {
+        val gameState = GameState(gameMode = gameMode)
+        val intent = Intent(context, MainGameSetupActivity::class.java).apply {
+            putExtra(ConstantValues.GAME_STATE, gameState)
+        }
         context.startActivity(intent)
         (context as Activity).finish()
     }

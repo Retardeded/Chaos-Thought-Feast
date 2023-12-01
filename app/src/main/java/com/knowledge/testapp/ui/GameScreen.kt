@@ -118,7 +118,6 @@ fun GameScreen(
     win: MutableState<Boolean>,
     onEndQuest: (Boolean, Int, List<String>) -> Unit
 ) {
-
     val options by wikiParseViewModel.options.observeAsState(emptyList())
     val listState = rememberLazyListState()
 
