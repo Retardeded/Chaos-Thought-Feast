@@ -251,7 +251,7 @@ fun GameScreen(
                     totalSteps.value = totalSteps.value + 1
                     currentTitle.value = option
 
-                    if (option == goalTitle.value) {
+                    if (option == goalTitle.value.replace("_", " ")) {
                         win.value = true
                         onEndQuest(win.value, totalSteps.value, pathList.value)
                     } else {

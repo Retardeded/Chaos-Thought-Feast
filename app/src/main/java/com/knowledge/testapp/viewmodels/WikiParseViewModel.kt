@@ -4,31 +4,84 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.knowledge.testapp.utils.ModifyingStrings.Companion.encodedURLToText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.*
-import java.io.IOException
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import org.json.JSONException
+import org.json.JSONObject
 import org.jsoup.Jsoup
+import java.io.IOException
 import org.jsoup.nodes.Document
 
 class WikiParseViewModel: ViewModel() {
     private val _options = MutableLiveData<List<String>>()
     val options: LiveData<List<String>> = _options
-
-    private lateinit var mCurrentHtml:String
-    private lateinit var mUrls:ArrayList<String>
-    private var currentIndex = 0
-    private var currentOverloadedIndex = 0
     private val okHttpClient = OkHttpClient()
 
     fun fetchTitles(articleUrl: String) {
         viewModelScope.launch {
-            val titles = fetchAndProcessHtmlToGetTitles(articleUrl)
-            _options.value = titles
+            fetchTitlesFromWikipediaSections(
+                pageTitle = articleUrl,
+                maxTitles = 200,
+                onTitlesFetched = { titles ->
+                    _options.value = titles
+                }
+            )
+        }
+    }
+
+    private suspend fun fetchTitlesFromWikipediaSections(
+        pageTitle: String,
+        maxTitles: Int = 200,
+        onTitlesFetched: (List<String>) -> Unit
+    ) {
+        var section = 0
+        val titles = mutableListOf<String>()
+
+        while (titles.size < maxTitles) {
+            val apiUrl = "https://en.wikipedia.org/w/api.php?action=parse&page=$pageTitle&prop=links&section=$section&format=json"
+
+            val responseString = withContext(Dispatchers.IO) {
+                try {
+                    val request = Request.Builder().url(apiUrl).build()
+                    okHttpClient.newCall(request).execute().use { response ->
+                        if (response.isSuccessful) {
+                            response.body?.string()
+                        } else null
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    null
+                }
+            }
+
+            try {
+                responseString?.let {
+                    val jsonResponse = JSONObject(it)
+                    val links = jsonResponse.getJSONObject("parse").getJSONArray("links")
+                    val unwantedTitlePattern = Regex("ISO \\d+-\\d+")
+
+                    for (i in 0 until links.length()) {
+                        val linkObject = links.getJSONObject(i)
+                        val title = linkObject.getString("*")
+
+                        // Check if it's an actual article and does not contain a colon
+                        if (!title.endsWith("(identifier)") && !title.contains(":") && !unwantedTitlePattern.matches(title)) {
+                            titles.add(title)
+                            if (titles.size >= maxTitles) break
+                        }
+                    }
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                return
+                // Handle the JSONException here (e.g., log it, continue to next section, etc.)
+            }
+            onTitlesFetched(titles.toList()) // Callback with the titles fetched
+            section++
+            // If you've checked all sections or reached the maximum number of titles, exit the loop
+            if (titles.size >= maxTitles) break
         }
     }
 
@@ -62,24 +115,6 @@ class WikiParseViewModel: ViewModel() {
                 null
             }
         }
-    }
-
-    private fun getTitlesFromHtml(url: String, htmlContent: String): List<String> {
-        // Process the HTML content
-        mCurrentHtml = htmlContent
-        System.out.println("link:" + url)
-        mUrls = parseLinksFromHtmlCode(url, mCurrentHtml)
-
-        return (mUrls)
-
-        /*
-        tv.post {
-            val lastPart = url.substringAfterLast("/")
-            tv.text = lastPart
-            callback(mUrls) // Call the callback with mUrls
-        }
-
-         */
     }
 
     fun getFirstParagraphWithArticleNameOrBoldTextFromHtml(url: String, htmlContent: String): String {
@@ -125,37 +160,8 @@ class WikiParseViewModel: ViewModel() {
         return finalParagraph
     }
 
-    private suspend fun fetchAndProcessHtmlToGetTitles(url: String): List<String> {
-        val htmlContent = fetchHtmlFromUrl(url) ?: return emptyList()
-        return getTitlesFromHtml(url, htmlContent)
-    }
-
     suspend fun fetchAndProcessHtmlToGetParagraph(url: String): String {
         val htmlContent = fetchHtmlFromUrl(url) ?: return "No content found"
         return getFirstParagraphWithArticleNameOrBoldTextFromHtml(url, htmlContent)
-    }
-
-    fun parseLinksFromHtmlCode(baseUrl: String, code: String?): ArrayList<String> {
-        val urls: MutableList<String> = ArrayList()
-        val patternLinkTag: Pattern =
-            Pattern.compile("(?i)(<a.*?href=[\"'])(.*?)([\"'].*?>)(.*?)(</a>)")
-        val matcherWebpageHtmlCode: Matcher = patternLinkTag.matcher(code)
-        var parsedUrl: StringBuilder
-        while (matcherWebpageHtmlCode.find() && urls.size < 200) {
-            parsedUrl = StringBuilder().append(
-                    matcherWebpageHtmlCode.group(2)
-            )
-            if (parsedUrl.toString().startsWith("#") || parsedUrl.toString().contains(":") || parsedUrl.toString().contains(";") || parsedUrl.toString().contains("#") || parsedUrl.toString().contains("&") ) {
-                continue
-            }
-            if (parsedUrl.toString().startsWith("/")) {
-                parsedUrl.insert(0, baseUrl)
-                val encodedUrl = encodedURLToText(parsedUrl.toString())
-                val lastPart = encodedUrl.substringAfterLast("/")
-                urls.add(lastPart)
-            }
-        }
-
-        return ArrayList(urls.subList(3, urls.size))
     }
 }

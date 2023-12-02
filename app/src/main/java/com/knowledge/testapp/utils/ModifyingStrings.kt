@@ -22,8 +22,9 @@ class ModifyingStrings {
         // Function to generate article URL
         fun generateArticleUrl(userLanguageCode: String, articleTitle: String): String {
             val basicLinkPrefix = ConstantValues.BASIC_LINK_PREFIX.lowercase(Locale.ROOT)
-            val basicLinkSuffix = ConstantValues.BASIC_LINK_SUFFIX
-            return "$basicLinkPrefix$userLanguageCode$basicLinkSuffix${articleTitle.replace(" ", "_")}"
+            val basicLinkInffix = ConstantValues.BASIC_LINK_INFIX
+            val basicLinkSuffixEnd = ConstantValues.BASIC_LINK_SUFFIX
+            return "$basicLinkPrefix$userLanguageCode$basicLinkInffix${articleTitle.replace(" ", "_")}$basicLinkSuffixEnd"
         }
 
         fun createTableName(
