@@ -17,8 +17,8 @@ android {
         applicationId "com.knowledge.testapp"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 20
-        versionName "1.47"
+        versionCode 22
+        versionName "1.49"
 
         multiDexEnabled true
 

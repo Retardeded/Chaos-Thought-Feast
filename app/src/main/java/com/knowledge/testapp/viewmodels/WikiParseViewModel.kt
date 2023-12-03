@@ -22,7 +22,7 @@ class WikiParseViewModel: ViewModel() {
     fun fetchTitles(articleUrl: String) {
         viewModelScope.launch {
             fetchTitlesFromWikipediaSections(
-                pageTitle = articleUrl,
+                articleUrl = articleUrl,
                 maxTitles = 200,
                 onTitlesFetched = { titles ->
                     _options.value = titles
@@ -32,7 +32,7 @@ class WikiParseViewModel: ViewModel() {
     }
 
     private suspend fun fetchTitlesFromWikipediaSections(
-        pageTitle: String,
+        articleUrl: String,
         maxTitles: Int = 200,
         onTitlesFetched: (List<String>) -> Unit
     ) {
@@ -40,11 +40,10 @@ class WikiParseViewModel: ViewModel() {
         val titles = mutableListOf<String>()
 
         while (titles.size < maxTitles) {
-            val apiUrl = "https://en.wikipedia.org/w/api.php?action=parse&page=$pageTitle&prop=links&section=$section&format=json"
 
             val responseString = withContext(Dispatchers.IO) {
                 try {
-                    val request = Request.Builder().url(apiUrl).build()
+                    val request = Request.Builder().url(articleUrl).build()
                     okHttpClient.newCall(request).execute().use { response ->
                         if (response.isSuccessful) {
                             response.body?.string()
