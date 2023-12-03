@@ -65,7 +65,7 @@ fun GameOptionItem(
 
     LaunchedEffect(showDescription.value) {
         if (showDescription.value) {
-            description.value = wikiParseViewModel.fetchAndProcessHtmlToGetParagraph(
+            description.value = wikiParseViewModel.fetchFirstSectionText(
                 ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, option)
             )
         }
@@ -129,7 +129,7 @@ fun GameScreen(
 
     LaunchedEffect(startFetchDescription) {
         if (startFetchDescription) {
-            description.value = wikiParseViewModel.fetchAndProcessHtmlToGetParagraph(
+            description.value = wikiParseViewModel.fetchFirstSectionText(
                 ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, goalTitle.value)
             )
             showDialog = true

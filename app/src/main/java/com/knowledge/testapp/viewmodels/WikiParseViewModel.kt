@@ -4,15 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.knowledge.testapp.utils.ModifyingStrings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.*
-import org.json.JSONException
-import org.json.JSONObject
-import org.jsoup.Jsoup
 import java.io.IOException
-import org.jsoup.nodes.Document
 
 class WikiParseViewModel: ViewModel() {
     private val _options = MutableLiveData<List<String>>()
@@ -37,13 +34,15 @@ class WikiParseViewModel: ViewModel() {
         onTitlesFetched: (List<String>) -> Unit
     ) {
         var section = 0
-        val titles = mutableListOf<String>()
+        val titlesSet = linkedSetOf<String>()
+        var reachedMaxTitles = false
 
-        while (titles.size < maxTitles) {
+        while (titlesSet.size < maxTitles) {
+            val sectionUrl = "$articleUrl&section=$section"
 
             val responseString = withContext(Dispatchers.IO) {
                 try {
-                    val request = Request.Builder().url(articleUrl).build()
+                    val request = Request.Builder().url(sectionUrl).build()
                     okHttpClient.newCall(request).execute().use { response ->
                         if (response.isSuccessful) {
                             response.body?.string()
@@ -55,32 +54,44 @@ class WikiParseViewModel: ViewModel() {
                 }
             }
 
+            var foundNewTitles = false
             try {
                 responseString?.let {
-                    val jsonResponse = JSONObject(it)
-                    val links = jsonResponse.getJSONObject("parse").getJSONArray("links")
+                    var trimmedText = (it)
+                    if(section == 0) {
+                        trimmedText = extractTextAfterFirstBoldParagraph(it)
+                    }
+                    val decodedText = ModifyingStrings.decodeHtmlEntities(trimmedText)
+
+                    val linkRegex = Regex("/wiki/([^\\\\]+)\\\\")
                     val unwantedTitlePattern = Regex("ISO \\d+-\\d+")
+                    val links = linkRegex.findAll(decodedText).map { match ->
+                        ModifyingStrings.encodedURLToText(match.groupValues[1])
+                    }.filter { title ->
+                        !title.endsWith("(identifier)") && !title.contains(":") && !unwantedTitlePattern.matches(title)
+                    }.toList()
 
-                    for (i in 0 until links.length()) {
-                        val linkObject = links.getJSONObject(i)
-                        val title = linkObject.getString("*")
-
-                        // Check if it's an actual article and does not contain a colon
-                        if (!title.endsWith("(identifier)") && !title.contains(":") && !unwantedTitlePattern.matches(title)) {
-                            titles.add(title)
-                            if (titles.size >= maxTitles) break
+                    links.forEach { title ->
+                        val added = titlesSet.add(title)
+                        if (added) {
+                            foundNewTitles = true
+                        }
+                        if (titlesSet.size >= maxTitles) {
+                            reachedMaxTitles = true
+                            return@forEach  // Skip further processing in forEach
                         }
                     }
                 }
-            } catch (e: JSONException) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 return
-                // Handle the JSONException here (e.g., log it, continue to next section, etc.)
+                // Handle exceptions
             }
-            onTitlesFetched(titles.toList()) // Callback with the titles fetched
+
+            onTitlesFetched(titlesSet.toList()) // Convert set to list and callback
             section++
-            // If you've checked all sections or reached the maximum number of titles, exit the loop
-            if (titles.size >= maxTitles) break
+
+            if (!foundNewTitles || reachedMaxTitles) break
         }
     }
 
@@ -100,10 +111,71 @@ class WikiParseViewModel: ViewModel() {
         }
     }
 
-    private suspend fun fetchHtmlFromUrl(url: String): String? {
-        return withContext(Dispatchers.IO) {
+    fun cutToThreeSentencesOrSixtyWords(text: String): String {
+        var sentenceCount = 0
+        var wordCount = 0
+
+        val stringBuilder = StringBuilder()
+        text.split(" ").forEach { word ->
+            stringBuilder.append("$word ")
+            wordCount++
+
+            if (word.endsWith('.') || word.endsWith('?') || word.endsWith('!')) {
+                sentenceCount++
+                if (wordCount >= 60) {
+                    return stringBuilder.trim().toString()
+                }
+            }
+        }
+
+        return stringBuilder.trim().toString()
+    }
+
+    fun extractTextAfterFirstBoldParagraph(response: String): String {
+        // Extract the article title
+        val title = extractRawTitle(response)
+
+        // Split the title into words
+        val titleWords = title.split(" ")
+
+        // Find the first occurrence of "<p><b>" that contains at least one word from the title
+        var startIndex = -1
+        for (word in titleWords) {
+            val pattern = "<p><b>$word"
+            startIndex = response.indexOf(pattern)
+            if (startIndex != -1) {
+                break
+            }
+        }
+
+        return if (startIndex != -1) {
+            // Keep everything after the found pattern
+            response.substring(startIndex)
+        } else {
+            // If a matching pattern is not found, return a default message
+            response
+        }
+    }
+
+    fun extractRawTitle(response: String): String {
+        val titlePrefix = "\"title\":\""
+        val startIndex = response.indexOf(titlePrefix)
+        if (startIndex != -1) {
+            val endIndex = response.indexOf("\"", startIndex + titlePrefix.length)
+            if (endIndex != -1) {
+                return response.substring(startIndex + titlePrefix.length, endIndex)
+            }
+        }
+        return "Title not found"
+    }
+
+    suspend fun fetchFirstSectionText(articleUrl: String): String {
+        val sectionUrl = "$articleUrl&section=0"  // Fetching the first section
+
+        // Fetch response from the API
+        val responseString = withContext(Dispatchers.IO) {
             try {
-                val request = Request.Builder().url(url).build()
+                val request = Request.Builder().url(sectionUrl).build()
                 okHttpClient.newCall(request).execute().use { response ->
                     if (response.isSuccessful) {
                         response.body?.string()
@@ -114,53 +186,48 @@ class WikiParseViewModel: ViewModel() {
                 null
             }
         }
+
+        // Process the response string
+        return responseString?.let {
+            var trimmedText = extractTextAfterFirstBoldParagraph(it)
+            // You need to determine how to find the end of the first section
+            // This is an example, adjust according to the actual structure
+            val firstSection = trimmedText.substringBefore("<h2>") // or another appropriate delimiter
+            val cleanedDescription = cleanHtmlContent(firstSection)
+            var description = ModifyingStrings.decodeUnicodeEscapes(cleanedDescription)
+            description = cutToThreeSentencesOrSixtyWords(description)
+            System.out.println(description)
+
+            description
+        } ?: "No content found"  // Default value if responseString is null
     }
 
-    fun getFirstParagraphWithArticleNameOrBoldTextFromHtml(url: String, htmlContent: String): String {
-        val document: Document = Jsoup.parse(htmlContent)
-        val articleName = url.substringAfterLast("/").replace("_", " ")
-        val paragraphs = document.select("p")
-        var firstParagraphWithArticleName: String? = null
-        var finalParagraph: String? = null
-        val pattern = Regex("\\[.*?\\]")
+    fun cleanHtmlContent(htmlContent: String): String {
+        // Remove any <span> tag with "error" inside it and everything after it
+        val errorPattern = Regex("<span [^>]*error[^>]*>.*")
+        val cleanedHtml = htmlContent.replace(errorPattern, "")
 
-        for (paragraph in paragraphs) {
-            val text = paragraph.text()
-            val boldText = paragraph.select("b").text()
+        // Remove HTML tags
+        var text = cleanedHtml.replace(Regex("<[^>]*>"), " ")
 
-            val plainTextPattern = Regex("^[A-Za-z ]+\$")
-            if (text.contains(articleName, ignoreCase = true) && plainTextPattern.matches(boldText)) {
-                firstParagraphWithArticleName = text
-                break
-            }
-        }
+        // Replace common HTML entities
+        text = text.replace("&amp;", "&")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", "\"")
+            .replace("&apos;", "'")
+            .replace("&#91;", "[")  // '[' character
+            .replace("&#93;", "]")  // ']' character
 
-        // If the paragraph with exact article name is not found, search for bold text
-        if (firstParagraphWithArticleName == null) {
-            var firstParagraphWithBoldText: String? = null
+        // Remove reference markers like [1]
+        text = text.replace(Regex("\\[\\d+\\]"), "")
 
-            // Second loop: Search for the first paragraph with bold text
-            for (paragraph in paragraphs) {
-                val boldText = paragraph.select("b").text()
-                if (boldText.isNotEmpty()) {
-                    firstParagraphWithBoldText = paragraph.text()
-                    break
-                }
-            }
+        // Remove newline characters
+        text = text.replace("\\n", " ") // Using "\\n" to handle the escape character
 
-            // Select the final paragraph based on whether a paragraph with bold text was found
-            finalParagraph = firstParagraphWithBoldText ?: "No relevant content found"
-        } else {
-            finalParagraph = firstParagraphWithArticleName
-        }
+        // Optional: Replace multiple consecutive spaces with a single space
+        text = text.replace(Regex(" +"), " ")
 
-        finalParagraph = finalParagraph.replace(pattern,"")
-
-        return finalParagraph
-    }
-
-    suspend fun fetchAndProcessHtmlToGetParagraph(url: String): String {
-        val htmlContent = fetchHtmlFromUrl(url) ?: return "No content found"
-        return getFirstParagraphWithArticleNameOrBoldTextFromHtml(url, htmlContent)
+        return text.trim()
     }
 }

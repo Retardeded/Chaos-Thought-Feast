@@ -38,7 +38,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             val startTitle = remember { mutableStateOf(startTitleText) }
             val goalTitle = remember { mutableStateOf(goalTitleText) }
 
-            val selectedCategory = remember { mutableStateOf("") }
+            val selectedCategory = remember { mutableStateOf(gameState.category) }
             val typedKeyword = remember { mutableStateOf("") }
 
             val updateStartTitle: (String) -> Unit = { newTitle ->
@@ -105,7 +105,7 @@ class MainGameSetupActivity : AppCompatActivity() {
         viewModel.viewModelScope.launch {
             val articleUrl = ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, title)
             if (viewModel.isTitleCorrect(articleUrl)) { // Assuming isTitleCorrect is a suspend function
-                val articleDescription = viewModel.fetchAndProcessHtmlToGetParagraph(articleUrl)
+                val articleDescription = viewModel.fetchFirstSectionText(articleUrl)
                 onDescriptionFetched(articleDescription)
             } else {
                 onDescriptionFetched("The article title is not correct.")
@@ -147,6 +147,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             else getRandomConcept(keyword, category).replace(" ", "_")
             gameState.goalConcept = if (goalConceptPresent) goalTitle.replace(" ", "_")
             else getRandomConcept(keyword, category).replace(" ", "_")
+            gameState.category = category
 
             val intent = Intent(this@MainGameSetupActivity, GameActivity::class.java)
 

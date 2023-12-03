@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class GameState(
     var gameMode: GameMode = GameMode.FIND_YOUR_LIKINGS,
+    var category: String = "",
     var startConcept: String = "",
     var goalConcept: String = "",
     var win: Boolean = false,

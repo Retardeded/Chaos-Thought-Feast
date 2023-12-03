@@ -65,7 +65,7 @@ class ResultActivity : AppCompatActivity() {
     }
 
     fun tryAgain() {
-        NavigationUtils.tryAgain(this, gameState.gameMode)
+        NavigationUtils.tryAgain(this, gameState)
     }
 
     fun goToMainMenu() {

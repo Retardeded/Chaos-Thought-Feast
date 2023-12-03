@@ -87,5 +87,7 @@ dependencies {
 
     implementation "androidx.fragment:fragment:1.6.2"
 
+    implementation 'org.apache.commons:commons-text:1.9'
+
 
 }

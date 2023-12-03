@@ -3,11 +3,23 @@ package com.knowledge.testapp.utils
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.*
+import org.apache.commons.text.StringEscapeUtils
 
 class ModifyingStrings {
     companion object {
         fun sanitizeEmail(email: String): String {
             return email.replace(".", ",")
+        }
+
+        fun decodeHtmlEntities(htmlText: String): String {
+            return StringEscapeUtils.unescapeHtml4(htmlText)
+        }
+
+        fun decodeUnicodeEscapes(str: String): String {
+            val regex = Regex("\\\\u[0-9a-fA-F]{4}")
+            return regex.replace(str) {
+                it.value.substring(2).toInt(16).toChar().toString()
+            }
         }
 
         fun textToEncodedURL(displayText: String): String {
