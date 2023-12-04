@@ -65,8 +65,8 @@ fun GameOptionItem(
 
     LaunchedEffect(showDescription.value) {
         if (showDescription.value) {
-            description.value = wikiParseViewModel.fetchFirstSectionText(
-                ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, option)
+            description.value = wikiParseViewModel.fetchIntroText(
+                ModifyingStrings.generateArticleDescriptionUrl(ConstantValues.USER!!.language.languageCode, option)
             )
         }
     }
@@ -129,8 +129,8 @@ fun GameScreen(
 
     LaunchedEffect(startFetchDescription) {
         if (startFetchDescription) {
-            description.value = wikiParseViewModel.fetchFirstSectionText(
-                ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, goalTitle.value)
+            description.value = wikiParseViewModel.fetchIntroText(
+                ModifyingStrings.generateArticleDescriptionUrl(ConstantValues.USER!!.language.languageCode, goalTitle.value)
             )
             showDialog = true
             startFetchDescription = false

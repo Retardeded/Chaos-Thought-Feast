@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.*
+import org.json.JSONObject
+import org.jsoup.Jsoup
 import java.io.IOException
 
 class WikiParseViewModel: ViewModel() {
@@ -141,8 +143,11 @@ class WikiParseViewModel: ViewModel() {
         // Find the first occurrence of "<p><b>" that contains at least one word from the title
         var startIndex = -1
         for (word in titleWords) {
-            val pattern = "<p><b>$word"
+            val pattern = "<b>$word"
             startIndex = response.indexOf(pattern)
+            if(startIndex == -1) {
+                startIndex = response.indexOf(pattern.lowercase())
+            }
             if (startIndex != -1) {
                 break
             }
@@ -169,13 +174,10 @@ class WikiParseViewModel: ViewModel() {
         return "Title not found"
     }
 
-    suspend fun fetchFirstSectionText(articleUrl: String): String {
-        val sectionUrl = "$articleUrl&section=0"  // Fetching the first section
-
-        // Fetch response from the API
+    suspend fun fetchIntroText(articleUrl: String): String {
         val responseString = withContext(Dispatchers.IO) {
             try {
-                val request = Request.Builder().url(sectionUrl).build()
+                val request = Request.Builder().url(articleUrl).build()
                 okHttpClient.newCall(request).execute().use { response ->
                     if (response.isSuccessful) {
                         response.body?.string()
@@ -187,19 +189,20 @@ class WikiParseViewModel: ViewModel() {
             }
         }
 
-        // Process the response string
         return responseString?.let {
-            var trimmedText = extractTextAfterFirstBoldParagraph(it)
-            // You need to determine how to find the end of the first section
-            // This is an example, adjust according to the actual structure
-            val firstSection = trimmedText.substringBefore("<h2>") // or another appropriate delimiter
-            val cleanedDescription = cleanHtmlContent(firstSection)
-            var description = ModifyingStrings.decodeUnicodeEscapes(cleanedDescription)
-            description = cutToThreeSentencesOrSixtyWords(description)
+            val jsonObject = JSONObject(it)
+            val pages = jsonObject.getJSONObject("query").getJSONObject("pages")
+            val pageId = pages.keys().next() // Assuming the first key is the page ID
+            val extract = pages.getJSONObject(pageId).getString("extract")
+
+            val text = Jsoup.parse(extract).text() // Using Jsoup to parse HTML and extract text
+
+            val cleanedDescription = cleanHtmlContent(text) // Apply your cleaning and trimming methods
+            val description = cutToThreeSentencesOrSixtyWords(cleanedDescription)
             System.out.println(description)
 
             description
-        } ?: "No content found"  // Default value if responseString is null
+        } ?: "No content found"
     }
 
     fun cleanHtmlContent(htmlContent: String): String {

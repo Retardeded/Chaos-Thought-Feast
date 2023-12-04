@@ -103,9 +103,9 @@ class MainGameSetupActivity : AppCompatActivity() {
 
     fun fetchArticleDescription(viewModel: WikiParseViewModel, title: String, onDescriptionFetched: (String) -> Unit) {
         viewModel.viewModelScope.launch {
-            val articleUrl = ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, title)
+            val articleUrl = ModifyingStrings.generateArticleDescriptionUrl(ConstantValues.USER!!.language.languageCode, title)
             if (viewModel.isTitleCorrect(articleUrl)) { // Assuming isTitleCorrect is a suspend function
-                val articleDescription = viewModel.fetchFirstSectionText(articleUrl)
+                val articleDescription = viewModel.fetchIntroText(articleUrl)
                 onDescriptionFetched(articleDescription)
             } else {
                 onDescriptionFetched("The article title is not correct.")
@@ -148,6 +148,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             gameState.goalConcept = if (goalConceptPresent) goalTitle.replace(" ", "_")
             else getRandomConcept(keyword, category).replace(" ", "_")
             gameState.category = category
+            gameState.totalSteps = 0
 
             val intent = Intent(this@MainGameSetupActivity, GameActivity::class.java)
 

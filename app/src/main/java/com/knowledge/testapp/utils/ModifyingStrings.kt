@@ -39,6 +39,13 @@ class ModifyingStrings {
             return "$basicLinkPrefix$userLanguageCode$basicLinkInffix${articleTitle.replace(" ", "_")}$basicLinkSuffixEnd"
         }
 
+        fun generateArticleDescriptionUrl(userLanguageCode: String, articleTitle: String): String {
+            val basicLinkPrefix = ConstantValues.BASIC_LINK_PREFIX.lowercase(Locale.ROOT)
+            val basicLinkInffix = ConstantValues.BASIC_LINK_DESCRIPTION_INFIX
+            val basicLinkSuffixEnd = ConstantValues.BASIC_LINK_DESCRIPTION_SUFFIX
+            return "$basicLinkPrefix$userLanguageCode$basicLinkInffix${articleTitle.replace(" ", "_")}$basicLinkSuffixEnd"
+        }
+
         fun createTableName(
             tableNameSpecification: String,
             lang: String
