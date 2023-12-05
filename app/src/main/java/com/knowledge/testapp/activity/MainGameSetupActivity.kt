@@ -32,14 +32,22 @@ class MainGameSetupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val gameState: GameState = intent.getParcelableExtra(ConstantValues.GAME_STATE)!!
-            val startTitleText = stringResource(R.string.example_starting_concept)
-            val goalTitleText = stringResource(R.string.example_goal_concept)
+            var startTitleText = stringResource(R.string.example_starting_concept)
+            if (gameState.startConcept.isNotEmpty()) {
+                // Set startTitleText to the value of startConcept
+                startTitleText = gameState.startConcept
+            }
+            var goalTitleText = stringResource(R.string.example_goal_concept)
+            if (gameState.goalConcept.isNotEmpty()) {
+                // Set startTitleText to the value of startConcept
+                goalTitleText = gameState.goalConcept
+            }
 
             val startTitle = remember { mutableStateOf(startTitleText) }
             val goalTitle = remember { mutableStateOf(goalTitleText) }
 
             val selectedCategory = remember { mutableStateOf(gameState.category) }
-            val typedKeyword = remember { mutableStateOf("") }
+            val typedKeyword = remember { mutableStateOf(gameState.keyword) }
 
             val updateStartTitle: (String) -> Unit = { newTitle ->
                 startTitle.value = newTitle
@@ -148,6 +156,8 @@ class MainGameSetupActivity : AppCompatActivity() {
             gameState.goalConcept = if (goalConceptPresent) goalTitle.replace(" ", "_")
             else getRandomConcept(keyword, category).replace(" ", "_")
             gameState.category = category
+            gameState.keyword = keyword
+            gameState.win = false
             gameState.totalSteps = 0
 
             val intent = Intent(this@MainGameSetupActivity, GameActivity::class.java)
