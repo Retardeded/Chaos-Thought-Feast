@@ -74,7 +74,7 @@ class WikiParseViewModel: ViewModel() {
                     }.toList()
 
                     links.forEach { title ->
-                        val added = titlesSet.add(title)
+                        val added = titlesSet.add(title.replace("_", " "))
                         if (added) {
                             foundNewTitles = true
                         }

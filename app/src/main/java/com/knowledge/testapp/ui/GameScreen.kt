@@ -257,12 +257,12 @@ fun GameScreen(
                     totalSteps.value = totalSteps.value + 1
                     currentTitle.value = option
 
-                    if (option == goalTitle.value.replace("_", " ")) {
+                    if (option == goalTitle.value) {
                         win.value = true
                         onEndQuest(win.value, totalSteps.value, pathList.value)
                     } else {
                         wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(
-                            language, option))
+                        language, option))
                     }
                 },
                 wikiParseViewModel = wikiParseViewModel,

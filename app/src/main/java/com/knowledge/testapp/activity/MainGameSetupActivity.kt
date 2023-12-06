@@ -152,10 +152,10 @@ class MainGameSetupActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val gameState: GameState = intent.getParcelableExtra(ConstantValues.GAME_STATE)!!
 
-            gameState.startConcept = if (startingConceptPresent) startTitle.replace(" ", "_")
-            else getRandomConcept(keyword, category).replace(" ", "_")
-            gameState.goalConcept = if (goalConceptPresent) goalTitle.replace(" ", "_")
-            else getRandomConcept(keyword, category).replace(" ", "_")
+            gameState.startConcept = if (startingConceptPresent) startTitle.replace("_", " ")
+            else getRandomConcept(keyword, category).replace("_", " ")
+            gameState.goalConcept = if (goalConceptPresent) goalTitle.replace("_", " ")
+            else getRandomConcept(keyword, category).replace("_", " ")
             gameState.category = category
             gameState.keyword = keyword
             gameState.win = false
