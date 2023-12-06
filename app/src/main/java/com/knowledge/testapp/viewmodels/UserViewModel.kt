@@ -6,12 +6,11 @@ import androidx.lifecycle.ViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.R
 import com.knowledge.testapp.data.User
 import com.knowledge.testapp.utils.ModifyingStrings
+import com.knowledge.testapp.utils.UserManager
 import java.sql.DriverManager
 import java.util.*
 
@@ -50,13 +49,9 @@ class UserViewModel : ViewModel() {
             }
     }
 
-    fun seUserAndLanguage(context: Context) {
-        FirebaseAuth.getInstance().currentUser?.email?.let {
-            getUserDataByEmail(it) { user ->
-                ConstantValues.USER = user
-                setAppLocale(context, user!!.language.languageCode)
-            }
-        }
+    fun seUserAndLanguage(context: Context, user:User) {
+            UserManager.setUser(user)
+            setAppLocale(context, user.language.languageCode)
     }
 
     fun checkIfUserExists(email: String, callback: (Boolean) -> Unit) {

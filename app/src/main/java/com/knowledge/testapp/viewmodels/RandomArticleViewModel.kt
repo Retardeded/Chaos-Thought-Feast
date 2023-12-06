@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.database.*
 import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.data.Language
+import com.knowledge.testapp.utils.UserManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -25,7 +26,7 @@ import kotlin.coroutines.suspendCoroutine
 
 class RandomArticleViewModel : ViewModel() {
 
-    private val lang = ConstantValues.USER!!.language.languageCode
+    private val lang = UserManager.getUser().language.languageCode
     private val mostPopularPagesRef: DatabaseReference = FirebaseDatabase.getInstance().getReference("mostPopularPagesWithCategories")
     private val categoriesRef = if (lang == Language.ENGLISH.languageCode) {
         FirebaseDatabase.getInstance().getReference("categories")
@@ -40,8 +41,10 @@ class RandomArticleViewModel : ViewModel() {
     val categories: LiveData<Map<String, List<String>>> = _categories
 
     init {
-        categoriesTranslations {
-            categoriesTranslation.putAll(it)
+        if (lang != Language.ENGLISH.languageCode) {
+            categoriesTranslations {
+                categoriesTranslation.putAll(it)
+            }
         }
         fetchCategories()
     }
@@ -89,32 +92,6 @@ class RandomArticleViewModel : ViewModel() {
             }
         })
     }
-
-    /*
-    fun getCategoriesWithSubcategories(callback: (Map<String, List<String>>) -> Unit) {
-        categoriesRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val categoryMap = mutableMapOf<String, List<String>>()
-                for (categorySnapshot in dataSnapshot.children) {
-                    val categories = mutableListOf<String>()
-                    for (subcategorySnapshot in categorySnapshot.children) {
-                        val subcategoryName = subcategorySnapshot.getValue(String::class.java)
-                        subcategoryName?.let {
-                            categories.add(it)
-                        }
-                    }
-                    categoryMap[categorySnapshot.key.toString()] = categories
-                }
-                callback(categoryMap) // Return the list of subcategories
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Handle any errors that occur.
-            }
-        })
-    }
-
-     */
 
     fun countTitlesPerCategory() {
         val categoryCountMap = HashMap<String, Int>()
@@ -228,7 +205,6 @@ class RandomArticleViewModel : ViewModel() {
             })
 
              */
-
 
             val randomIndex = (0 until 8000).random()
 

@@ -19,12 +19,14 @@ import com.knowledge.testapp.ui.TopUsersDialog
 import com.knowledge.testapp.ui.UserRecordsDialog
 import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
+import com.knowledge.testapp.utils.UserManager
 import com.knowledge.testapp.viewmodels.RankingsViewModel
 
 
 class RankingsActivity : AppCompatActivity() {
-    private val currentUserSanitizedEmail = ModifyingStrings.sanitizeEmail(ConstantValues.USER!!.email)
-    private val currentUserLanguage = ConstantValues.USER!!.language.languageCode
+    private val currentUserSanitizedEmail = ModifyingStrings.sanitizeEmail(UserManager.getUser().email)
+    private val currentUserLanguage = UserManager.getUser().language.languageCode
+    private val currentUserName = UserManager.getUser().username
 
     private var topUsers by mutableStateOf(listOf<User>())
     private var showTopUsersFindYourLikings by mutableStateOf(false)
@@ -75,7 +77,7 @@ class RankingsActivity : AppCompatActivity() {
             if (userRecordsFindYourLikings) {
                 UserRecordsDialog(
                     backgroundResource = R.drawable.findyourlikings,
-                    title = ConstantValues.USER!!.username,
+                    title = currentUserName,
                     gameMode = (R.string.find_your_likings),
                     userRecords = userRecords,
                     onDismissRequest = { userRecordsFindYourLikings = false }
@@ -85,7 +87,7 @@ class RankingsActivity : AppCompatActivity() {
             if (userRecordsLikingSpectrumJourney) {
                 UserRecordsDialog(
                     backgroundResource = R.drawable.likingspecturmjourney,
-                    title = ConstantValues.USER!!.username,
+                    title = currentUserName,
                     gameMode = (R.string.liking_spectrum_journey),
                     userRecords = userRecords,
                     onDismissRequest = { userRecordsLikingSpectrumJourney = false }
@@ -95,7 +97,7 @@ class RankingsActivity : AppCompatActivity() {
             if (userRecordsAnyfinCanHappen) {
                 UserRecordsDialog(
                     backgroundResource = R.drawable.anyfin_can_happen,
-                    title = ConstantValues.USER!!.username,
+                    title = currentUserName,
                     gameMode = (R.string.anyfin_can_happen),
                     userRecords = userRecords,
                     onDismissRequest = { userRecordsAnyfinCanHappen = false }

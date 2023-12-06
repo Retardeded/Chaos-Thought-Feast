@@ -22,7 +22,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.utils.ConstantValues
+import com.knowledge.testapp.utils.LocalLanguage
 import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.utils.ModifyingStrings
 
@@ -63,10 +65,12 @@ fun GameOptionItem(
     val showDescription = remember { mutableStateOf(false) }
     val description = remember { mutableStateOf("") }
 
+    val language = LocalLanguage.current
+
     LaunchedEffect(showDescription.value) {
         if (showDescription.value) {
             description.value = wikiParseViewModel.fetchIntroText(
-                ModifyingStrings.generateArticleDescriptionUrl(ConstantValues.USER!!.language.languageCode, option)
+                ModifyingStrings.generateArticleDescriptionUrl(language, option)
             )
         }
     }
@@ -127,10 +131,12 @@ fun GameScreen(
 
     val progress = totalSteps.value.toFloat() / maxSteps
 
+    val language = LocalLanguage.current
+
     LaunchedEffect(startFetchDescription) {
         if (startFetchDescription) {
             description.value = wikiParseViewModel.fetchIntroText(
-                ModifyingStrings.generateArticleDescriptionUrl(ConstantValues.USER!!.language.languageCode, goalTitle.value)
+                ModifyingStrings.generateArticleDescriptionUrl(language, goalTitle.value)
             )
             showDialog = true
             startFetchDescription = false
@@ -138,7 +144,7 @@ fun GameScreen(
     }
 
     LaunchedEffect(currentTitle) {
-        wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, currentTitle.value))
+        wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(language, currentTitle.value))
     }
 
     LaunchedEffect(options) {
@@ -153,7 +159,7 @@ fun GameScreen(
             totalSteps.value = totalSteps.value - 1
 
             wikiParseViewModel.fetchTitles(
-                ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, newCurrentTitle)
+                ModifyingStrings.generateArticleUrl(language, newCurrentTitle)
             )
         }
     }
@@ -256,8 +262,7 @@ fun GameScreen(
                         onEndQuest(win.value, totalSteps.value, pathList.value)
                     } else {
                         wikiParseViewModel.fetchTitles(ModifyingStrings.generateArticleUrl(
-                            ConstantValues.USER!!.language.languageCode, option))
-
+                            language, option))
                     }
                 },
                 wikiParseViewModel = wikiParseViewModel,

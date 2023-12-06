@@ -18,6 +18,7 @@ import com.knowledge.testapp.R
 import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.ui.LoseScreen
 import com.knowledge.testapp.ui.WinScreen
+import com.knowledge.testapp.utils.UserManager
 import com.knowledge.testapp.viewmodels.LocalDataViewModel
 import com.knowledge.testapp.viewmodels.UserViewModel
 
@@ -297,7 +298,7 @@ class ResultActivity : AppCompatActivity() {
 
 
     fun savePathToDatabase(win: Boolean, startConcept: String, goalConcept: String) {
-        val userId = ConstantValues.USER?.email ?: ""
+        val userId = UserManager.getUser().email
         localDataViewModel.savePathToDatabase(userId, win, startConcept, goalConcept, pathList as ArrayList<String>, pathLength)
     }
 }

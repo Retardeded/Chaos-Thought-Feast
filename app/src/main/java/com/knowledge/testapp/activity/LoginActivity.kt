@@ -72,7 +72,9 @@ class LoginActivity : AppCompatActivity() {
                             userViewModel.saveUserDataToDatabase(newUser)
                         }
 
-                        userViewModel.seUserAndLanguage(this@LoginActivity)
+                        userViewModel.getUserDataByEmail(email) {
+                            userViewModel.seUserAndLanguage(this@LoginActivity, it!!)
+                        }
 
                         val intent = Intent(this@LoginActivity, MainMenuActivity::class.java)
                         startActivity(intent)
@@ -115,13 +117,14 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    userViewModel.seUserAndLanguage(this)
+                    userViewModel.getUserDataByEmail(email) {
+                        userViewModel.seUserAndLanguage(this@LoginActivity, it!!)
+                    }
                     val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    val exception = task.exception
-                    when (exception) {
+                    when (val exception = task.exception) {
                         is FirebaseAuthInvalidUserException -> {
                             // User not found
                             Toast.makeText(this, "User not found. Please register.", Toast.LENGTH_LONG).show()

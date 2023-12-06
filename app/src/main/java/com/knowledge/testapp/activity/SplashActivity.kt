@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.UserViewModel
 
 class SplashActivity : AppCompatActivity() {
@@ -23,20 +22,14 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun decideActivityToStart() {
-        // Check if the user is already logged in
-        if (isLoggedIn()) {
-            // User is logged in, start MainActivity
-            FirebaseAuth.getInstance().currentUser?.email?.let {
-                userViewModel.getUserDataByEmail(it) { user ->
-                    // This code block will be executed when the data is loaded
-                    // Update QuizValues.USER with the loaded user data
-                    ConstantValues.USER = user
-                    userViewModel.setAppLocale(this, ConstantValues.USER!!.language.languageCode)
-                    startActivity(Intent(this, MainMenuActivity::class.java))
-                }
+        FirebaseAuth.getInstance().currentUser?.email?.let { email ->
+            userViewModel.getUserDataByEmail(email) { user ->
+                user?.let {
+                        userViewModel.seUserAndLanguage(this, user)
+                        startActivity(Intent(this, MainMenuActivity::class.java))
+                    }
             }
-        } else {
-            // User is not logged in, start LoginActivity
+        } ?: run {
             startActivity(Intent(this, LoginActivity::class.java))
         }
     }

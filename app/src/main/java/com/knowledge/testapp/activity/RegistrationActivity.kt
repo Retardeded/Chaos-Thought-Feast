@@ -48,9 +48,8 @@ class RegistrationActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = User(username, email, selectedLanguage, recordsHeld = 0, currentScore = 0)
-
                     userViewModel.saveUserDataToDatabase(user)
-                    userViewModel.seUserAndLanguage(this)
+                    userViewModel.seUserAndLanguage(this, user)
                     val intent = Intent(this, MainMenuActivity::class.java)
                     startActivity(intent)
                     finish()

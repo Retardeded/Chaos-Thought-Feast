@@ -20,6 +20,7 @@ import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.ui.GameSetupScreen
 import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
+import com.knowledge.testapp.utils.UserManager
 import kotlinx.coroutines.launch
 
 
@@ -77,7 +78,7 @@ class MainGameSetupActivity : AppCompatActivity() {
             }
 
             fun checkTitleCorrectness(title: String, onResult: (Boolean) -> Unit) {
-                val articleUrl = ModifyingStrings.generateArticleUrl(ConstantValues.USER!!.language.languageCode, title)
+                val articleUrl = ModifyingStrings.generateArticleUrl(UserManager.getUser().language.languageCode, title)
                 lifecycleScope.launch { // Use lifecycleScope in Activity or Fragment
                     val isCorrect = wikiParseViewModel.isTitleCorrect(articleUrl)
                     onResult(isCorrect)
@@ -111,7 +112,7 @@ class MainGameSetupActivity : AppCompatActivity() {
 
     fun fetchArticleDescription(viewModel: WikiParseViewModel, title: String, onDescriptionFetched: (String) -> Unit) {
         viewModel.viewModelScope.launch {
-            val articleUrl = ModifyingStrings.generateArticleDescriptionUrl(ConstantValues.USER!!.language.languageCode, title)
+            val articleUrl = ModifyingStrings.generateArticleDescriptionUrl(UserManager.getUser().language.languageCode, title)
             if (viewModel.isTitleCorrect(articleUrl)) { // Assuming isTitleCorrect is a suspend function
                 val articleDescription = viewModel.fetchIntroText(articleUrl)
                 onDescriptionFetched(articleDescription)

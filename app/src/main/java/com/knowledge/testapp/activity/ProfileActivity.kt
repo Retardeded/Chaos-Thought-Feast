@@ -12,12 +12,12 @@ import androidx.compose.runtime.setValue
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.UserViewModel
 import com.knowledge.testapp.ui.ProfilePathsDialog
 import com.knowledge.testapp.ui.ProfileScreen
 import com.knowledge.testapp.utils.ModifyingStrings
 import com.knowledge.testapp.utils.NavigationUtils
+import com.knowledge.testapp.utils.UserManager
 import com.knowledge.testapp.viewmodels.LocalDataViewModel
 
 class ProfileActivity : AppCompatActivity() {
@@ -29,14 +29,14 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        localDataViewModel.fetchPathsForUser(ConstantValues.USER!!.email, true) // For winning paths
-        localDataViewModel.fetchPathsForUser(ConstantValues.USER!!.email, false) // For losing paths
+        localDataViewModel.fetchPathsForUser(UserManager.getUser().email, true) // For winning paths
+        localDataViewModel.fetchPathsForUser(UserManager.getUser().email, false) // For losing paths
 
         setContent {
             if (showWinningPathsDialog) {
                 ProfilePathsDialog(
                     true,
-                    ConstantValues.USER!!.username,
+                    UserManager.getUser().username,
                     pathsData = localDataViewModel.winningPathsData.value.reversed(),
                     onDismissRequest = { showWinningPathsDialog = false }
                 )
@@ -44,7 +44,7 @@ class ProfileActivity : AppCompatActivity() {
             if (showLosingPathsDialog) {
                 ProfilePathsDialog(
                     false,
-                    ConstantValues.USER!!.username,
+                    UserManager.getUser().username,
                     pathsData = localDataViewModel.losingPathsData.value.reversed(),
                     onDismissRequest = { showLosingPathsDialog = false }
                 )
@@ -62,7 +62,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     fun clearPaths() {
-        localDataViewModel.clearUserData(ConstantValues.USER!!.email)
+        localDataViewModel.clearUserData(UserManager.getUser().email)
     }
 
     fun showWinningPathsDialog() {

@@ -5,12 +5,15 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.knowledge.testapp.data.GameState
 import com.knowledge.testapp.utils.ConstantValues
 import com.knowledge.testapp.viewmodels.WikiParseViewModel
 import com.knowledge.testapp.ui.GameScreen
+import com.knowledge.testapp.utils.LocalLanguage
+import com.knowledge.testapp.utils.UserManager
 
 
 class GameActivity : AppCompatActivity() {
@@ -24,7 +27,7 @@ class GameActivity : AppCompatActivity() {
 
             val currentTitle = remember { mutableStateOf(gameState.startConcept) }
             val goalTitle = remember { mutableStateOf(gameState.goalConcept) }
-            val pathList =  remember { mutableStateOf(listOf(gameState.startConcept)) }
+            val pathList = remember { mutableStateOf(listOf(gameState.startConcept)) }
             val totalSteps = remember { mutableStateOf(gameState.totalSteps) }
             val win = remember { mutableStateOf(gameState.win) }
 
@@ -38,17 +41,20 @@ class GameActivity : AppCompatActivity() {
                 finish()
             }
 
-            GameScreen(
-                currentTitle = currentTitle,
-                goalTitle = goalTitle,
-                wikiParseViewModel = wikiParseViewModel,
-                pathList = pathList,
-                totalSteps = totalSteps,
-                win = win,
-                onEndQuest = { win, totalSteps, pathList ->
-                    endQuest(win, totalSteps, pathList)
-                }
-            )
+            val languageCode = UserManager.getUser().language.languageCode
+            CompositionLocalProvider(LocalLanguage provides languageCode) {
+                GameScreen(
+                    currentTitle = currentTitle,
+                    goalTitle = goalTitle,
+                    wikiParseViewModel = wikiParseViewModel,
+                    pathList = pathList,
+                    totalSteps = totalSteps,
+                    win = win,
+                    onEndQuest = { win, totalSteps, pathList ->
+                        endQuest(win, totalSteps, pathList)
+                    }
+                )
+            }
         }
     }
 }

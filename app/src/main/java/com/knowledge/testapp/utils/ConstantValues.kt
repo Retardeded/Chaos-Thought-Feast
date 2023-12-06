@@ -16,5 +16,4 @@ object ConstantValues {
     const val topUsers_FIND_YOUR_LIKINGS = "topUsers_FIND_YOUR_LIKINGS"
     const val topUsers_LIKING_SPECTRUM_JOURNEY = "topUsers_LIKING_SPECTRUM_JOURNEY"
     const val topUsers_ANYFIN_CAN_HAPPEN = "topUsers_ANYFIN_CAN_HAPPEN"
-    var USER: User? = null
 }
