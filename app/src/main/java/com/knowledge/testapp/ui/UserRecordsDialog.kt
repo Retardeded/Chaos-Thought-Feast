@@ -14,6 +14,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -24,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.knowledge.testapp.R
 import com.knowledge.testapp.data.PathRecord
 
 @Composable
@@ -33,7 +33,7 @@ fun UserRecordsDialog(
     title: String,
     gameMode: Int,
     onDismissRequest: () -> Unit,
-    userRecords: List<PathRecord> // Corrected the naming
+    userRecords: List<PathRecord>
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         UserRecordsScreen(
@@ -55,7 +55,6 @@ fun UserRecordsScreen(
     onCloseClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        // Background image
         Image(
             painter = painterResource(id = backgroundResource),
             contentDescription = null,
@@ -99,11 +98,14 @@ fun UserRecordsScreen(
             onClick = onCloseClick,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(8.dp)
+                .padding(top = 4.dp, end = 4.dp)
+                .size(24.dp),
+            contentPadding = PaddingValues(all = 0.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close"
+                contentDescription = "Close",
+                modifier = Modifier.size(18.dp)
             )
         }
     }
@@ -115,27 +117,40 @@ fun PathRecordItem(pathRecord: PathRecord) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 16.dp),
-        elevation = 5.dp,
+            .padding(vertical = 8.dp), // Adjusted padding
         shape = RoundedCornerShape(8.dp)
     ) {
 
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = pathRecord.startingConcept,
-                style = TextStyle(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Start
-            )
-            Spacer(modifier = Modifier.padding(top = 8.dp))
-            Text(
-                text = pathRecord.goalConcept,
-                style = TextStyle(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Start
-            )
-            Spacer(modifier = Modifier.padding(top = 8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = pathRecord.startConcept,
+                    fontSize = 13.sp,
+                    style = TextStyle(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.wrapContentWidth(Alignment.Start)
+                )
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "To",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(horizontal = 4.dp)
+                )
+                Text(
+                    text = pathRecord.goalConcept,
+                    fontSize = 13.sp,
+                    style = TextStyle(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.wrapContentWidth(Alignment.End)
+                )
+            }
+            Spacer(modifier = Modifier.padding(bottom = 8.dp))
             Text(
                 text = pathRecord.path.joinToString(" -> "),
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                fontSize = 12.sp
             )
         }
 

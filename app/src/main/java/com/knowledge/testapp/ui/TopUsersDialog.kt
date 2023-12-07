@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.knowledge.testapp.R
 import com.knowledge.testapp.data.User
 
 
@@ -66,6 +67,19 @@ fun TopUsersScreen(
                 .align(Alignment.Center)
         ) {
             Text(
+                text = stringResource(gameMode),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                textAlign = TextAlign.Center,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
                 text = title,
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -75,19 +89,6 @@ fun TopUsersScreen(
                 color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text(
-                text = stringResource(gameMode),
-                modifier = Modifier
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-
-            // RecyclerView equivalent in Compose
             LazyColumn(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -104,12 +105,14 @@ fun TopUsersScreen(
             onClick = onCloseClick,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 8.dp, end = 8.dp),
+                .padding(top = 4.dp, end = 4.dp)
+                .size(24.dp),
             contentPadding = PaddingValues(all = 0.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close"
+                contentDescription = "Close",
+                modifier = Modifier.size(18.dp)
             )
         }
 
@@ -143,7 +146,7 @@ fun UserItem(user: User, position: Int) {
                 fontSize = 16.sp
             )
             Text(
-                text = "${user.currentScore} Points",
+                text = stringResource(R.string.user_score, user.currentScore),
                 modifier = Modifier.weight(2f),
                 fontSize = 16.sp
             )

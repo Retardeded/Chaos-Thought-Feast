@@ -45,6 +45,7 @@
     <string name="have_not_found_concept">You haven\'t found %1$s</string>
     <string name="new_world_record_romantic">This path has remained unexplored until now! You\'ve set a new record in its discovery.</string>
     <string name="new_world_record_with_diff">You\'ve discovered a shorter path linking both concepts! You surpassed the previous record by %1$d steps.</string>
+    <string name="user_score">"%1$d Points"</string>
 
     <string name="google_sign_in_failed">Google Sign-In failed: %1$s</string>
     <string name="authentication_failed">Authentication failed. Please try again.</string>

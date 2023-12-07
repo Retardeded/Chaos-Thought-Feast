@@ -45,6 +45,7 @@
     <string name="have_not_found_concept">Nie znalazłeś(aś) %1$s</string>
     <string name="new_world_record_romantic">To ścieżka dotąd nieeksplorowana! Także zapisuje się ona do rekordów!</string>
     <string name="new_world_record_with_diff">Znalazłeś krótsza ścieżkę łącząca oba pojęcia! Pokonałeś(aś) starą o %1$d kroków.</string>
+    <string name="user_score">%1$d Punktów</string>
 
     <string name="google_sign_in_failed">Błąd logowania Google: %1$s</string>
     <string name="authentication_failed">Błąd autentykacji. Proszę spróbować ponownie.</string>

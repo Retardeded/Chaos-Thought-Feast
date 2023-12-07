@@ -43,7 +43,7 @@ class UserPathDbManager(private val context: Context) {
 
         while (cursor.moveToNext()) {
             val wikiPath = PathRecord().apply {
-                startingConcept = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
+                startConcept = cursor.getString(cursor.getColumnIndexOrThrow(STARTTITLE))
                 goalConcept = cursor.getString(cursor.getColumnIndexOrThrow(GOALTITLE))
                 val pathJson = cursor.getString(cursor.getColumnIndexOrThrow(PATH))
                 path = Gson().fromJson(pathJson, object : TypeToken<List<String>>() {}.type)
@@ -84,7 +84,7 @@ class UserPathDbManager(private val context: Context) {
     fun insert(userId: String, wikiPath: PathRecord): Long {
         val values = ContentValues().apply {
             put(USER_ID, userId) // Include the userId
-            put(STARTTITLE, wikiPath.startingConcept)
+            put(STARTTITLE, wikiPath.startConcept)
             put(GOALTITLE, wikiPath.goalConcept)
             val pathJson = Gson().toJson(wikiPath.path)
             put(PATH, pathJson)

@@ -50,7 +50,7 @@ fun RankingsScreen(
                 color = Color.White,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 15.dp)
+                    .padding(bottom = 15.dp, top = 5.dp)
             )
 
             Divider(color = Color.White, thickness = 1.dp)

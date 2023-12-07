@@ -11,11 +11,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
@@ -106,32 +111,49 @@ fun PathsProfileScreen(
             onClick = onCloseClick,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 16.dp, end = 16.dp)
+                .padding(top = 4.dp, end = 4.dp)
+                .size(24.dp),
+            contentPadding = PaddingValues(all = 0.dp)
         ) {
-            Text("Close")
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }
 
 @Composable
-fun PathItem(path: PathRecord) {
+fun PathItem(pathRecord: PathRecord) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = pathRecord.startConcept,
+                fontSize = 13.sp,
+                style = TextStyle(fontWeight = FontWeight.Bold),
+                modifier = Modifier.wrapContentWidth(Alignment.Start)
+            )
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = "To",
+                modifier = Modifier
+                    .size(24.dp)
+                    .padding(horizontal = 4.dp)
+            )
+            Text(
+                text = pathRecord.goalConcept,
+                fontSize = 13.sp,
+                style = TextStyle(fontWeight = FontWeight.Bold),
+                modifier = Modifier.wrapContentWidth(Alignment.End)
+            )
+        }
         Text(
-            text = path.startingConcept,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            color = Color.Black
-        )
-        Text(
-            text = path.goalConcept,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            color = Color.Black
-        )
-        Text(
-            text = path.path.joinToString(" -> "),
-            fontSize = 14.sp,
-            color = Color.Gray
+            text = pathRecord.path.joinToString(" -> "),
+            fontSize = 12.sp,
         )
     }
 }
