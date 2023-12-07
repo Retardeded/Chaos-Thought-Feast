@@ -1,7 +1,13 @@
 package com.knowledge.testapp.activity
 
 import android.content.Intent
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -11,14 +17,30 @@ class SplashActivity : AppCompatActivity() {
 
     private lateinit var userViewModel: UserViewModel
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
-        decideActivityToStart()
-        // Close the SplashActivity to prevent the user from going back to it
+        if (isNetworkAvailable()) {
+            decideActivityToStart()
+        } else {
+            Toast.makeText(this, "Please turn on internet to continue", Toast.LENGTH_LONG).show()
+        }
+
         finish()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+
+        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
     }
 
     private fun decideActivityToStart() {

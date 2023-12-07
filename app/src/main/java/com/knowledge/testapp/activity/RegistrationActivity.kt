@@ -39,7 +39,6 @@ class RegistrationActivity : AppCompatActivity() {
     }
 
     private fun registerUser(username: String, email: String, password: String, selectedLanguage : Language) {
-
         if (username.isBlank() || email.isBlank() || password.isBlank()) {
             Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
             return

@@ -114,6 +114,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_LONG).show()
+            return
+        }
+
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -137,5 +142,5 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
-    }
+        }
 }
