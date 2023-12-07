@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.knowledge.testapp.R
 import com.knowledge.testapp.viewmodels.UserViewModel
 import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.data.User
@@ -42,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
             firebaseAuthWithGoogle(account.idToken!!)
         } catch (e: ApiException) {
             Log.e("LoginActivity", "Google Sign-In failed. Status Code: ${e.statusCode}", e)
-            Toast.makeText(this, "Google Sign-In failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.google_sign_in_failed, e.localizedMessage), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -81,11 +82,10 @@ class LoginActivity : AppCompatActivity() {
                         finish()
                     }
                 } else {
-                    Toast.makeText(this, "Authentication failed. Please try again.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.authentication_failed), Toast.LENGTH_LONG).show()
                 }
             } else {
-                // Display a generic error message or log the error
-                Toast.makeText(this, "Google Sign-In failed. Please try again.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.google_sign_in_failed_generic), Toast.LENGTH_LONG).show()
                 Log.e("LoginActivity", "Google Sign-In failed: ${task.exception}")
             }
         }
@@ -126,16 +126,13 @@ class LoginActivity : AppCompatActivity() {
                 } else {
                     when (val exception = task.exception) {
                         is FirebaseAuthInvalidUserException -> {
-                            // User not found
-                            Toast.makeText(this, "User not found. Please register.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, getString(R.string.user_not_found), Toast.LENGTH_LONG).show()
                         }
                         is FirebaseAuthInvalidCredentialsException -> {
-                            // Invalid email or password
-                            Toast.makeText(this, "Invalid email or password.", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, getString(R.string.invalid_email_or_password), Toast.LENGTH_LONG).show()
                         }
                         else -> {
-                            // Other errors
-                            Toast.makeText(this, "Login failed: ${exception?.message}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(this, getString(R.string.login_failed, exception?.message), Toast.LENGTH_LONG).show()
                         }
                     }
                 }

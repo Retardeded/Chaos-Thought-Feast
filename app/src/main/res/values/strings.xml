@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Mindless Thought Cake</string>
+    <string name="app_name">Chaos Thought Feast</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="mindless_thought_cake">Mindless Thought Cake</string>
+    <string name="mindless_thought_cake">Chaos Thought Feast</string>
     <string name="find_your_likings">Find Your Likings</string>
     <string name="liking_spectrum_journey">Liking Spectrum Journey</string>
     <string name="anyfin_can_happen">Anyfin Can Happen</string>
@@ -24,26 +24,39 @@
     <string name="your_wiki_path">Your wiki path:</string>
     <string name="another_try">Another try</string>
     <string name="you_failed">You failed!</string>
-    <string name="winning_paths">Winning Paths</string>
-    <string name="losing_paths">Losing Paths</string>
+    <string name="winning_paths">Successful Thought-Ways</string>
+    <string name="losing_paths">Unsuccessful Thought-Ways</string>
     <string name="clear_your_local_data">Clear your local data</string>
     <string name="delete_account">Delete Account</string>
     <string name="logout">Logout</string>
-    <string name="top_users_in_each_mode">Top users in each mode</string>
+    <string name="top_users_in_each_mode">Top game enjoyers in each mode</string>
     <string name="your_personal_bests">Your personal Bests</string>
     <string name="find_your_likings_records">Find Your Likings Records</string>
     <string name="liking_spectrum_journey_records">Liking Spectrum Journey Records</string>
     <string name="anyfin_can_happen_records">Anyfin Can Happen</string>
-    <string name="top_users">Top Users</string>
+    <string name="top_users">Top Game Enjoyers</string>
 
     <string name="example_starting_concept">Quiz</string>
     <string name="example_goal_concept">Europe</string>
 
-    <string name="not_enough_for_wr">" steps too much for World Record"</string>
-    <string name="enough_for_wr">New World Record!</string>
+    <string name="not_enough_for_wr">" steps too many compared to the current record</string>
+    <string name="enough_for_wr">New shortest path!</string>
     <string name="found_concept_steps">You found %1$s in %2$d steps</string>
     <string name="have_not_found_concept">You haven\'t found %1$s</string>
-    <string name="new_world_record_romantic">That\'s a new World Record!, no one ever before tried this path</string>
-    <string name="new_world_record_with_diff">That\'s a new World Record!, beaten the old one by %1$d steps.</string>
+    <string name="new_world_record_romantic">This path has remained unexplored until now! You\'ve set a new record in its discovery.</string>
+    <string name="new_world_record_with_diff">You\'ve discovered a shorter path linking both concepts! You surpassed the previous record by %1$d steps.</string>
+
+    <string name="google_sign_in_failed">Google Sign-In failed: %1$s</string>
+    <string name="authentication_failed">Authentication failed. Please try again.</string>
+    <string name="google_sign_in_failed_generic">Google Sign-In failed. Please try again.</string>
+    <string name="user_not_found">User not found. Please register.</string>
+    <string name="invalid_email_or_password">Invalid email or password.</string>
+    <string name="login_failed">Login failed: %1$s</string>
+
+    <string name="fill_all_fields">Please fill in all fields</string>
+    <string name="weak_password">Password is too weak</string>
+    <string name="invalid_email_format">Invalid email format</string>
+    <string name="email_in_use">Email is already in use</string>
+    <string name="registration_failed">Registration failed: %1$s</string>
 
 </resources>

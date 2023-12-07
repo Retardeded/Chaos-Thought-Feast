@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.knowledge.testapp.R
 import com.knowledge.testapp.viewmodels.UserViewModel
 import com.knowledge.testapp.data.Language
 import com.knowledge.testapp.data.User
@@ -40,7 +41,7 @@ class RegistrationActivity : AppCompatActivity() {
     private fun registerUser(username: String, email: String, password: String, selectedLanguage : Language) {
 
         if (username.isBlank() || email.isBlank() || password.isBlank()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -56,16 +57,16 @@ class RegistrationActivity : AppCompatActivity() {
                 }  else {
                     when (val exception = task.exception) {
                         is FirebaseAuthWeakPasswordException -> {
-                            Toast.makeText(this, "Password is too weak", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, getString(R.string.weak_password), Toast.LENGTH_SHORT).show()
                         }
                         is FirebaseAuthInvalidCredentialsException -> {
-                            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, getString(R.string.invalid_email_format), Toast.LENGTH_SHORT).show()
                         }
                         is FirebaseAuthUserCollisionException -> {
-                            Toast.makeText(this, "Email is already in use", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, getString(R.string.email_in_use), Toast.LENGTH_SHORT).show()
                         }
                         else -> {
-                            Toast.makeText(this, "Registration failed: ${exception?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, getString(R.string.registration_failed, exception?.message), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bezmyślny Tort Myśli</string>
+    <string name="app_name">Chaotyczna Uczta Myśli</string>
     <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
-    <string name="mindless_thought_cake">Bezmyślny Tort Myśli</string>
+    <string name="mindless_thought_cake">Chaotyczna Uczta Myśli</string>
     <string name="find_your_likings">Znajdź swoje Upodobania</string>
     <string name="liking_spectrum_journey">Podróż przez Spektrum Upodobań</string>
     <string name="anyfin_can_happen">Wszystko się może zdarzyć</string>
@@ -22,27 +22,40 @@
     <string name="end_quest">Zakończ zadanie</string>
     <string name="go_back">Cofnij się</string>
     <string name="you_connected_da_dots">Połączyłeś kropki!</string>
-    <string name="your_wiki_path">Twój ścieżka w wiki:</string>
+    <string name="your_wiki_path">Twój ścieżka wiki:</string>
     <string name="another_try">Kolejna próba</string>
     <string name="you_failed">Nie udało się!</string>
-    <string name="winning_paths">Ścieżki zwycięstwa</string>
-    <string name="losing_paths">Ścieżki porażki</string>
+    <string name="winning_paths">Pomyślne ścieżki</string>
+    <string name="losing_paths">Niepomyślne ścieżki</string>
     <string name="clear_your_local_data">Wyczyść swoje dane lokalne</string>
     <string name="delete_account">Usuń konto</string>
     <string name="logout">Wyloguj</string>
-    <string name="top_users_in_each_mode">Topowi użytkownicy w każdym trybie</string>
+    <string name="top_users_in_each_mode">Najbardziej zaangażowani gracze w każdym trybie</string>
     <string name="your_personal_bests">Twoje osobiste rekordy</string>
-    <string name="find_your_likings_records">Rekordy Znajdź swoje Upodobania</string>
-    <string name="liking_spectrum_journey_records">Rekordy Podróż przez Spektrum Upodobań</string>
-    <string name="anyfin_can_happen_records">Rekordy Wszystko się może zdarzyć</string>
-    <string name="top_users">Najlepsi użytkownicy</string>
+    <string name="find_your_likings_records">Znajdź swoje Upodobania</string>
+    <string name="liking_spectrum_journey_records">Podróż przez Spektrum Upodobań</string>
+    <string name="anyfin_can_happen_records">Wszystko się może zdarzyć</string>
+    <string name="top_users">Najbardziej zaangażowani gracze</string>
     <string name="example_starting_concept">Quiz</string>
     <string name="example_goal_concept">Europa</string>
 
-    <string name="not_enough_for_wr">" kroków to zbyt wiele dla rekordu świata"</string>
-    <string name="enough_for_wr">Nowy rekord świata!</string>
+    <string name="not_enough_for_wr">" kroków zbyt wiele w porównaniu do obecnego rekordu"</string>
+    <string name="enough_for_wr">Nowa najkrótsza ścieżka!</string>
     <string name="found_concept_steps">Znalazłeś(aś) %1$s w %2$d krokach</string>
     <string name="have_not_found_concept">Nie znalazłeś(aś) %1$s</string>
-    <string name="new_world_record_romantic">To nowy rekord świata! Nikt wcześniej nie próbował tej drogi</string>
-    <string name="new_world_record_with_diff">To nowy rekord świata! Pokonałeś(aś) stary o %1$d kroków.</string>
+    <string name="new_world_record_romantic">To ścieżka dotąd nieeksplorowana! Także zapisuje się ona do rekordów!</string>
+    <string name="new_world_record_with_diff">Znalazłeś krótsza ścieżkę łącząca oba pojęcia! Pokonałeś(aś) starą o %1$d kroków.</string>
+
+    <string name="google_sign_in_failed">Błąd logowania Google: %1$s</string>
+    <string name="authentication_failed">Błąd autentykacji. Proszę spróbować ponownie.</string>
+    <string name="google_sign_in_failed_generic">Błąd logowania Google. Proszę spróbować ponownie.</string>
+    <string name="user_not_found">Nie znaleziono użytkownika. Proszę się zarejestrować.</string>
+    <string name="invalid_email_or_password">Nieprawidłowy e-mail lub hasło.</string>
+    <string name="login_failed">Logowanie nieudane: %1$s</string>
+
+    <string name="fill_all_fields">Proszę wypełnić wszystkie pola</string>
+    <string name="weak_password">Hasło jest zbyt słabe</string>
+    <string name="invalid_email_format">Nieprawidłowy format e-maila</string>
+    <string name="email_in_use">E-mail jest już używany</string>
+    <string name="registration_failed">Rejestracja nieudana: %1$s</string>
 </resources>
