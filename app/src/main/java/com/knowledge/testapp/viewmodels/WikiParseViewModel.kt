@@ -104,7 +104,7 @@ class WikiParseViewModel: ViewModel() {
                 okHttpClient.newCall(request).execute().use { response ->
                     if (response.isSuccessful) {
                         val result = response.body?.string()
-                        result != null && !result.contains("Wikipedia does not have an article with this exact name")
+                        result != null && !result.contains("\"error\"")
                     } else false
                 }
             } catch (e: IOException) {
